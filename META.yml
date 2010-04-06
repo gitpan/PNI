@@ -1,0 +1,11 @@
+--- #YAML:1.0
+abstract: 'Perl Node Interface'
+name: PNI
+version: 0.0.1
+requires:
+    AppConfig: 1.66
+    Tk: 804.028
+    Time::HiRes:
+author:
+    - Gianluca Casati <casati.gianluca@gmail.com>
+
