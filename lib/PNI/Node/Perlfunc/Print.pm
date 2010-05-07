@@ -1,21 +1,24 @@
 package PNI::Node::Perlfunc::Print;
 
-BEGIN { require PNI::Node , @ISA = ( 'PNI::Node' ) }
+use 5.010001;
+use strict;
+use warnings;
 
-my $previous_message;
+our $VERSION = '0.01';
+
+BEGIN { require PNI::Node , @ISA = ( 'PNI::Node' ) }
 
 sub init {
     my $node = shift;
-    #$node->has_input( 'FileHandle' => *STDOUT ); # come si fa?
-    $node->has_input( 'message' => '' );
+    $node->has_input( 'message' => undef );
+    $node->has_input( 'do_print' => 0 );
 }
 
 sub task {
     my $node = shift;
+    return unless $node->input->{do_print}; 
     return unless defined $node->input->{message};
-    # dovrebbe essere un array ma per ora va bene un solo scalare;
-    return unless $node->input->{message} eq $previous_message;
-    $previous_message = $node->input->{message};
+    
     print STDOUT $node->input->{message};
 }
 
@@ -25,6 +28,18 @@ __END__
 =head1
 
 PNI::Node::Perlfunc::Print;
+
+=head1 AUTHOR
+
+G. Casati , E<lt>fibo@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2010 by G. Casati
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.1 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
 

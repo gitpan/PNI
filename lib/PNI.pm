@@ -1,154 +1,41 @@
 package PNI;
-our $VERSION = '0.0.1';
-use 5.008;
+
+use 5.010001;
 use strict;
 use warnings;
+
+our $VERSION = '0.01';
+
+use PNI::Tree;
 use Time::HiRes( 'usleep' );
-use PNI::Node;
-use PNI::Slot;
 
-#sub NODE;
-#sub LINK;
+my $PNI_is_running = 0;
 
-my $NODE = {};
-my $LINK = {};
-my $SLOT = {};
+sub LINK { return PNI::Tree::add_link( @_ ) }
 
-my $id = 0;
-my @hierarchy;
-
-my $update_hierarchy = sub {
-    #warn 'update hierarchy' . "\n";
-    @hierarchy = ();
-    my $level = -1;
-    my $next = $NODE;
-    my $current = {};
-
-    while( values %{ $next } ) {
-        $current = $next;
-        $next = {};
-        $level++; 
-        #warn 'level ' . $level . "\n";
-        $hierarchy[ $level ] = [];
-
-        for my $node ( values %{ $current } ) {
-            my $has_parent = 0;
-            for my $input_name ( keys %{ $node->input } ) {
-                #warn "looking at input $input_name of node $$node\n";
-                last if $has_parent;
-                if( my $source_node = $LINK->{ $$node . $input_name }->[0] ) {
-                    $has_parent = 1 if $current->{$$source_node};
-                }
-            }
-            if( $has_parent ) {
-                $next->{$$node} = $node;
-            }
-            else {
-                push @{ $hierarchy[ $level ] } , $node;
-                #warn 'node ' . $$node . ' ( ' . $node . ' ) ' . ' has level ' . $level . "\n";
-            }
-        }
-    }
-};
-
-my $update_values_at_level = sub {
-    my $level = shift;
-    #warn 'update values at level ' . $level . "\n";
-    for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
-        for my $node ( @{ $hierarchy[$level] } ) {
-            for my $input_name ( keys %{ $node->input } ) {
-                #warn "looking at input $input_name of node $$node\n";
-                if( my( $source_node , $source_output_name ) = @{ $LINK->{ $$node . $input_name } } ) {
-                    $node->input->{$input_name} = $source_node->output->{$source_output_name};
-                }
-            }
-        }
-    }
-};
-
-my $do_tasks = sub {
-    #warn 'doing tasks at level 0' . "\n";
-    for my $node ( @{ $hierarchy[0] } ) {
-        $node->task()
-    }
-    for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
-        #warn 'doing tasks at level ' . $level . "\n";
-        &$update_values_at_level( $level );
-        for my $node ( @{ $hierarchy[$level] } ) {
-            $node->task()
-        }
-    }
-};
-
-sub NODE {
-    my $node_type = shift;
-    my $node_class = 'PNI::Node::' . $node_type;
-    my $node_path = $node_class . '.pm'; $node_path =~ s!::!/!g;
-
-    eval { require $node_path };
-
-    if( $@ ) { 
-        warn $@; 
-        return 
-    }
-    else {
-        $id++;
-        my $node_id = 'Node'.$id;
-        $NODE->{$node_id} = bless \$node_id , $node_class;
-        $NODE->{$node_id}->init();
-        warn 'PNI::NODE ' . $node_type . '(' . $node_id . ')' . "\n";
-        return $NODE->{$node_id}
-    }
-}
-
-sub LINK {
-    # TODO aggiungi un controllo sui cammini chiusi, non deve esistere un cammino
-    # piu lungo del numero di nodi presenti altrimenti sto looppando.
-
-    # TODO aggiungi il controllo sul tipo di dati dell' input e dell' output,
-    # una cosa del tipo
-    #
-    # return unless ref $source_node->{$source_output_name} eq ref
-    # $source_node->{$target_input_name}
-    #
-    # per ora lascia solo il warn, da togliere non appena implementato il
-    # controllo.
-    my( $source_node , $target_node , $source_output_name , $target_input_name ) = @_;
-
-    eval { $LINK->{ $$target_node . $target_input_name } = [ $source_node , $source_output_name ] };
-    if( $@ ) { 
-        warn $@; 
-        return 
-    }
-    warn 'PNI::LINK ' . $source_node . ' => ' . $target_node . ' , ' . $source_output_name . ' => ' . $target_input_name . "\n";
-}
-
-#TODO usa delete $NODE->{$node_id}
-
-sub SLOT {
-    my $slot_type = shift;
-    my $slot_class = 'PNI::Slot::' . $slot_type;
-    my $slot_path = $slot_class . '.pm'; $slot_path =~ s!::!/!g;
-    eval{ require $slot_path };
-
-    if( $@ ) {
-        warn $@; 
-        return
-    } else {
-        $id++;
-        my $slot_id = 'Slot'.$id;
-        $SLOT->{$slot_id} = bless \$slot_id , $slot_class;
-        return $SLOT->{$slot_id}
-    }
-}
+sub NODE { return PNI::Tree::add_node( @_ ) }
 
 sub RUN { 
-    &$update_hierarchy;
-    &$do_tasks;
+    # prevent PNI::RUN is called inside a PNI::Node task method.
+    return if $PNI_is_running;
+    $PNI_is_running = 1;
+
+    PNI::Tree::update_hierarchy;
+    PNI::Tree::do_tasks;
     usleep( 1 );
+    
+    $PNI_is_running = 0;
 }
 
-sub LOOP { &RUN while 1 }
+sub LOOP {
+    # prevent PNI::LOOP is called inside a PNI::Node task method.
+    return if $PNI_is_running;
+
+    while( 1 ) { RUN }
+
+    # never reach here
+    exit
+}
 
 1;
 __END__
@@ -159,29 +46,129 @@ PNI - Perl Node Interface
 
 =head1 SYNOPSIS
 
-use PNI;
+  use PNI;
 
-my $node1 = PNI::NODE 'Template'; 
-my $print = PNI::NODE 'Perlfunc::Print'; 
+  my $node = PNI::NODE 'Perlfunc::Print';
+  $node->input->{message} = 'Hello World !';
+  $node->input->{do_print} = 1;
 
-PNI::LINK $node1 => $print , 'output1' => 'message';
-
-PNI::RUN;
-
+  PNI::RUN
+  
 =head1 DESCRIPTION
 
-=head1 AUTHOR
+Hi! I'm an italian mathematician. 
+I really like Perl phylosophy as Larry jokes a lot even if 
+he is one of the masters of hacking.
 
-Gianluca Casati
+PNI stands for Perl Node Interface.
 
-=head1 LICENSE
+It is my main project, my contribution to this great community. 
+Node programming is really interesting since makes possible to make 
+a program even if you have no idea about programming. 
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+Think about genetic researchers, for example. 
+They need to focus on protein chains, not on what is a package.
+Maybe they can do an extra effort and say the world "variable" or "string" 
+or even "regular expression" and that makes them proud, but they don't care about inheritance.
+
+They want things working and they need Perl ... 
+but if you say Strawberry they think about yogurth, not about Windows.
+
+There are a lot of node programming languages (vvvv, puredata, max) 
+but normally they target artists and interaction designers.
+I saw a lot of vjs and musicians do really complex programs
+with those software, and they never wrote a line of code.
+
+This is my effort to provide a node interface that brings Perl power 
+to people who don't know the Perl language.
+
+Blah blah blah. ( this was the h2xs command :)
+
+=head2 EXPORT
+
+PNI module does not export subs, you have to call them directly. 
+They are all uppercase and you can omit parenthesis, like
+
+  PNI::NODE 'Some::Node';
+
+  PNI::RUN;
+
+They have short names and sometimes they points to other modules methods inside the PNI namespace.
+
+=head2 SUBS
+
+=over
+
+=item PNI::NODE
+
+Creates a node by its pni type. If you write
+
+=over 4
+
+  PNI::Node 'Some::Node'
+
+=back
+
+PNI do the following steps:
+
+=over 4
+
+=item 1
+
+requires the PNI/Node/Some/Node.pm module.
+
+=item 2
+
+creates a new PNI::Node assigns it an id 
+and bless it as a PNI::Node::Some::Node.
+
+=item 3
+
+calls the init method as implemented in the 
+PNI::Node::Some::Node package.
+
+=back
+
+=item PNI::LINK
+
+Connects an output of a node to an input of another node.
+
+=item PNI::RUN
+
+Updates the tree node hierarchy and calls 
+the task method of every loaded node.
+
+=item PNI::LOOP
+
+Starts the PNI main loop, it keeps calling PNI::RUN as fast as it can.
+
+=back
 
 =head1 SEE ALSO
 
 PNI::Node
+PNI::Tree
+PNI::Link
+PNI::Node::Perlfunc
+PNI::Node::Perlop
+
+=cut
+
+# If you have a mailing list set up for your module, mention it here.
+
+# If you have a web site set up for your module, mention it here.
+
+=head1 AUTHOR
+
+G. Casati , E<lt>fibo@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2010 by G. Casati
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.1 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
 

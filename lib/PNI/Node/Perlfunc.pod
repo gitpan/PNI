@@ -1,0 +1,23 @@
+
+=head1 NAME
+
+PNI::Node::Perlfunc
+
+=head1 DESCRIPTION
+
+It's a basic collection of PNI nodes implementing perl builtin functions.
+
+=head1 AUTHOR
+
+G. Casati , E<lt>fibo@cpan.orgE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2010 by G. Casati
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.10.1 or,
+at your option, any later version of Perl 5 you may have available.
+
+=cut
+

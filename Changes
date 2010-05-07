@@ -1,3 +1,4 @@
+Revision history for Perl extension PNI.
 
-0.0.2 ( 2010/xx/xx )
-first usable release
+0.01  20100507
+	- first minimal release: just works as cpan module :)

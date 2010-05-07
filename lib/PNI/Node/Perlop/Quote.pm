@@ -1,5 +1,11 @@
 package PNI::Node::Perlop::Quote;
-our $VERSION = '0.0.1';
+
+use 5.010001;
+use strict;
+use warnings;
+
+our $VERSION = '0.01';
+
 BEGIN { require PNI::Node , @ISA = ( 'PNI::Node' ) }
 
 sub init {
@@ -22,21 +28,17 @@ __END__
 
 PNI::Node::Perlop::Quote
 
-=head1 DESCRIPTION
-
 =head1 AUTHOR
 
-Gianluca Casati
+G. Casati , E<lt>fibo@cpan.orgE<gt>
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2010 by G. Casati
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=head1 SEE ALSO
-
-PNI::Node
+it under the same terms as Perl itself, either Perl version 5.10.1 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
-
 
