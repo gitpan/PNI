@@ -4,7 +4,7 @@ use 5.010001;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 my $source = {};
 my $target = {};
@@ -53,6 +53,13 @@ __END__
 =head1 NAME
 
 PNI::Link
+
+=head2 DESCRIPTION
+
+This class represents connections between nodes. It links a node output to a node input, 
+so at every PNI::RUN every node input is updated with the corresponding node output.
+
+Don't use this module, call PNI::LINK instead.
 
 =head1 AUTHOR
 

@@ -3,6 +3,7 @@ Makefile.PL
 MANIFEST
 README
 t/PNI.t
+t/nodes.t
 t/project_structure.t
 lib/PNI.pm
 lib/PNI/Link.pm
@@ -13,5 +14,6 @@ lib/PNI/Node/Perlfunc/Cos.pm
 lib/PNI/Node/Perlfunc/Sin.pm
 lib/PNI/Node/Perlfunc/Print.pm
 lib/PNI/Node/Perlop.pod
+lib/PNI/Node/Perlop/Eq.pm
 lib/PNI/Node/Perlop/Quote.pm
 META.yml                                 Module meta-data (added by MakeMaker)

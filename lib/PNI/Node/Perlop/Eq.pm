@@ -1,4 +1,4 @@
-package PNI::Node::Perlop::Quote;
+package PNI::Node::Perlop::Eq;
 
 use 5.010001;
 use strict;
@@ -11,14 +11,14 @@ our @ISA = ( 'PNI::Node' );
 sub init {
     my $node = shift;
     
-    $node->has_input( 'input' => 0 );
-    $node->has_output( 'output' => 0 );
+    $node->has_input( 'arg1' => undef );
+    $node->has_input( 'arg2' => undef );
+    $node->has_output( 'result' => undef );
 }
 
 sub task {
     my $node = shift;
-    
-    $node->output->{output} = qq{ $node->input->{input} };
+    $node->output->{result} = $node->input->{arg1} eq $node->input->{arg2}
 }
 
 1;
@@ -26,7 +26,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlop::Quote
+PNI::Node::Perlop::Eq
 
 =head1 AUTHOR
 
@@ -41,4 +41,5 @@ it under the same terms as Perl itself, either Perl version 5.10.1 or,
 at your option, any later version of Perl 5 you may have available.
 
 =cut
+
 

@@ -4,12 +4,13 @@ use 5.010001;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use PNI::Tree;
 use Time::HiRes( 'usleep' );
 
 my $PNI_is_running = 0;
+my $num_of_runs = 0;
 
 sub LINK { return PNI::Tree::add_link( @_ ) }
 
@@ -20,11 +21,15 @@ sub RUN {
     return if $PNI_is_running;
     $PNI_is_running = 1;
 
+    $num_of_runs++;
+
     PNI::Tree::update_hierarchy;
     PNI::Tree::do_tasks;
     usleep( 1 );
     
     $PNI_is_running = 0;
+
+    return $num_of_runs
 }
 
 sub LOOP {
@@ -82,7 +87,7 @@ with those software, and they never wrote a line of code.
 This is my effort to provide a node interface that brings Perl power 
 to people who don't know the Perl language.
 
-Blah blah blah. ( this was the h2xs command :)
+Blah blah blah. ( this was the h2xs command :-)
 
 =head2 EXPORT
 

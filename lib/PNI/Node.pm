@@ -1,7 +1,7 @@
 package PNI::Node;
 use strict;
 use warnings;
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 sub init { die }
 sub task { die }
@@ -51,10 +51,12 @@ sub has_input {
 sub has_output {
     my $node         = shift;
     my $output_name  = shift;
+    my $output_value = shift;
     
     return unless defined $output_name;
+
     #warn "node $$node has output $output_name\n";
-    $output->{$$node}->{$output_name} = $output_value;
+    $output->{$$node}->{$output_name} = $output_value || undef;
 }
 
 #--------
@@ -88,16 +90,10 @@ sub type {
     return $node_type
 }
 
-=pod
-
-$node->has_input { };
-
-=cut
-
 sub DESTROY {
-my $node = shift;
-warn 'del node ' . $node->type . " [ $$node ]\n";
-delete $input->{$$node}; delete $output->{$$node};
+    my $node = shift;
+    #warn 'del node ' . $node->type . " [ $$node ]\n";
+    delete $input->{$$node}; delete $output->{$$node};
 }
 
 1;
@@ -107,9 +103,12 @@ __END__
 
 PNI::Node
 
-=head1 NAME
+=head1 DESCRIPTION
 
-PNI::Link
+This is the base class every PNI::Node must inherit from. 
+It declares two abstract methods: init and task. 
+
+Don't use this module, call PNI::NODE instead.
 
 =head1 AUTHOR
 

@@ -4,7 +4,9 @@ use 5.010001;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
+
+use PNI::Node;
 
 my $PNI = {
     LINK => {},
@@ -20,13 +22,19 @@ sub add_node {
     my $node_class = 'PNI::Node::' . $node_type;
     my $node_path = $node_class . '.pm'; $node_path =~ s!::!/!g;
 
-    eval { require $node_path };
+    eval "require $node_class";
+    #eval { require $node_path };
 
-    if( $@ ) { 
-        warn $@; 
-        return 
-    }
-    else {
+    if( $@ ) {
+        warn $@;
+        return
+    };
+
+    #    or { 
+    #    warn 'add_node failed ' , $@ , "\n"; 
+    #    return 
+    #};
+    #else {
         $ID++;
         my $node_id = 'Node'.$ID;
         my $node = bless \$node_id , $node_class;
@@ -34,7 +42,7 @@ sub add_node {
         #warn 'add node ' . $node->type . " [ $node_id ]\n";
         $PNI->{NODE}->{$node_id} = $node;
         return $PNI->{NODE}->{$node_id}
-    }
+        #}
 }
 
 sub add_link {
@@ -95,10 +103,12 @@ sub update_hierarchy {
     }
 }
 
+=pod
+
 my $update_values_at_level = sub {
     my $level = shift;
     #warn 'update values at level ' . $level . "\n";
-    for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
+    #for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
         for my $node ( @{ $hierarchy[$level] } ) {
             for my $input_name ( $node->input_names ) {
                 #warn "looking at input $input_name of node $$node\n";
@@ -112,20 +122,45 @@ my $update_values_at_level = sub {
                 }
             }
         }
-    }
+        #}
 };
 
+=cut
+
 sub do_tasks {
+    my $node;
     #warn 'doing tasks at level 0' . "\n";
-    for my $node ( @{ $hierarchy[0] } ) {
+    for $node ( @{ $hierarchy[0] } ) {
         #warn 'doing task at level 0 for node ' . $node; sleep 1;
         $node->task()
     }
 
     for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
-        #warn 'doing tasks at level ' . $level . "\n"; sleep 1;
-        &$update_values_at_level( $level );
-        for my $node ( @{ $hierarchy[$level] } ) {
+        
+        #warn "update values at level $level\n";
+
+    #my $update_values_at_level = sub {
+    #my $level = shift;
+    #warn 'update values at level ' . $level . "\n";
+    #for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
+        for $node ( @{ $hierarchy[$level] } ) {
+            for my $input_name ( $node->input_names ) {
+                #warn "looking at input $input_name of node $$node\n";
+                my $link = $node->get_link_of_input( $input_name ) or next;
+
+                if( my( $source_node , $source_output_name ) = ( $link->source->{node} , $link->source->{output_name} ) ) {
+                    #warn 'source_node ' . $source_node , "\n";
+                    #warn 'input_name ' . $input_name , "\n";
+                    #warn $node->input->{$input_name} . ' = ' . $source_node->output->{$source_output_name} . "\n";
+                    $node->input->{$input_name} = $source_node->output->{$source_output_name};
+                }
+            }
+        }
+        #}
+#};
+
+#warn 'doing tasks at level ' . $level . "\n"; sleep 1;
+        for $node ( @{ $hierarchy[$level] } ) {
             $node->task()
         }
     }

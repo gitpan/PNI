@@ -1,4 +1,7 @@
 Revision history for Perl extension PNI.
 
+0.02  20100512
+    - fixed problem about loading nodes
+    - added Perlop::Eq node
 0.01  20100507
-	- first minimal release: just works as cpan module :)
+    - first minimal release: just works as cpan module :)

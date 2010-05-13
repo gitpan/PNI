@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '0.01';
 
-BEGIN { require PNI::Node , @ISA = ( 'PNI::Node' ) }
+our @ISA = ( 'PNI::Node' );
 
 sub init {
     my $node = shift;
