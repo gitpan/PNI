@@ -1,6 +1,5 @@
 package PNI::Node::Perlop::Quote;
 
-use 5.010001;
 use strict;
 use warnings;
 

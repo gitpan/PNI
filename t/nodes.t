@@ -3,6 +3,13 @@ use Test::More;
 use File::Find;
 use PNI;
 
+# TODO metti questo algoritmo in PNI::NODECOLLECTION
+# poi da qui chiami PNI::NODECOLLECTION
+
+#use Data::Dumper;
+
+#print STDOUT Data::Dumper::Dump( &PNI::NODECOLLECTION );
+
 my @nodes = ();
 my $dir = './lib/PNI/Node/'; # keep the last slash.
 

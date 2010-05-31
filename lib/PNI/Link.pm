@@ -1,13 +1,22 @@
 package PNI::Link;
 
-use 5.010001;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $source = {};
 my $target = {};
+
+sub connect_to_source {
+    my $link = shift;
+    my $source_node = shift;
+    my $output_name = shift;
+    $source->{$$link} = {
+        node => $source_node,
+        output_name => $output_name
+    };
+}
 
 sub connect_to_target {
     my $link = shift;
@@ -20,14 +29,13 @@ sub connect_to_target {
     $target_node->has_input_link( $link => $input_name );
 }
 
-sub connect_to_source {
+#-------------
+# $link->source->{node}
+# $link->source->{output_name}
+#-------------
+sub source {
     my $link = shift;
-    my $source_node = shift;
-    my $output_name = shift;
-    $source->{$$link} = {
-        node => $source_node,
-        output_name => $output_name
-    };
+    return $source->{$$link}
 }
 
 #---------
@@ -36,15 +44,6 @@ sub connect_to_source {
 sub target {
     my $link = shift;
     return $target->{$$link}
-}
-
-#-------------
-# $link->source->{node}
-# $link->source->{output_name}
-#-------------
-sub source {
-    my $link = shift;
-    return $source->{$$link}
 }
 
 1;
@@ -60,6 +59,16 @@ This class represents connections between nodes. It links a node output to a nod
 so at every PNI::RUN every node input is updated with the corresponding node output.
 
 Don't use this module, call PNI::LINK instead.
+
+=head2 SUBS
+
+=item connect_to_source
+
+Used to connect a link to its node source.
+
+=item connect_to_target
+
+Used to connect a link to its node target.
 
 =head1 AUTHOR
 

@@ -1,16 +1,17 @@
 package PNI::Node::Perlfunc::Print;
 
-use 5.010001;
 use strict;
 use warnings;
 
-#our $VERSION = '0.01';
+our $VERSION = '0.01';
 
 our @ISA = ( 'PNI::Node' );
 
 sub init {
     my $node = shift;
-    $node->has_input( 'message' => undef );
+    #$node->has_input( 'message' => undef );
+    my $message = $node->has_input( 'message' => 'hello' );
+    $message->set( 'ciaooo' );
     $node->has_input( 'do_print' => 0 );
 }
 
@@ -19,7 +20,7 @@ sub task {
     return unless $node->input->{do_print}; 
     return unless defined $node->input->{message};
     
-    print STDOUT $node->input->{message};
+    print STDOUT $node->input->{message}->get();
 }
 
 1;

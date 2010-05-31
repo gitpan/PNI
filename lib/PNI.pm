@@ -1,12 +1,15 @@
 package PNI;
 
-use 5.010001;
+use 5.8.8;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use PNI::Tree;
+use PNI::Node;
+
+use File::Find;
 use Time::HiRes( 'usleep' );
 
 my $PNI_is_running = 0;
@@ -15,6 +18,64 @@ my $num_of_runs = 0;
 sub LINK { return PNI::Tree::add_link( @_ ) }
 
 sub NODE { return PNI::Tree::add_node( @_ ) }
+
+sub NODECOLLECTION { 
+    my $node_collection = {};
+    # prima cerco le PNI/Node
+    #&find( , @INC );
+
+    # poi nelle cartelle che trovo cerco i .pod, ognuno dei quali è
+    # una categoria
+    
+    # poi per ogni categoria cerco i .pm, ognuno dei quali è un nodo
+    # quindi aggiungo all hash $node_collection
+
+    for my $dir ( @INC ) {
+
+        # TODO ci vorrebbe qualche modulo per gestire i path
+        #      in maniera portabile. L' ho trovato, è File::Spec
+        my $pni_node_dir = $dir . '/PNI/Node';
+        next unless -d $pni_node_dir;
+        &find( { 
+                wanted => sub { 
+                    return unless s/\.pod$//; 
+                    $node_collection->{$_} = [] ;
+                    #print; 
+                } , 
+                follow => 1 
+            } , ($pni_node_dir) );
+        for my $category ( keys %{ $node_collection } ) {
+
+            &find( {
+                wanted => sub {
+                    return unless s/\.pm$//;
+
+                    # TODO gestisco per ora solo 1 + 1 livello
+                    push @{ $node_collection->{$category} } , $_;
+
+                }
+                } , ($pni_node_dir . '/' . $category ) )
+        }
+    }
+
+    return $node_collection
+}
+
+sub OBJECT {
+    #PER ORA NON DOCUMENTATA NE IMPLEMENTATA
+
+    #TODO dalla 0.04 qui metti
+    # ID++ , bless della classe al riferimento dell' id
+    # poi forse in futuro controlli sul caller (sia file che package) 
+    # e su quali classi instanziano quali oggetti
+    # ad esempio Tree non puo instanziare Slot, Node lo puo fare.
+    # documenta nel diagramma PNI.dia o vedi se si puo fare con il plugin
+    # di vi per disegnare in ascii.
+    #
+
+    # pensa anche a fare una classe contenitrice di oggetti, ci sarà un pattern
+
+}
 
 sub RUN { 
     # prevent PNI::RUN is called inside a PNI::Node task method.
@@ -67,8 +128,8 @@ he is one of the masters of hacking.
 
 PNI stands for Perl Node Interface.
 
-It is my main project, my contribution to this great community. 
-Node programming is really interesting since makes possible to make 
+It is my main project, my contribution to the great Perl community. 
+Node programming is really interesting since makes possible to realize
 a program even if you have no idea about programming. 
 
 Think about genetic researchers, for example. 
@@ -79,7 +140,7 @@ or even "regular expression" and that makes them proud, but they don't care abou
 They want things working and they need Perl ... 
 but if you say Strawberry they think about yogurth, not about Windows.
 
-There are a lot of node programming languages (vvvv, puredata, max) 
+There are a lot of node programming languages (VVVV, Puredata, Max/Msp) 
 but normally they target artists and interaction designers.
 I saw a lot of vjs and musicians do really complex programs
 with those software, and they never wrote a line of code.
@@ -98,11 +159,16 @@ They are all uppercase and you can omit parenthesis, like
 
   PNI::RUN;
 
-They have short names and sometimes they points to other modules methods inside the PNI namespace.
+They often delegates to other modules methods inside the PNI namespace.
 
 =head2 SUBS
 
 =over
+
+=item PNI::LINK
+
+Connects an output of a node to an input of another node.
+Delegates to PNI::Tree::add_link.
 
 =item PNI::NODE
 
@@ -134,9 +200,21 @@ PNI::Node::Some::Node package.
 
 =back
 
-=item PNI::LINK
+Delegates to PNI::Tree::add_node.
 
-Connects an output of a node to an input of another node.
+=item PNI::NODECOLLECTION
+
+Returns available nodes in an hash reference like this:
+
+=over4
+
+$node_collection = {
+    node_category1 => [ qw( /node/path1 , /node/path2 , ... ) ],
+    node_category2 => [ qw( /node/path1 , /node/path2 , ... ) ], 
+    ...
+}
+
+=back
 
 =item PNI::RUN
 

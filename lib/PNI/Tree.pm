@@ -1,11 +1,11 @@
 package PNI::Tree;
 
-use 5.010001;
 use strict;
 use warnings;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
+use PNI::Link;
 use PNI::Node;
 
 my $PNI = {
@@ -23,25 +23,25 @@ sub add_node {
     my $node_path = $node_class . '.pm'; $node_path =~ s!::!/!g;
 
     eval "require $node_class";
-    #eval { require $node_path };
+    #TODO prova eval "require $node_class" or do { warn $@ } and return;
 
     if( $@ ) {
         warn $@;
         return
     };
 
-    #    or { 
-    #    warn 'add_node failed ' , $@ , "\n"; 
-    #    return 
-    #};
-    #else {
-        $ID++;
+        
+    $ID++;
+
+        # TODO togli Node e Link dall' id, lascia un numero e generalizza gli oggetti 
+        # inside-out di PNI (per ora solo Node e Link, ma poi anche Tree e Slot ?)
+        
         my $node_id = 'Node'.$ID;
         my $node = bless \$node_id , $node_class;
         $node->init( $args );
         #warn 'add node ' . $node->type . " [ $node_id ]\n";
         $PNI->{NODE}->{$node_id} = $node;
-        return $PNI->{NODE}->{$node_id}
+        return $node
         #}
 }
 
@@ -58,6 +58,7 @@ sub add_link {
 
     $PNI->{LINK}->{$link_id} = $link;
 
+    return $link
     #warn 'add link from output ' . $source_output_name . ' of node ' . $source_node . "\n" . ' to input ' . $target_input_name . ' of node ' . $target_node . "\n";
 }
 
@@ -129,6 +130,21 @@ my $update_values_at_level = sub {
 
 sub do_tasks {
     my $node;
+    my $node_id;
+
+    my $input_name;
+    my $output_name;
+
+    # reset reset_change_flag for all inputs and outputs
+    for $node_id ( keys %{ $PNI->{NODE} } ) {
+        for $input_name ( keys %{ $PNI->{NODE}->{$node_id}->input } ) {
+            $PNI->{NODE}->{$node_id}->input->{$input_name}->reset_change_flag
+        }
+        for $output_name ( keys %{ $PNI->{NODE}->{$node_id}->output } ) {
+            $PNI->{NODE}->{$node_id}->output->{$output_name}->reset_change_flag
+        }
+    }
+
     #warn 'doing tasks at level 0' . "\n";
     for $node ( @{ $hierarchy[0] } ) {
         #warn 'doing task at level 0 for node ' . $node; sleep 1;
@@ -159,7 +175,8 @@ sub do_tasks {
         #}
 #};
 
-#warn 'doing tasks at level ' . $level . "\n"; sleep 1;
+
+        #warn 'doing tasks at level ' . $level . "\n"; sleep 1;
         for $node ( @{ $hierarchy[$level] } ) {
             $node->task()
         }
@@ -181,6 +198,22 @@ Don't use this module, it is a PNI internal.
 =head1 DESCRIPTION
 
 This class holds the PNI nodes and links hierarchy tree.
+
+=head2 SUBS
+
+=over
+
+=item add_node
+
+Adds a PNI node to the hierarchy tree. It's called by the PNI::NODE method.
+Returns a reference to the node created.
+
+=item add_link
+
+Adds a PNI link to the hierarchy tree. It's called by the PNI::LINK method.
+Returns a reference to the new link created.
+
+=back
 
 =head1 AUTHOR
 

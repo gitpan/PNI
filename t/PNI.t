@@ -5,8 +5,18 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test::More tests => 1;
+use Test::More tests => 4;
 BEGIN { use_ok('PNI') };
+
+use_ok( 'PNI::Node' );
+use_ok( 'PNI::Link' );
+use_ok( 'PNI::Tree' );
+
+#TODO vedi come aggiungere i vari methodi dei moduli
+#     documenta il metodo e lo inserisci qua
+#
+#my $modules = ( )
+#can_ok( $_ , @{ $_->{methods} } ) for ();
 
 #########################
 

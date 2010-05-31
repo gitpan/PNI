@@ -1,6 +1,5 @@
 package PNI::Node::Perlfunc::Cos;
 
-use 5.010001;
 use strict;
 use warnings;
 
@@ -25,11 +24,11 @@ __END__
 
 =head1 NAME 
 
-PNI::Node::Perlfunc::Cos;
+PNI::Node::Perlfunc::Cos
 
 =head1 SEE ALSO
 
-PNI::Node::Perlfunc::Sin;
+PNI::Node::Perlfunc::Sin
 
 =head1 AUTHOR
 

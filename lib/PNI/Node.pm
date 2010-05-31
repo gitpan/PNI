@@ -1,7 +1,11 @@
 package PNI::Node;
+
 use strict;
 use warnings;
-our $VERSION = '0.0.2';
+
+our $VERSION = '0.03';
+
+use PNI::Slot;
 
 sub init { die }
 sub task { die }
@@ -45,7 +49,10 @@ sub has_input {
     return unless defined $input_name
         and defined $input_value;
     #warn "node $$node has input $input_name\n";
-    $input->{$$node}->{$input_name} = $input_value;
+
+    my $slot = _add_slot( value => $input_value ) or return;
+    $input->{$$node}->{$input_name} = $slot;
+    return $slot
 }
 
 sub has_output {
@@ -56,7 +63,11 @@ sub has_output {
     return unless defined $output_name;
 
     #warn "node $$node has output $output_name\n";
-    $output->{$$node}->{$output_name} = $output_value || undef;
+    #$output->{$$node}->{$output_name} = $output_value || undef;
+    my $slot = _add_slot( value => $output_value ) or return;
+    $output->{$$node}->{$output_name} = $slot;
+    return $slot
+
 }
 
 #--------
@@ -90,10 +101,18 @@ sub type {
     return $node_type
 }
 
+sub _add_slot {
+
+    my $arg = { @_ };
+    return unless exists $arg->{value};
+    return bless { value => $arg->{value} } , 'PNI::Slot'
+}
+
 sub DESTROY {
     my $node = shift;
     #warn 'del node ' . $node->type . " [ $$node ]\n";
-    delete $input->{$$node}; delete $output->{$$node};
+    delete $input->{$$node}; 
+    delete $output->{$$node};
 }
 
 1;
@@ -108,7 +127,31 @@ PNI::Node
 This is the base class every PNI::Node must inherit from. 
 It declares two abstract methods: init and task. 
 
-Don't use this module, call PNI::NODE instead.
+Don't use this module, call PNI::NODE instead and use the reference it returns.
+
+=head2 SUBS
+
+=over
+
+=item has_input
+
+Declares node has the given input.
+Returns a reference to the slot created by _add_slot.
+
+=item has_output
+
+Declares node has the given output.
+Returns a reference to the slot created by _add_slot.
+
+=item _add_slot
+
+Called by has_input and has_output methods to allocate a new PNI Slot.
+
+=item type
+
+Returns the PNI node type.
+
+=back
 
 =head1 AUTHOR
 
