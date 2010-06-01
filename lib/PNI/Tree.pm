@@ -3,7 +3,7 @@ package PNI::Tree;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use PNI::Link;
 use PNI::Node;
@@ -42,7 +42,6 @@ sub add_node {
         #warn 'add node ' . $node->type . " [ $node_id ]\n";
         $PNI->{NODE}->{$node_id} = $node;
         return $node
-        #}
 }
 
 sub add_link {
@@ -104,30 +103,6 @@ sub update_hierarchy {
     }
 }
 
-=pod
-
-my $update_values_at_level = sub {
-    my $level = shift;
-    #warn 'update values at level ' . $level . "\n";
-    #for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
-        for my $node ( @{ $hierarchy[$level] } ) {
-            for my $input_name ( $node->input_names ) {
-                #warn "looking at input $input_name of node $$node\n";
-                my $link = $node->get_link_of_input( $input_name ) or next;
-
-                if( my( $source_node , $source_output_name ) = ( $link->source->{node} , $link->source->{output_name} ) ) {
-                    #warn 'source_node ' . $source_node , "\n";
-                    #warn 'input_name ' . $input_name , "\n";
-                    #warn $node->input->{$input_name} . ' = ' . $source_node->output->{$source_output_name} . "\n";
-                    $node->input->{$input_name} = $source_node->output->{$source_output_name};
-                }
-            }
-        }
-        #}
-};
-
-=cut
-
 sub do_tasks {
     my $node;
     my $node_id;
@@ -155,10 +130,6 @@ sub do_tasks {
         
         #warn "update values at level $level\n";
 
-    #my $update_values_at_level = sub {
-    #my $level = shift;
-    #warn 'update values at level ' . $level . "\n";
-    #for( my $level = 1 ; $level <= $#hierarchy ; $level++ ) {
         for $node ( @{ $hierarchy[$level] } ) {
             for my $input_name ( $node->input_names ) {
                 #warn "looking at input $input_name of node $$node\n";
@@ -172,16 +143,12 @@ sub do_tasks {
                 }
             }
         }
-        #}
-#};
-
 
         #warn 'doing tasks at level ' . $level . "\n"; sleep 1;
         for $node ( @{ $hierarchy[$level] } ) {
             $node->task()
         }
     }
-
 }
 
 1;

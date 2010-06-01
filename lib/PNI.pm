@@ -4,7 +4,7 @@ use 5.8.8;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use PNI::Tree;
 use PNI::Node;
