@@ -3,32 +3,34 @@ package PNI::Node::Perlfunc::Sin;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.05';
 
-our @ISA = ( 'PNI::Node' );
+our @ISA = ('PNI::Node');
 
 sub init {
     my $node = shift;
-    $node->has_input( 'radians' );
-    $node->has_output( 'output' );
+
+    $node->add_input( 'in' => 0 );
+
+    $node->add_output( 'out' => 0 );
+
+    return;
 }
 
 sub task {
     my $node = shift;
-    return unless defined $node->input->{radians};
-    $node->output->{output} = sin( $node->input->{radians} );
+
+    $node->set_output( out => sin( $node->get_input('in') ) );
+
+    return;
 }
 
 1;
 __END__
 
-=head1 NAME 
+=head1 NAME
 
-PNI::Node::Perlfunc::Sin
-
-=head1 SEE ALSO
-
-PNI::Node::Perlfunc::Cos
+PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
 
 =head1 AUTHOR
 
@@ -39,8 +41,6 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 Copyright (C) 2010 by G. Casati
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.1 or,
-at your option, any later version of Perl 5 you may have available.
+it under the same terms as Perl itself.
 
 =cut
-

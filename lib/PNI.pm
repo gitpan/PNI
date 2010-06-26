@@ -4,80 +4,91 @@ use 5.8.8;
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use PNI::Tree;
 use PNI::Node;
 
 use File::Find;
-use Time::HiRes( 'usleep' );
+use Time::HiRes('usleep');
 
 my $PNI_is_running = 0;
-my $num_of_runs = 0;
+my $num_of_runs    = 0;
 
-sub LINK { return PNI::Tree::add_link( @_ ) }
+#----------------------------------------------------------------------------
+# Usage      | PNI::LINK $source_node => $target_node ,
+#            |           $source_output_name => $target_input_name
+# Purpose    |
+# Returns    | A reference to the PNI::Link created.
+#----------------------------------------------------------------------------
+sub LINK { return PNI::Tree::add_link(@_) }
 
-sub NODE { return PNI::Tree::add_node( @_ ) }
+#----------------------------------------------------------------------------
+# Usage      | PNI::NODE 'Foo::Bar'
+# Purpose    |
+# Returns    | A reference to the PNI::Node created.
+#----------------------------------------------------------------------------
+sub NODE { return PNI::Tree::add_node(@_) }
 
-sub NODECOLLECTION { 
+#----------------------------------------------------------------------------
+# Usage      | PNI::NODECOLLECTION
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub NODECOLLECTION {
     my $node_collection = {};
+
     # prima cerco le PNI/Node
     #&find( , @INC );
 
     # poi nelle cartelle che trovo cerco i .pod, ognuno dei quali è
     # una categoria
-    
+
     # poi per ogni categoria cerco i .pm, ognuno dei quali è un nodo
     # quindi aggiungo all hash $node_collection
 
-    for my $dir ( @INC ) {
+    for my $dir (@INC) {
 
-        # TODO ci vorrebbe qualche modulo per gestire i path
-        #      in maniera portabile. L' ho trovato, è File::Spec
-        my $pni_node_dir = $dir . '/PNI/Node';
+        # TODO fai metodo PNI::NODEDIRS
+        my $pni_node_dir = File::Spec->catfile( $dir, 'PNI', 'Node' );
         next unless -d $pni_node_dir;
-        &find( { 
-                wanted => sub { 
-                    return unless s/\.pod$//; 
-                    $node_collection->{$_} = [] ;
-                    #print; 
-                } , 
-                follow => 1 
-            } , ($pni_node_dir) );
-        for my $category ( keys %{ $node_collection } ) {
-
-            &find( {
+        &find(
+            {
                 wanted => sub {
-                    return unless s/\.pm$//;
+                    return unless s/\.pod$//;
+                    $node_collection->{$_} = [];
+                },
+                follow => 1
+            },
+            ($pni_node_dir)
+        );
+        for my $category ( keys %{$node_collection} ) {
 
-                    # TODO gestisco per ora solo 1 + 1 livello
-                    push @{ $node_collection->{$category} } , $_;
+            &find(
+                {
+                    wanted => sub {
+                        return unless s/\.pm$//;
 
-                }
-                } , ($pni_node_dir . '/' . $category ) )
+                        # TODO gestisco per ora solo 1 + 1 livello
+                        push @{ $node_collection->{$category} }, $_;
+
+                      }
+                },
+                ( File::Spec->catfile( $pni_node_dir, $category ) )
+            );
         }
     }
 
-    return $node_collection
+    return $node_collection;
 }
 
-sub OBJECT {
-    #PER ORA NON DOCUMENTATA NE IMPLEMENTATA
+#----------------------------------------------------------------------------
+# Usage      | PNI::RUN
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub RUN {
 
-    #TODO dalla 0.04 qui metti
-    # ID++ , bless della classe al riferimento dell' id
-    # poi forse in futuro controlli sul caller (sia file che package) 
-    # e su quali classi instanziano quali oggetti
-    # ad esempio Tree non puo instanziare Slot, Node lo puo fare.
-    # documenta nel diagramma PNI.dia o vedi se si puo fare con il plugin
-    # di vi per disegnare in ascii.
-    #
-
-    # pensa anche a fare una classe contenitrice di oggetti, ci sarà un pattern
-
-}
-
-sub RUN { 
     # prevent PNI::RUN is called inside a PNI::Node task method.
     return if $PNI_is_running;
     $PNI_is_running = 1;
@@ -86,21 +97,27 @@ sub RUN {
 
     PNI::Tree::update_hierarchy;
     PNI::Tree::do_tasks;
-    usleep( 1 );
-    
+    usleep(1);
+
     $PNI_is_running = 0;
 
-    return $num_of_runs
+    return $num_of_runs;
 }
 
+#----------------------------------------------------------------------------
+# Usage      | PNI::LOOP
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub LOOP {
+
     # prevent PNI::LOOP is called inside a PNI::Node task method.
     return if $PNI_is_running;
 
-    while( 1 ) { RUN }
+    while (1) { RUN }
 
     # never reach here
-    exit
+    exit;
 }
 
 1;
@@ -135,7 +152,8 @@ a program even if you have no idea about programming.
 Think about genetic researchers, for example. 
 They need to focus on protein chains, not on what is a package.
 Maybe they can do an extra effort and say the world "variable" or "string" 
-or even "regular expression" and that makes them proud, but they don't care about inheritance.
+or even "regular expression" and that makes them proud, 
+but they don't care about inheritance.
 
 They want things working and they need Perl ... 
 but if you say Strawberry they think about yogurth, not about Windows.
@@ -176,7 +194,7 @@ Creates a node by its pni type. If you write
 
 =over 4
 
-  PNI::Node 'Some::Node'
+PNI::Node 'Some::Node'
 
 =back
 
@@ -209,9 +227,13 @@ Returns available nodes in an hash reference like this:
 =over4
 
 $node_collection = {
-    node_category1 => [ qw( /node/path1 , /node/path2 , ... ) ],
-    node_category2 => [ qw( /node/path1 , /node/path2 , ... ) ], 
-    ...
+
+node_category1 => [ qw( /node/path1 , /node/path2 , ... ) ],
+
+node_category2 => [ qw( /node/path1 , /node/path2 , ... ) ], 
+
+...
+
 }
 
 =back

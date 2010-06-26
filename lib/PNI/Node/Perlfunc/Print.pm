@@ -3,32 +3,37 @@ package PNI::Node::Perlfunc::Print;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.05';
 
-our @ISA = ( 'PNI::Node' );
+our @ISA = ('PNI::Node');
 
 sub init {
     my $node = shift;
-    #$node->has_input( 'message' => undef );
-    my $message = $node->has_input( 'message' => 'hello' );
-    $message->set( 'ciaooo' );
-    $node->has_input( 'do_print' => 0 );
+
+    $node->add_input( 'list' => 'hello' );
+    $node->add_input( 'bang' => 0 );
+
+    return;
 }
 
 sub task {
     my $node = shift;
-    return unless $node->input->{do_print}; 
-    return unless defined $node->input->{message};
-    
-    print STDOUT $node->input->{message}->get();
+
+    return unless $node->get_input('bang') and defined $node->get_input('list');
+
+    print STDOUT $node->get_input('list');
+
+    $node->set_input( bang => 0 );
+
+    return;
 }
 
 1;
 __END__
 
-=head1
+=head1 NAME
 
-PNI::Node::Perlfunc::Print;
+PNI::Node::Perlfunc::Print - PNI node that implements Perl print builtin function.
 
 =head1 AUTHOR
 
@@ -39,8 +44,6 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 Copyright (C) 2010 by G. Casati
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.1 or,
-at your option, any later version of Perl 5 you may have available.
+it under the same terms as Perl itself.
 
 =cut
-

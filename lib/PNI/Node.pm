@@ -3,9 +3,10 @@ package PNI::Node;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.05';
 
-use PNI::Slot;
+#sub info { return {} }
+# posso fare sub info; ?
 
 sub init { die }
 sub task { die }
@@ -15,103 +16,155 @@ my $output = {};
 
 my $input_link = {};
 
-#----------
-# $node->input->{foo}
-# ---------
-sub input { 
-    my $node = shift; 
+# per ora lo lascio per non creare errori, ma, è DEPRECATO
+sub input {
+    my $node = shift;
     return $input->{$$node}
-    # if node has no input ...
-    ||
-    # return an empty hash so $node->input->{missing_input_name}
-    # is undef instead of raising a runtime error.
-    {}
+
+      # if node has no input ...
+      ||
+
+      # return an empty hash so $node->input->{missing_input_name}
+      # is undef instead of raising a runtime error.
+      {};
 }
 
-#----------
-# $node->output->{bar}
-# ---------
-sub output { 
-    my $node = shift; 
+# per ora lo lascio per non creare errori, ma, è DEPRECATO
+sub output {
+    my $node = shift;
     return $output->{$$node}
-    # if node has no output ...
-    ||
-    # return an empty hash so $node->output->{missing_output_name}
-    # is undef instead of raising a runtime error.
-    {}
+
+      # if node has no output ...
+      ||
+
+      # return an empty hash so $node->output->{missing_output_name}
+      # is undef instead of raising a runtime error.
+      {};
 }
 
-sub has_input {
+sub add_input {
+
     my $node        = shift;
     my $input_name  = shift;
     my $input_value = shift;
 
-    return unless defined $input_name
-        and defined $input_value;
-    #warn "node $$node has input $input_name\n";
+    return
+      unless defined $input_name
+          and defined $input_value
+          and not exists $input->{$$node}->{$input_name};
 
-    my $slot = _add_slot( value => $input_value ) or return;
-    $input->{$$node}->{$input_name} = $slot;
-    return $slot
+    $input->{$$node}->{$input_name} = $input_value;
+
+    return;
 }
 
-sub has_output {
+sub add_output {
     my $node         = shift;
     my $output_name  = shift;
     my $output_value = shift;
-    
-    return unless defined $output_name;
 
-    #warn "node $$node has output $output_name\n";
-    #$output->{$$node}->{$output_name} = $output_value || undef;
-    my $slot = _add_slot( value => $output_value ) or return;
-    $output->{$$node}->{$output_name} = $slot;
-    return $slot
+    return
+      unless defined $output_name
+          and defined $output_value
+          and not exists $output->{$$node}->{$output_name};
 
+    $output->{$$node}->{$output_name} = $output_value;
+
+    return;
 }
 
-#--------
-# get input names
-#--------
+sub del_input;    # controlla che esista altrimenti return
+sub del_output;
+
+sub get_input {
+    my $node       = shift;
+    my $input_name = shift;
+
+    return unless exists $input->{$$node}->{$input_name};
+
+    return $input->{$$node}->{$input_name};
+}
+
+sub get_output {
+    my $node        = shift;
+    my $output_name = shift;
+
+    return unless exists $output->{$$node}->{$output_name};
+
+    return $output->{$$node}->{$output_name};
+}
+
+sub set_input {
+    my $node       = shift;
+    my $input_name = shift;
+
+    my $input_value = shift;
+
+    return
+      unless defined $input_name
+          and defined $input_value
+          and exists $input->{$$node}->{$input_name};
+
+    $input->{$$node}->{$input_name} = $input_value;
+
+    return;
+}
+
+sub set_output {
+    my $node         = shift;
+    my $output_name  = shift;
+    my $output_value = shift;
+
+    return
+      unless defined $output_name
+          and defined $output_value
+          and exists $output->{$$node}->{$output_name};
+
+    $output->{$$node}->{$output_name} = $output_value;
+
+    return;
+}
+
 sub input_names {
     my $node = shift;
-    return keys %{ $input->{$$node} }
+
+    return unless exists $input->{$$node};
+
+    return keys %{ $input->{$$node} };
 }
 
 sub get_link_of_input {
-    my $node = shift;
+    my $node       = shift;
     my $input_name = shift;
-    return $input_link->{$$node}->{$input_name}
+
+    return unless exists $input_link->{$$node}->{$input_name};
+
+    return $input_link->{$$node}->{$input_name};
 }
 
+sub del_input_link;
+sub add_input_link;
+
+# per ora lo lascio per non creare errori, ma, è DEPRECATO
 sub has_input_link {
-    my $node = shift;
-    my $link = shift;
+    my $node       = shift;
+    my $link       = shift;
     my $input_name = shift;
     $input_link->{$$node}->{$input_name} = $link;
 }
 
-#-------
-# get node's PNI type
-#-------
 sub type {
-    my $node = shift;
+    my $node      = shift;
     my $node_type = ref $node;
     $node_type =~ s/^PNI::Node:://;
-    return $node_type
-}
-
-sub _add_slot {
-
-    my $arg = { @_ };
-    return unless exists $arg->{value};
-    return bless { value => $arg->{value} } , 'PNI::Slot'
+    return $node_type;
 }
 
 sub DESTROY {
     my $node = shift;
+
     #warn 'del node ' . $node->type . " [ $$node ]\n";
-    delete $input->{$$node}; 
+    delete $input->{$$node};
     delete $output->{$$node};
 }
 
@@ -133,23 +186,17 @@ Don't use this module, call PNI::NODE instead and use the reference it returns.
 
 =over
 
-=item has_input
+=item add_input
 
 Declares node has the given input.
-Returns a reference to the slot created by _add_slot.
 
-=item has_output
+=item add_output
 
 Declares node has the given output.
-Returns a reference to the slot created by _add_slot.
-
-=item _add_slot
-
-Called by has_input and has_output methods to allocate a new PNI Slot.
 
 =item type
 
-Returns the PNI node type.
+Returns the PNI node type, i.e. package name minus PNI::Node .
 
 =back
 

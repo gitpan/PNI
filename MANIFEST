@@ -2,6 +2,7 @@ Changes
 Makefile.PL
 MANIFEST
 README
+t/all_critic_ok.t
 t/PNI.t
 t/nodes.t
 t/project_structure.t

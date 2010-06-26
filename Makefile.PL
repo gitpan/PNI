@@ -9,6 +9,8 @@ WriteMakefile(
         Test::More  => 0.94, 
         Time::HiRes => 0,
         File::Find  => 0,
+        English => 0,
+        File::Spec => 0
     },
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/PNI.pm', # retrieve abstract from module

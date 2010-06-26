@@ -111,14 +111,15 @@ sub do_tasks {
     my $output_name;
 
     # reset reset_change_flag for all inputs and outputs
-    for $node_id ( keys %{ $PNI->{NODE} } ) {
-        for $input_name ( keys %{ $PNI->{NODE}->{$node_id}->input } ) {
-            $PNI->{NODE}->{$node_id}->input->{$input_name}->reset_change_flag
-        }
-        for $output_name ( keys %{ $PNI->{NODE}->{$node_id}->output } ) {
-            $PNI->{NODE}->{$node_id}->output->{$output_name}->reset_change_flag
-        }
-    }
+    #for $node_id ( keys %{ $PNI->{NODE} } ) {
+    #    for $input_name ( keys %{ $PNI->{NODE}->{$node_id}->input } ) {
+            #warn "input name $input_name , " , $PNI->{NODE}->{$node_id}->input->{$input_name} , "\n";
+            #$PNI->{NODE}->{$node_id}->input->{$input_name}->reset_change_flag
+            #    }
+            #for $output_name ( keys %{ $PNI->{NODE}->{$node_id}->output } ) {
+            #$PNI->{NODE}->{$node_id}->output->{$output_name}->reset_change_flag
+            #}
+            #}
 
     #warn 'doing tasks at level 0' . "\n";
     for $node ( @{ $hierarchy[0] } ) {

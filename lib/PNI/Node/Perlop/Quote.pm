@@ -10,8 +10,8 @@ our @ISA = ( 'PNI::Node' );
 sub init {
     my $node = shift;
     
-    $node->has_input( 'input' => 0 );
-    $node->has_output( 'output' => 0 );
+    $node->add_input( 'input' => 0 );
+    $node->add_output( 'output' => 0 );
 }
 
 sub task {
