@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlfunc::Length;
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
+    $node->add_input( 'in' => '' );
 
     $node->add_output( 'out' => 0 );
 
@@ -20,7 +20,7 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    $node->set_output( 'out' => length( $node->get_input('in') ) );
 
     return 1;
 }
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlfunc::Length - PNI node that implements Perl length builtin function.
 
 =head1 AUTHOR
 

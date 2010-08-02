@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlop::Not;
 
 use strict;
 use warnings;
@@ -20,7 +20,16 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    if ( not $node->get_input('in') ) {
+
+        $node->set_output( out => 1 );
+
+    }
+    else {
+
+        $node->set_output( out => 0 );
+
+    }
 
     return 1;
 }
@@ -30,7 +39,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlop::Not - PNI node that implements Perl or operator
 
 =head1 AUTHOR
 

@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlop::Double_quote;
 
 use strict;
 use warnings;
@@ -20,7 +20,9 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    my $in = $node->get_input('in');
+
+    $node->set_output( out => qq{$in} );
 
     return 1;
 }
@@ -30,7 +32,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlop::Double_quote - PNI node that implements Perl qq{} operator
 
 =head1 AUTHOR
 

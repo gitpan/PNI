@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlfunc::Exp;
 
 use strict;
 use warnings;
@@ -20,7 +20,7 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    $node->set_output( out => exp( $node->get_input('in') ) );
 
     return 1;
 }
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlfunc::Exp - PNI node that implements Perl exp builtin function.
 
 =head1 AUTHOR
 

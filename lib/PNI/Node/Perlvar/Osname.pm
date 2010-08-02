@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlvar::Osname;
 
 use strict;
 use warnings;
@@ -10,9 +10,7 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
-
-    $node->add_output( 'out' => 0 );
+    $node->add_output( 'OSNAME' => 0 );
 
     return 1;
 }
@@ -20,7 +18,7 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    $node->set_output( OSNAME => $^O );
 
     return 1;
 }
@@ -30,7 +28,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlvar::Osname - PNI node that implements Perl and operator
 
 =head1 AUTHOR
 

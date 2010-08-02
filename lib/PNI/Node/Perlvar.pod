@@ -1,15 +1,15 @@
 
 =head1 NAME
 
-PNI::Node::Perlop
+PNI::Node::Perlvar
 
 =head1 DESCRIPTION
 
-It's a basic collection of PNI nodes implementing Perl operators.
+It's a basic collection of PNI nodes implementing Perl predefined variables.
 
 =head1 SEE ALSO
 
-perlop
+perlvar
 
 =head1 AUTHOR
 

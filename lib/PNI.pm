@@ -4,7 +4,7 @@ use 5.8.8;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use PNI::Tree;
 use PNI::Node;
@@ -12,7 +12,7 @@ use PNI::Node;
 use File::Find;
 use Time::HiRes('usleep');
 
-my $PNI_is_running = 0;
+my $pni_is_running = 0;
 my $num_of_runs    = 0;
 
 #----------------------------------------------------------------------------
@@ -22,6 +22,10 @@ my $num_of_runs    = 0;
 # Returns    | A reference to the PNI::Link created.
 #----------------------------------------------------------------------------
 sub LINK { return PNI::Tree::add_link(@_) }
+
+# TODO definisci bene i tipi di dati, l' idea è di usare solo scalare e riferimenti
+# ... scrivi quindi i test per questa feature e documentala. 
+# P.S. puoi metterla nel nodes.t
 
 #----------------------------------------------------------------------------
 # Usage      | PNI::NODE 'Foo::Bar'
@@ -52,7 +56,7 @@ sub NODECOLLECTION {
         # TODO fai metodo PNI::NODEDIRS
         my $pni_node_dir = File::Spec->catfile( $dir, 'PNI', 'Node' );
         next unless -d $pni_node_dir;
-        &find(
+        find(
             {
                 wanted => sub {
                     return unless s/\.pod$//;
@@ -64,7 +68,7 @@ sub NODECOLLECTION {
         );
         for my $category ( keys %{$node_collection} ) {
 
-            &find(
+            find(
                 {
                     wanted => sub {
                         return unless s/\.pm$//;
@@ -90,16 +94,15 @@ sub NODECOLLECTION {
 sub RUN {
 
     # prevent PNI::RUN is called inside a PNI::Node task method.
-    return if $PNI_is_running;
-    $PNI_is_running = 1;
+    return if $pni_is_running;
+    $pni_is_running = 1;
 
     $num_of_runs++;
 
     PNI::Tree::update_hierarchy;
     PNI::Tree::do_tasks;
-    usleep(1);
 
-    $PNI_is_running = 0;
+    $pni_is_running = 0;
 
     return $num_of_runs;
 }
@@ -112,9 +115,12 @@ sub RUN {
 sub LOOP {
 
     # prevent PNI::LOOP is called inside a PNI::Node task method.
-    return if $PNI_is_running;
+    return if $pni_is_running;
 
-    while (1) { RUN }
+    while (1) {
+        RUN;
+        usleep(1);
+    }
 
     # never reach here
     exit;
@@ -132,11 +138,11 @@ PNI - Perl Node Interface
   use PNI;
 
   my $node = PNI::NODE 'Perlfunc::Print';
-  $node->input->{message} = 'Hello World !';
-  $node->input->{do_print} = 1;
+  $node->set_input( list => 'Hello World !' );
+  $node->set_input( bang => 1 );
 
-  PNI::RUN
-  
+  PNI::RUN;
+
 =head1 DESCRIPTION
 
 Hi! I'm an italian mathematician. 
@@ -179,7 +185,7 @@ They are all uppercase and you can omit parenthesis, like
 
 They often delegates to other modules methods inside the PNI namespace.
 
-=head2 SUBS
+=head1 SUBROUTINES/METHODS
 
 =over
 
@@ -204,17 +210,17 @@ PNI do the following steps:
 
 =item 1
 
-requires the PNI/Node/Some/Node.pm module.
+requires the PNI/Node/Some/Node.pm module .
 
 =item 2
 
-creates a new PNI::Node assigns it an id 
-and bless it as a PNI::Node::Some::Node.
+creates a new PNI::Node, assigns it an id 
+and bless it as a PNI::Node::Some::Node .
 
 =item 3
 
 calls the init method as implemented in the 
-PNI::Node::Some::Node package.
+PNI::Node::Some::Node package .
 
 =back
 
@@ -224,7 +230,7 @@ Delegates to PNI::Tree::add_node.
 
 Returns available nodes in an hash reference like this:
 
-=over4
+=over 4
 
 $node_collection = {
 
@@ -256,6 +262,7 @@ PNI::Tree
 PNI::Link
 PNI::Node::Perlfunc
 PNI::Node::Perlop
+PNI::Node::Perlvar
 
 =cut
 
@@ -267,13 +274,12 @@ PNI::Node::Perlop
 
 G. Casati , E<lt>fibo@cpan.orgE<gt>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 LICENSE AND COPYRIGHT
 
 Copyright (C) 2010 by G. Casati
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.1 or,
-at your option, any later version of Perl 5 you may have available.
+it under the same terms as Perl itself .
 
 =cut
 

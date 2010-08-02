@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlop::Quote_word;
 
 use strict;
 use warnings;
@@ -10,9 +10,9 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
+    $node->add_input( 'in' => '' );
 
-    $node->add_output( 'out' => 0 );
+    $node->add_output( 'out' => [] );
 
     return 1;
 }
@@ -20,7 +20,9 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    my $in = $node->get_input('in');
+
+    $node->set_output( out => [qw{$in}] );
 
     return 1;
 }
@@ -30,7 +32,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlop::Quote_word - PNI node that implements Perl qw{} operator
 
 =head1 AUTHOR
 

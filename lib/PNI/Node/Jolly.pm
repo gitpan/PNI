@@ -1,18 +1,16 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Jolly;
 
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.01';
 
 our @ISA = ('PNI::Node');
 
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
-
-    $node->add_output( 'out' => 0 );
+    $node->add_input( 'task' => 0 );
 
     return 1;
 }
@@ -20,7 +18,9 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    return 1 unless $node->get_input('task');
+
+    &{$node->get_input('task')};
 
     return 1;
 }
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Jolly - PNI generic node.
 
 =head1 AUTHOR
 

@@ -14,7 +14,7 @@ sub init {
 
     $node->add_output( 'out' => 0 );
 
-    return;
+    return 1;
 }
 
 sub task {
@@ -22,7 +22,7 @@ sub task {
 
     $node->set_output( out => cos( $node->get_input('in') ) );
 
-    return;
+    return 1;
 }
 
 1;

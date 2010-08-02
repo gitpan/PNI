@@ -2,6 +2,7 @@ use strict;
 use Test::More;
 use File::Find;
 use PNI;
+use PNI::Node;
 
 # TODO metti questo algoritmo in PNI::NODECOLLECTION
 # poi da qui chiami PNI::NODECOLLECTION
@@ -18,9 +19,9 @@ sub wanted {
     push @nodes , $File::Find::name;
 }
 
-&find( \&wanted , $dir );
+find( \&wanted , $dir );
 
-my $number_of_tests_run = ( $#nodes + 1 ) * 3;
+my $number_of_tests_run = ( $#nodes + 1 ) * 5;
 
 for my $node_path ( @nodes ) {
 
@@ -28,10 +29,22 @@ for my $node_path ( @nodes ) {
     $node_class =~ s!$dir!!;
     $node_class =~ s!/!::!g;
     $node_class =~ s/\.pm$//;
+
     my $node = PNI::NODE $node_class;
-    ok( $node , 'PNI::NODE ' . $node_class );
+    
+    ok( $node , "create node $node_class" );
+    
+    # created node is ok .
     isa_ok( $node , 'PNI::Node' );
-    can_ok( $node , qw( init task ) );
+    can_ok( $node , 'init' );
+    can_ok( $node , 'task' );
+
+    # TODO per ora questo test non mi va a buon fine per tutti
+    TODO: {
+    local $TODO = "give a first run  with default values to $node_class";
+    ok( $node->task() , "run $node_class task" );
+
+}
 }
 
-&done_testing( $number_of_tests_run );
+done_testing( $number_of_tests_run );

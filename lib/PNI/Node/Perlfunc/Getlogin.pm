@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlfunc::Getlogin;
 
 use strict;
 use warnings;
@@ -10,8 +10,6 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
-
     $node->add_output( 'out' => 0 );
 
     return 1;
@@ -20,7 +18,9 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    my $login = getlogin;
+
+    $node->set_output( out => $login );
 
     return 1;
 }
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlfunc::Getlogin - PNI node that implements Perl getlogin builtin function.
 
 =head1 AUTHOR
 

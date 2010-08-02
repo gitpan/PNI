@@ -3,7 +3,9 @@ package PNI::Node;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
+
+use Carp;
 
 #sub info { return {} }
 # posso fare sub info; ?
@@ -11,37 +13,19 @@ our $VERSION = '0.05';
 sub init { die }
 sub task { die }
 
-my $input  = {};
-my $output = {};
+my $attr = {
+    input              => {},
+    output             => {},
+    input_link         => {},
+    inputs_are_changed => {}
+};
 
-my $input_link = {};
-
-# per ora lo lascio per non creare errori, ma, è DEPRECATO
-sub input {
-    my $node = shift;
-    return $input->{$$node}
-
-      # if node has no input ...
-      ||
-
-      # return an empty hash so $node->input->{missing_input_name}
-      # is undef instead of raising a runtime error.
-      {};
-}
-
-# per ora lo lascio per non creare errori, ma, è DEPRECATO
-sub output {
-    my $node = shift;
-    return $output->{$$node}
-
-      # if node has no output ...
-      ||
-
-      # return an empty hash so $node->output->{missing_output_name}
-      # is undef instead of raising a runtime error.
-      {};
-}
-
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub add_input {
 
     my $node        = shift;
@@ -51,49 +35,45 @@ sub add_input {
     return
       unless defined $input_name
           and defined $input_value
-          and not exists $input->{$$node}->{$input_name};
+          and not exists $attr->{input}->{$$node}->{$input_name};
 
-    $input->{$$node}->{$input_name} = $input_value;
+    $attr->{input}->{$$node}->{$input_name} = $input_value;
 
-    return;
+    return 1;
 }
 
-sub add_output {
-    my $node         = shift;
-    my $output_name  = shift;
-    my $output_value = shift;
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub del_input;
 
-    return
-      unless defined $output_name
-          and defined $output_value
-          and not exists $output->{$$node}->{$output_name};
-
-    $output->{$$node}->{$output_name} = $output_value;
-
-    return;
-}
-
-sub del_input;    # controlla che esista altrimenti return
-sub del_output;
-
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub get_input {
-    my $node       = shift;
-    my $input_name = shift;
+    my $node = shift
+      or carp 'undefined node';
+    my $input_name = shift
+      or carp 'missing input name parameter';
 
-    return unless exists $input->{$$node}->{$input_name};
+    exists $attr->{input}->{$$node}->{$input_name}
+      or carp "input $input_name is not defined for node $node";
 
-    return $input->{$$node}->{$input_name};
+    return $attr->{input}->{$$node}->{$input_name};
 }
 
-sub get_output {
-    my $node        = shift;
-    my $output_name = shift;
-
-    return unless exists $output->{$$node}->{$output_name};
-
-    return $output->{$$node}->{$output_name};
-}
-
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub set_input {
     my $node       = shift;
     my $input_name = shift;
@@ -103,13 +83,64 @@ sub set_input {
     return
       unless defined $input_name
           and defined $input_value
-          and exists $input->{$$node}->{$input_name};
+          and exists $attr->{input}->{$$node}->{$input_name};
 
-    $input->{$$node}->{$input_name} = $input_value;
+    $attr->{input}->{$$node}->{$input_name} = $input_value;
+    $attr->{inputs_are_changed}->{$$node} = 1;
 
-    return;
+    return 1;
 }
 
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub add_output {
+    my $node         = shift;
+    my $output_name  = shift;
+    my $output_value = shift;
+
+    return
+      unless defined $output_name
+          and defined $output_value
+          and not exists $attr->{output}->{$$node}->{$output_name};
+
+    $attr->{output}->{$$node}->{$output_name} = $output_value;
+
+    return 1;
+}
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub del_output;
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub get_output {
+    my $node        = shift;
+    my $output_name = shift;
+
+    return unless exists $attr->{output}->{$$node}->{$output_name};
+
+    return $attr->{output}->{$$node}->{$output_name};
+}
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub set_output {
     my $node         = shift;
     my $output_name  = shift;
@@ -118,41 +149,118 @@ sub set_output {
     return
       unless defined $output_name
           and defined $output_value
-          and exists $output->{$$node}->{$output_name};
+          and exists $attr->{output}->{$$node}->{$output_name};
 
-    $output->{$$node}->{$output_name} = $output_value;
+    $attr->{output}->{$$node}->{$output_name} = $output_value;
 
-    return;
+    return 1;
 }
 
+#----------------------------------------------------------------------------
+# Usage      | $node->add_input_link( $input_link => $input_name );
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub add_input_link {
+    my $node       = shift;
+    my $input_link = shift;
+    my $input_name = shift;
+
+    return 0
+      unless defined $input_link
+          and defined $input_name;
+
+    $attr->{input_link}->{$$node}->{$input_name} = $input_link;
+    return 1;
+}
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub del_input_link;
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub get_link_of_input {
+
+    # TODO sarebbe da cambiare in get_input_link
+    my $node       = shift;
+    my $input_name = shift;
+
+    return unless exists $attr->{input_link}->{$$node}->{$input_name};
+
+    return $attr->{input_link}->{$$node}->{$input_name};
+}
+
+#----------------------------------------------------------------------------
+# Usage      | $node->inputs_are_changed
+# Purpose    |
+# Returns    | 1 or 0
+#----------------------------------------------------------------------------
+sub inputs_are_changed {
+    my $node = shift;
+
+    return 0
+      if not exists $attr->{inputs_are_changed}->{$$node}
+          or not defined $attr->{inputs_are_changed}->{$$node};
+    return $attr->{inputs_are_changed}->{$$node};
+}
+
+#----------------------------------------------------------------------------
+# Usage      | $node->reset_input_changes_flag
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub reset_input_changes_flag {
+    my $node = shift;
+
+    return 0
+      if not exists $attr->{inputs_are_changed}->{$$node}
+          or not defined $attr->{inputs_are_changed}->{$$node};
+
+    $attr->{inputs_are_changed}->{$$node} = 1;
+    return 1;
+}
+
+#----------------------------------------------------------------------------
+# Usage      | $node->input_names
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub input_names {
     my $node = shift;
 
-    return unless exists $input->{$$node};
+    return unless exists $attr->{input}->{$$node};
 
-    return keys %{ $input->{$$node} };
+    return keys %{ $attr->{input}->{$$node} };
 }
 
-sub get_link_of_input {
-    my $node       = shift;
-    my $input_name = shift;
+#----------------------------------------------------------------------------
+# Usage      | $node->output_names
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub output_names {
+    my $node = shift;
 
-    return unless exists $input_link->{$$node}->{$input_name};
+    return unless exists $attr->{output}->{$$node};
 
-    return $input_link->{$$node}->{$input_name};
+    return keys %{ $attr->{output}->{$$node} };
 }
 
-sub del_input_link;
-sub add_input_link;
-
-# per ora lo lascio per non creare errori, ma, è DEPRECATO
-sub has_input_link {
-    my $node       = shift;
-    my $link       = shift;
-    my $input_name = shift;
-    $input_link->{$$node}->{$input_name} = $link;
-}
-
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
 sub type {
     my $node      = shift;
     my $node_type = ref $node;
@@ -164,8 +272,10 @@ sub DESTROY {
     my $node = shift;
 
     #warn 'del node ' . $node->type . " [ $$node ]\n";
-    delete $input->{$$node};
-    delete $output->{$$node};
+    delete $attr->{input}->{$$node};
+    delete $attr->{output}->{$$node};
+
+    return 1;
 }
 
 1;
@@ -182,7 +292,7 @@ It declares two abstract methods: init and task.
 
 Don't use this module, call PNI::NODE instead and use the reference it returns.
 
-=head2 SUBS
+=head1 SUBROUTINES/METHODS
 
 =over
 
@@ -209,8 +319,7 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 Copyright (C) 2010 by G. Casati
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.1 or,
-at your option, any later version of Perl 5 you may have available.
+it under the same terms as Perl itself .
 
 =cut
 

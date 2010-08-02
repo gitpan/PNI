@@ -10,22 +10,24 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'list' => 'hello' );
-    $node->add_input( 'bang' => 0 );
+    $node->add_input( 'list'     => 'hello' );
+    $node->add_input( 'do_print' => 0 );
 
-    return;
+    return 1;
 }
 
 sub task {
     my $node = shift;
 
-    return unless $node->get_input('bang') and defined $node->get_input('list');
+    return 1
+      unless $node->get_input('do_print')
+          and defined $node->get_input('list');
 
     print STDOUT $node->get_input('list');
 
-    $node->set_input( bang => 0 );
+    $node->set_input( do_print => 0 );
 
-    return;
+    return 1;
 }
 
 1;

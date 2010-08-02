@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlfunc::Sqrt;
 
 use strict;
 use warnings;
@@ -20,7 +20,7 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    $node->set_output( 'out' => sqrt( $node->get_input('in') ) );
 
     return 1;
 }
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlfunc::Sqrt - PNI node that implements Perl sqrt builtin function.
 
 =head1 AUTHOR
 

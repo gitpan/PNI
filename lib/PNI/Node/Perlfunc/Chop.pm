@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Sin;
+package PNI::Node::Perlfunc::Chop;
 
 use strict;
 use warnings;
@@ -10,9 +10,9 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input( 'in' => 0 );
+    $node->add_input( 'in' => [] );
 
-    $node->add_output( 'out' => 0 );
+    $node->add_output( 'out' => undef );
 
     return 1;
 }
@@ -20,7 +20,13 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->set_output( out => sin( $node->get_input('in') ) );
+    return unless ref $node->get_input('in') eq 'ARRAY';
+
+    my @list = @{ $node->get_input('in') };
+
+    chop(@list);
+
+    $node->set_output( 'out' => [@list] );
 
     return 1;
 }
@@ -30,7 +36,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sin - PNI node that implements Perl sin builtin function.
+PNI::Node::Perlfunc::Chop - PNI node that implements Perl chomp builtin function.
 
 =head1 AUTHOR
 
