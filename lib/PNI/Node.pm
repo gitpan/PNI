@@ -2,10 +2,11 @@ package PNI::Node;
 
 use strict;
 use warnings;
-
-our $VERSION = '0.06';
-
 use Carp;
+use PNI;
+# TODO: a sto punto, se va bene, fai che solo con use PNI fai tutto sto bloccco.
+our $VERSION = $PNI::VERSION;
+
 
 #sub info { return {} }
 # posso fare sub info; ?
@@ -190,7 +191,6 @@ sub del_input_link;
 #----------------------------------------------------------------------------
 sub get_link_of_input {
 
-    # TODO sarebbe da cambiare in get_input_link
     my $node       = shift;
     my $input_name = shift;
 
@@ -230,9 +230,9 @@ sub reset_input_changes_flag {
 }
 
 #----------------------------------------------------------------------------
-# Usage      | $node->input_names
+# Usage      | $node->input_names()
 # Purpose    |
-# Returns    |
+# Returns    | List of input names.
 #----------------------------------------------------------------------------
 sub input_names {
     my $node = shift;
@@ -243,9 +243,9 @@ sub input_names {
 }
 
 #----------------------------------------------------------------------------
-# Usage      | $node->output_names
+# Usage      | $node->output_names()
 # Purpose    |
-# Returns    |
+# Returns    | List of output names.
 #----------------------------------------------------------------------------
 sub output_names {
     my $node = shift;
@@ -256,16 +256,26 @@ sub output_names {
 }
 
 #----------------------------------------------------------------------------
-# Usage      |
-#            |
+# Usage      | $node->type()
 # Purpose    |
-# Returns    |
+# Returns    | The node package name minus 'PNI::Node'
 #----------------------------------------------------------------------------
 sub type {
     my $node      = shift;
     my $node_type = ref $node;
     $node_type =~ s/^PNI::Node:://;
     return $node_type;
+}
+
+#----------------------------------------------------------------------------
+# Usage      |
+#            |
+# Purpose    |
+# Returns    |
+#----------------------------------------------------------------------------
+sub id{
+my $node = shift;
+return $$node;
 }
 
 sub DESTROY {
@@ -287,10 +297,10 @@ PNI::Node
 
 =head1 DESCRIPTION
 
-This is the base class every PNI::Node must inherit from. 
-It declares two abstract methods: init and task. 
+This is the base class every PNI::Node must inherit from . 
+It declares two abstract methods: init and task . 
 
-Don't use this module, call PNI::NODE instead and use the reference it returns.
+Don't use this module, call PNI::NODE instead and use the reference it returns .
 
 =head1 SUBROUTINES/METHODS
 
@@ -298,11 +308,19 @@ Don't use this module, call PNI::NODE instead and use the reference it returns.
 
 =item add_input
 
-Declares node has the given input.
+Declares node has the given input .
 
 =item add_output
 
-Declares node has the given output.
+Declares node has the given output .
+
+=item input_names
+
+Returns the node input names list .
+
+=item output_names
+
+Returns the node output names list .
 
 =item type
 

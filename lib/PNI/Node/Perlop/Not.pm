@@ -39,7 +39,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlop::Not - PNI node that implements Perl or operator
+PNI::Node::Perlop::Not - PNI node that implements Perl not operator
 
 =head1 AUTHOR
 

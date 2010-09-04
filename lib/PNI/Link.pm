@@ -2,8 +2,10 @@ package PNI::Link;
 
 use strict;
 use warnings;
+use Carp;
+use PNI;
 
-our $VERSION = '0.04';
+our $VERSION = $PNI::VERSION;
 
 my $source = {};
 my $target = {};

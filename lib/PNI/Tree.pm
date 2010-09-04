@@ -2,8 +2,10 @@ package PNI::Tree;
 
 use strict;
 use warnings;
+use Carp;
+use PNI;
 
-our $VERSION = '0.06';
+our $VERSION = $PNI::VERSION;
 
 use PNI::Link;
 use PNI::Node;
@@ -29,7 +31,10 @@ sub add_node {
 
     #TODO prova l' eval con le graffe.
     #
-    eval "require $node_class" or do { warn $@ }
+    #eval "require $node_class" or do { warn $@ }
+    #  and return;
+    #eval { require $node_class } or do { warn $@ }
+    eval { require $node_path } or do { warn $@ }
       and return;
 
     $ID++;
@@ -195,7 +200,7 @@ sub do_tasks {
     #warn 'doing tasks at level 0' . "\n";
     for $node ( @{ $hierarchy[0] } ) {
 
-        warn 'doing task at level 0 for node ' . $node . "\n";
+        #warn 'doing task at level 0 for node ' . $node . "\n";
         $node->task();
     }
 
@@ -226,7 +231,7 @@ sub do_tasks {
         }
 
         for $node ( @{ $hierarchy[$level] } ) {
-        warn 'doing tasks at level ' . $level . ' for node ' , $node . "\n"; #sleep 1;
+            #warn 'doing tasks at level ' . $level . ' for node ' , $node . "\n"; #sleep 1;
             $node->task();
         }
     }

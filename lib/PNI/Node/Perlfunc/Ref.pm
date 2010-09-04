@@ -10,11 +10,19 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
+    $node->add_input( 'expr' => ' ' );
+
+    $node->add_output( 'type' => '' );
+
     return 1;
 }
 
 sub task {
     my $node = shift;
+
+    return unless defined $node->get_input('expr');
+
+    $node->set_output( type => ref( $node->get_input('expr') ) );
 
     return 1;
 }

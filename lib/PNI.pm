@@ -4,7 +4,7 @@ use 5.8.8;
 use strict;
 use warnings;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use PNI::Tree;
 use PNI::Node;
@@ -24,20 +24,35 @@ my $num_of_runs    = 0;
 sub LINK { return PNI::Tree::add_link(@_) }
 
 # TODO definisci bene i tipi di dati, l' idea è di usare solo scalare e riferimenti
-# ... scrivi quindi i test per questa feature e documentala. 
+# ... scrivi quindi i test per questa feature e documentala.
 # P.S. puoi metterla nel nodes.t
 
 #----------------------------------------------------------------------------
 # Usage      | PNI::NODE 'Foo::Bar'
 # Purpose    |
-# Returns    | A reference to the PNI::Node created.
+# Returns    | A reference to the PNI::Node created .
 #----------------------------------------------------------------------------
 sub NODE { return PNI::Tree::add_node(@_) }
 
 #----------------------------------------------------------------------------
-# Usage      | PNI::NODECOLLECTION
+# Usage      | PNI::BRANCH
 # Purpose    |
-# Returns    |
+# Returns    | A reference to the PNI::Branch created .
+#----------------------------------------------------------------------------
+#sub BRANCH { warn 'PNI::BRANCH is not implemented yet' }
+#
+# il Tree crea il branch, se creo un nodo e gli dico di appartenere a un certo
+# branch, il tree lo mette nel rispettivo array, in modo che tutti i nodi
+# e i link sono associati a quel branch.
+#
+# CI DEVE ESSERE LA ROOT che sta nel tree, ed è il default branch,
+# cioè se creo un nodo senza specificare.
+
+
+#----------------------------------------------------------------------------
+# Usage      | my $node_collection = PNI::NODECOLLECTION
+# Purpose    | Information about available nodes, arranged in categories .
+# Returns    | $node_collection hash_ref
 #----------------------------------------------------------------------------
 sub NODECOLLECTION {
     my $node_collection = {};
@@ -59,7 +74,7 @@ sub NODECOLLECTION {
         find(
             {
                 wanted => sub {
-                    return unless s/\.pod$//;
+                    return unless s/\.pod$//x;
                     $node_collection->{$_} = [];
                 },
                 follow => 1
@@ -71,7 +86,7 @@ sub NODECOLLECTION {
             find(
                 {
                     wanted => sub {
-                        return unless s/\.pm$//;
+                        return unless s/\.pm$//x;
 
                         # TODO gestisco per ora solo 1 + 1 livello
                         push @{ $node_collection->{$category} }, $_;
@@ -139,7 +154,7 @@ PNI - Perl Node Interface
 
   my $node = PNI::NODE 'Perlfunc::Print';
   $node->set_input( list => 'Hello World !' );
-  $node->set_input( bang => 1 );
+  $node->set_input( do_print => 1 );
 
   PNI::RUN;
 
@@ -162,7 +177,7 @@ or even "regular expression" and that makes them proud,
 but they don't care about inheritance.
 
 They want things working and they need Perl ... 
-but if you say Strawberry they think about yogurth, not about Windows.
+but if you say Strawberry they think about yogurt, not about Windows.
 
 There are a lot of node programming languages (VVVV, Puredata, Max/Msp) 
 but normally they target artists and interaction designers.
@@ -192,17 +207,20 @@ They often delegates to other modules methods inside the PNI namespace.
 =item PNI::LINK
 
 Connects an output of a node to an input of another node.
+
+  my $source_node = PNI::NODE 'Some::Node';
+
+  my $target_node = PNI::NODE 'Another::Node';
+
+  PNI::LINK $source_node => $target_node , 'source_output_name' => 'target_input_name';
+
 Delegates to PNI::Tree::add_link.
 
 =item PNI::NODE
 
 Creates a node by its pni type. If you write
 
-=over 4
-
-PNI::Node 'Some::Node'
-
-=back
+  PNI::NODE 'Some::Node'
 
 PNI do the following steps:
 
@@ -219,8 +237,7 @@ and bless it as a PNI::Node::Some::Node .
 
 =item 3
 
-calls the init method as implemented in the 
-PNI::Node::Some::Node package .
+calls the init method as implemented in the PNI::Node::Some::Node package .
 
 =back
 
@@ -246,8 +263,7 @@ node_category2 => [ qw( /node/path1 , /node/path2 , ... ) ],
 
 =item PNI::RUN
 
-Updates the tree node hierarchy and calls 
-the task method of every loaded node.
+Updates the tree node hierarchy and calls the task method for every loaded node.
 
 =item PNI::LOOP
 
@@ -258,10 +274,15 @@ Starts the PNI main loop, it keeps calling PNI::RUN as fast as it can.
 =head1 SEE ALSO
 
 PNI::Node
+
 PNI::Tree
+
 PNI::Link
+
 PNI::Node::Perlfunc
+
 PNI::Node::Perlop
+
 PNI::Node::Perlvar
 
 =cut

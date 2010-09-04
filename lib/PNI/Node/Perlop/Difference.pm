@@ -1,4 +1,4 @@
-package PNI::Node::Perlop::StringwiseEqual;
+package PNI::Node::Perlop::Difference;
 
 use strict;
 use warnings;
@@ -21,16 +21,12 @@ sub init {
 sub task {
     my $node = shift;
 
-    if ( $node->get_input('in1') eq $node->get_input('in2') ) {
+    return 1 unless defined $node->get_input('in1')
 
-        $node->set_output( out => 1 );
+          and defined $node->get_input('in2');
 
-    }
-    else {
-
-        $node->set_output( out => 0 );
-
-    }
+    $node->set_output(
+        out => $node->get_input('in1') - $node->get_input('in2') );
 
     return 1;
 }
@@ -40,7 +36,7 @@ __END__
 
 =head1 NAME
 
-PNI::Node::Perlop::StringwiseEqual - PNI node that implements Perl eq operator
+PNI::Node::Perlop::Difference - PNI node that implements Perl - operator
 
 =head1 AUTHOR
 

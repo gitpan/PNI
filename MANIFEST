@@ -23,6 +23,7 @@ lib/PNI/Node/Perlfunc/Substr.pm
 lib/PNI/Node/Perlop.pod
 lib/PNI/Node/Perlop/And.pm
 lib/PNI/Node/Perlop/Backticks.pm
+lib/PNI/Node/Perlop/Difference.pm
 lib/PNI/Node/Perlop/Double_quote.pm
 lib/PNI/Node/Perlop/Not.pm
 lib/PNI/Node/Perlop/NumericallyEqual.pm
@@ -30,6 +31,7 @@ lib/PNI/Node/Perlop/Or.pm
 lib/PNI/Node/Perlop/Quote_word.pm
 lib/PNI/Node/Perlop/Range.pm
 lib/PNI/Node/Perlop/StringwiseEqual.pm
+lib/PNI/Node/Perlop/Sum.pm
 lib/PNI/Node/Perlvar.pod
 lib/PNI/Node/Perlvar/Osname.pm
 lib/PNI/Node/Perlvar/Process_id.pm
