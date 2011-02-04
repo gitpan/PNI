@@ -1,144 +1,45 @@
 package PNI;
-
-use 5.8.8;
 use strict;
 use warnings;
-
-our $VERSION = '0.07';
-
-use PNI::Tree;
-use PNI::Node;
-
+our $VERSION = '0.1';
+use 5.8.8;
+use PNI::Hierarchy;
 use File::Find;
 use Time::HiRes('usleep');
 
-my $pni_is_running = 0;
-my $num_of_runs    = 0;
+# there is only one PNI root
+my $root = PNI::Hierarchy->new;
 
-#----------------------------------------------------------------------------
-# Usage      | PNI::LINK $source_node => $target_node ,
-#            |           $source_output_name => $target_input_name
-# Purpose    |
-# Returns    | A reference to the PNI::Link created.
-#----------------------------------------------------------------------------
-sub LINK { return PNI::Tree::add_link(@_) }
+sub ROOT { return $root }
 
-# TODO definisci bene i tipi di dati, l' idea è di usare solo scalare e riferimenti
-# ... scrivi quindi i test per questa feature e documentala.
-# P.S. puoi metterla nel nodes.t
+sub LINK {
+    my $source_node        = shift;
+    my $target_node        = shift;
+    my $source_output_name = shift;
+    my $target_input_name  = shift;
 
-#----------------------------------------------------------------------------
-# Usage      | PNI::NODE 'Foo::Bar'
-# Purpose    |
-# Returns    | A reference to the PNI::Node created .
-#----------------------------------------------------------------------------
-sub NODE { return PNI::Tree::add_node(@_) }
+    my $source_output = $source_node->get_output($source_output_name);
+    my $target_input  = $target_node->get_input($target_input_name);
 
-#----------------------------------------------------------------------------
-# Usage      | PNI::BRANCH
-# Purpose    |
-# Returns    | A reference to the PNI::Branch created .
-#----------------------------------------------------------------------------
-#sub BRANCH { warn 'PNI::BRANCH is not implemented yet' }
-#
-# il Tree crea il branch, se creo un nodo e gli dico di appartenere a un certo
-# branch, il tree lo mette nel rispettivo array, in modo che tutti i nodi
-# e i link sono associati a quel branch.
-#
-# CI DEVE ESSERE LA ROOT che sta nel tree, ed è il default branch,
-# cioè se creo un nodo senza specificare.
-
-
-#----------------------------------------------------------------------------
-# Usage      | my $node_collection = PNI::NODECOLLECTION
-# Purpose    | Information about available nodes, arranged in categories .
-# Returns    | $node_collection hash_ref
-#----------------------------------------------------------------------------
-sub NODECOLLECTION {
-    my $node_collection = {};
-
-    # prima cerco le PNI/Node
-    #&find( , @INC );
-
-    # poi nelle cartelle che trovo cerco i .pod, ognuno dei quali è
-    # una categoria
-
-    # poi per ogni categoria cerco i .pm, ognuno dei quali è un nodo
-    # quindi aggiungo all hash $node_collection
-
-    for my $dir (@INC) {
-
-        # TODO fai metodo PNI::NODEDIRS
-        my $pni_node_dir = File::Spec->catfile( $dir, 'PNI', 'Node' );
-        next unless -d $pni_node_dir;
-        find(
-            {
-                wanted => sub {
-                    return unless s/\.pod$//x;
-                    $node_collection->{$_} = [];
-                },
-                follow => 1
-            },
-            ($pni_node_dir)
-        );
-        for my $category ( keys %{$node_collection} ) {
-
-            find(
-                {
-                    wanted => sub {
-                        return unless s/\.pm$//x;
-
-                        # TODO gestisco per ora solo 1 + 1 livello
-                        push @{ $node_collection->{$category} }, $_;
-
-                      }
-                },
-                ( File::Spec->catfile( $pni_node_dir, $category ) )
-            );
-        }
-    }
-
-    return $node_collection;
+    return ROOT->add_link( source => $source_output, target => $target_input );
 }
 
-#----------------------------------------------------------------------------
-# Usage      | PNI::RUN
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
+sub NODE {
+    my $node_type = shift;
+    return ROOT->add_node( type => $node_type, @_ );
+}
+
 sub RUN {
-
-    # prevent PNI::RUN is called inside a PNI::Node task method.
-    return if $pni_is_running;
-    $pni_is_running = 1;
-
-    $num_of_runs++;
-
-    PNI::Tree::update_hierarchy;
-    PNI::Tree::do_tasks;
-
-    $pni_is_running = 0;
-
-    return $num_of_runs;
+    return ROOT->task;
 }
 
-#----------------------------------------------------------------------------
-# Usage      | PNI::LOOP
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
 sub LOOP {
-
-    # prevent PNI::LOOP is called inside a PNI::Node task method.
-    return if $pni_is_running;
-
     while (1) {
         RUN;
         usleep(1);
     }
 
-    # never reach here
-    exit;
+    return 1;
 }
 
 1;
@@ -214,8 +115,6 @@ Connects an output of a node to an input of another node.
 
   PNI::LINK $source_node => $target_node , 'source_output_name' => 'target_input_name';
 
-Delegates to PNI::Tree::add_link.
-
 =item PNI::NODE
 
 Creates a node by its pni type. If you write
@@ -239,25 +138,9 @@ and bless it as a PNI::Node::Some::Node .
 
 calls the init method as implemented in the PNI::Node::Some::Node package .
 
-=back
+=item 4
 
-Delegates to PNI::Tree::add_node.
-
-=item PNI::NODECOLLECTION
-
-Returns available nodes in an hash reference like this:
-
-=over 4
-
-$node_collection = {
-
-node_category1 => [ qw( /node/path1 , /node/path2 , ... ) ],
-
-node_category2 => [ qw( /node/path1 , /node/path2 , ... ) ], 
-
-...
-
-}
+adds the node to the root hierarchy
 
 =back
 
@@ -273,17 +156,11 @@ Starts the PNI main loop, it keeps calling PNI::RUN as fast as it can.
 
 =head1 SEE ALSO
 
-PNI::Node
+L<PNI::Node::Perlfunc>
 
-PNI::Tree
+L<PNI::Node::Perlop>
 
-PNI::Link
-
-PNI::Node::Perlfunc
-
-PNI::Node::Perlop
-
-PNI::Node::Perlvar
+L<PNI::Node::Perlvar>
 
 =cut
 

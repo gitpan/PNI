@@ -1,4 +1,4 @@
-package PNI::Node::Perlfunc::Length;
+package PNI::Node::Perlop::Stringwise_equal;
 
 use strict;
 use warnings;
@@ -10,7 +10,9 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    $node->add_input('in1');
+    $node->add_input('in2');
+
     $node->add_output('out');
 
     return 1;
@@ -20,7 +22,8 @@ sub task {
     my $node = shift;
 
     $node->get_output('out')
-      ->set_data( length( $node->get_input('in')->get_data ) );
+      ->set_data( $node->get_input('in1')->get_data eq
+          $node->get_input('in2')->get_data );
 
     return 1;
 }

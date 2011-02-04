@@ -5,13 +5,10 @@ WriteMakefile(
     NAME         => 'PNI',
     VERSION_FROM => 'lib/PNI.pm',
     PREREQ_PM    => {
-        Carp => 0,
-        Test::More  => 0.94,
-        Test::Pod   => 1.00,
-        Time::HiRes => 0,
         File::Find  => 0,
-        English     => 0,
-        File::Spec  => 0
+        File::Spec  => 0,
+        Time::HiRes => 0,
+        Test::More  => 0.94,
     },
     (
         $] >= 5.005

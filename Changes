@@ -1,16 +1,22 @@
 Revision history for Perl extension PNI.
 
+0.1   2011-02-01
+    - interface restiling and cleanup
+    - test driven development philosophy, every node has a test
+    - base class PNI::Item
+
 0.05  2010-06-26
-    - fixed failing tests.
-    - more nodes and tests.
-    - added blog at http://perl-node-interface.blogspot.com/ .
+    - fixed failing tests
+    - more nodes and tests
+    - added blog at http://perl-node-interface.blogspot.com/
+
 0.03  2010-05-31
-    - added PNI::NODECOLLECTION so you can find nodes at runtime.
+    - added PNI::NODECOLLECTION so you can find nodes at runtime
     - backported from perl 5.10 to 5.8.8
 
 0.02  2010-05-12
-    - fixed problem about loading nodes.
-    - added Perlop::Eq node.
+    - fixed problem about loading nodes
+    - added Perlop::Eq node
 
 0.01  2010-05-07
     - first minimal release: just works as cpan module :)

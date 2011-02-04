@@ -1,181 +1,54 @@
 package PNI::Link;
-
 use strict;
 use warnings;
-use Carp;
-use PNI;
+our $VERSION = '0.1';
+use base 'PNI::Item';
 
-our $VERSION = $PNI::VERSION;
+sub new {
+    my $class = shift;
+    my $arg = {@_} or return;
 
-my $source = {};
-my $target = {};
+    my $source = $arg->{source} or return;
+    $source->isa('PNI::Slot::Out') or return;
 
-#----------------------------------------------------------------------------
-# Usage      | $link->connect_to_source( node => $source_node , 
-#            |                           output_name => $output_name )
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub connect_to_source {
-    my $link        = shift;
-    my $source_node = shift;
-    my $output_name = shift;
-    $source->{$$link} = {
-        node        => $source_node,
-        output_name => $output_name
-    };
-    return 1;
+    my $target = $arg->{target} or return;
+    $target->isa('PNI::Slot::In') or return;
+
+    my $self = $class->SUPER::new();
+
+    # hierarchy is required for every node and link
+    my $hierarchy = $arg->{hierarchy} or return;
+
+    $self->add( hierarchy => $hierarchy );
+    $self->add( source    => $source );
+    $self->add( target    => $target );
+
+    $source->add_link($self);
+    $target->add_link($self);
+
+    return $self;
 }
 
-#----------------------------------------------------------------------------
-# Usage      | $link->connect_to_target( node => $target_node , 
-#            |                           input_name => $input_name )
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub connect_to_target {
-    my $link        = shift;
-    my $target_node = shift;
-    my $input_name  = shift;
-
-    return 0 unless defined $target_node
-        and defined $input_name;
-
-    $target->{$$link} = {
-        node       => $target_node,
-        input_name => $input_name
-    };
-    $target_node->add_input_link( $link => $input_name );
-    return 1;
+sub get_source {
+    return shift->get('source');
 }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub add_source;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub del_source;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub get_source;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub set_source;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub add_target;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub del_target;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub get_target;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub set_target;
-
-#-------------
-# $link->source->{node}
-# $link->source->{output_name}
-#-------------
-sub source {
-    my $link = shift;
-    return $source->{$$link};
+sub get_target {
+    return shift->get('target');
 }
 
-#---------
-# $link->target->{node}
-#---------
-sub target {
-    my $link = shift;
-    return $target->{$$link};
+sub get_source_node {
+    return shift->get_source->get_node;
 }
 
-sub DESTROY {
-    my $link = shift;
-    delete $source->{$$link};
-    delete $target->{$$link};
+sub get_target_node {
+    return shift->get_target->get_node;
+}
+
+sub task {
+    my $self = shift;
+    return $self->get_target->set_data( $self->get_source->get_data );
 }
 
 1;
-__END__
-
-=head1 NAME
-
-PNI::Link
-
-=head1 DESCRIPTION
-
-This class represents connections between nodes. It links a node output to a node input, 
-so at every PNI::RUN every node input is updated with the corresponding node output.
-
-Don't use this module, call PNI::LINK instead.
-
-=head1 SUBROUTINES/METHODS
-
-=over
-
-=item connect_to_source
-
-Used to connect a link to its node source.
-
-=item connect_to_target
-
-Used to connect a link to its node target.
-
-=back
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2010 by G. Casati
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.10.1 or,
-at your option, any later version of Perl 5 you may have available.
-
-=cut
-
 

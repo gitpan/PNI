@@ -1,343 +1,119 @@
 package PNI::Node;
-
 use strict;
 use warnings;
-use Carp;
-use PNI;
-# TODO: a sto punto, se va bene, fai che solo con use PNI fai tutto sto bloccco.
-our $VERSION = $PNI::VERSION;
+our $VERSION = '0.1';
+use base 'PNI::Item';
+use PNI::Slot::In;
+use PNI::Slot::Out;
 
+sub new {
+    shift;    # my $class
+    my $arg = {@_};
 
-#sub info { return {} }
-# posso fare sub info; ?
+    # type parameter is optional
+    my $node_type = $arg->{type};
+    my $node_class;
 
-sub init { die }
-sub task { die }
+    # if a type is specified, try to require the corresponding class
+    if ( defined $node_type ) {
+        $node_class = __PACKAGE__ . '::' . $node_type;
+        ( my $node_path = $node_class . '.pm' ) =~ s=::=/=g;
+        eval { require $node_path } or return;
+    }
 
-my $attr = {
-    input              => {},
-    output             => {},
-    input_link         => {},
-    inputs_are_changed => {}
-};
+    # otherwise build a generic empty node you can decorate later
+    else {
+        $node_class = __PACKAGE__;
+    }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
+    my $self = PNI::Item::new($node_class);
+
+    $self->add( 'inputs'  => {} );
+    $self->add( 'outputs' => {} );
+    $self->init;
+
+    # at this point the node is created, so you can add it in a hierarchy
+    my $hierarchy = $arg->{hierarchy} or return;
+    $self->add( hierarchy => $hierarchy );
+
+    return $self;
+}
+
 sub add_input {
+    my $self = shift;
+    my $input_name = shift or return;
 
-    my $node        = shift;
-    my $input_name  = shift;
-    my $input_value = shift;
+    # cannot have two inputs with the same name
+    exists $self->get('inputs')->{$input_name} and return;
 
-    return
-      unless defined $input_name
-          and defined $input_value
-          and not exists $attr->{input}->{$$node}->{$input_name};
-
-    $attr->{input}->{$$node}->{$input_name} = $input_value;
-
+    my $input = PNI::Slot::In->new( node => $self, name => $input_name, @_ )
+      or return;
+    $self->get('inputs')->{ $input->get_name } = $input;
     return 1;
 }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub del_input;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub get_input {
-    my $node = shift
-      or carp 'undefined node';
-    my $input_name = shift
-      or carp 'missing input name parameter';
-
-    exists $attr->{input}->{$$node}->{$input_name}
-      or carp "input $input_name is not defined for node $node";
-
-    return $attr->{input}->{$$node}->{$input_name};
-}
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub set_input {
-    my $node       = shift;
-    my $input_name = shift;
-
-    my $input_value = shift;
-
-    return
-      unless defined $input_name
-          and defined $input_value
-          and exists $attr->{input}->{$$node}->{$input_name};
-
-    $attr->{input}->{$$node}->{$input_name} = $input_value;
-    $attr->{inputs_are_changed}->{$$node} = 1;
-
-    return 1;
-}
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
 sub add_output {
-    my $node         = shift;
-    my $output_name  = shift;
-    my $output_value = shift;
+    my $self = shift;
+    my $output_name = shift or return;
 
-    return
-      unless defined $output_name
-          and defined $output_value
-          and not exists $attr->{output}->{$$node}->{$output_name};
+    # cannot have two outputs with the same name
+    exists $self->get('outputs')->{$output_name} and return;
 
-    $attr->{output}->{$$node}->{$output_name} = $output_value;
-
+    my $output = PNI::Slot::Out->new( node => $self, name => $output_name, @_ )
+      or return;
+    $self->get('outputs')->{ $output->get_name } = $output;
     return 1;
 }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub del_output;
+sub del_input  { return 1; }
+sub del_output { return 1; }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
+sub get_input {
+    my $self = shift;
+    my $input_name = shift or return;
+    return $self->get('inputs')->{$input_name};
+}
+
 sub get_output {
-    my $node        = shift;
-    my $output_name = shift;
-
-    return unless exists $attr->{output}->{$$node}->{$output_name};
-
-    return $attr->{output}->{$$node}->{$output_name};
+    my $self = shift;
+    my $output_name = shift or return;
+    return $self->get('outputs')->{$output_name};
 }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub set_output {
-    my $node         = shift;
-    my $output_name  = shift;
-    my $output_value = shift;
-
-    return
-      unless defined $output_name
-          and defined $output_value
-          and exists $attr->{output}->{$$node}->{$output_name};
-
-    $attr->{output}->{$$node}->{$output_name} = $output_value;
-
-    return 1;
+sub get_inputs {
+    return values %{ shift->get('inputs') };
 }
 
-#----------------------------------------------------------------------------
-# Usage      | $node->add_input_link( $input_link => $input_name );
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub add_input_link {
-    my $node       = shift;
-    my $input_link = shift;
-    my $input_name = shift;
-
-    return 0
-      unless defined $input_link
-          and defined $input_name;
-
-    $attr->{input_link}->{$$node}->{$input_name} = $input_link;
-    return 1;
+sub get_outputs {
+    return values %{ shift->get('outputs') };
 }
 
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub del_input_link;
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub get_link_of_input {
-
-    my $node       = shift;
-    my $input_name = shift;
-
-    return unless exists $attr->{input_link}->{$$node}->{$input_name};
-
-    return $attr->{input_link}->{$$node}->{$input_name};
+sub get_input_links {
+    my $self        = shift;
+    my @input_links = ();
+    for my $input ( $self->get_inputs ) {
+        my $link = $input->get_link;
+        if ( defined $link ) {
+            push @input_links, $link;
+        }
+    }
+    return @input_links;
 }
 
-#----------------------------------------------------------------------------
-# Usage      | $node->inputs_are_changed
-# Purpose    |
-# Returns    | 1 or 0
-#----------------------------------------------------------------------------
-sub inputs_are_changed {
-    my $node = shift;
-
-    return 0
-      if not exists $attr->{inputs_are_changed}->{$$node}
-          or not defined $attr->{inputs_are_changed}->{$$node};
-    return $attr->{inputs_are_changed}->{$$node};
+sub get_output_links {
+    my $self         = shift;
+    my @output_links = ();
+    for my $output ( $self->get_outputs ) {
+        my @links = $output->get_links;
+        if (@links) {
+            push @output_links, @links;
+        }
+    }
+    return @output_links;
 }
 
-#----------------------------------------------------------------------------
-# Usage      | $node->reset_input_changes_flag
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub reset_input_changes_flag {
-    my $node = shift;
-
-    return 0
-      if not exists $attr->{inputs_are_changed}->{$$node}
-          or not defined $attr->{inputs_are_changed}->{$$node};
-
-    $attr->{inputs_are_changed}->{$$node} = 1;
-    return 1;
-}
-
-#----------------------------------------------------------------------------
-# Usage      | $node->input_names()
-# Purpose    |
-# Returns    | List of input names.
-#----------------------------------------------------------------------------
-sub input_names {
-    my $node = shift;
-
-    return unless exists $attr->{input}->{$$node};
-
-    return keys %{ $attr->{input}->{$$node} };
-}
-
-#----------------------------------------------------------------------------
-# Usage      | $node->output_names()
-# Purpose    |
-# Returns    | List of output names.
-#----------------------------------------------------------------------------
-sub output_names {
-    my $node = shift;
-
-    return unless exists $attr->{output}->{$$node};
-
-    return keys %{ $attr->{output}->{$$node} };
-}
-
-#----------------------------------------------------------------------------
-# Usage      | $node->type()
-# Purpose    |
-# Returns    | The node package name minus 'PNI::Node'
-#----------------------------------------------------------------------------
-sub type {
-    my $node      = shift;
-    my $node_type = ref $node;
-    $node_type =~ s/^PNI::Node:://;
-    return $node_type;
-}
-
-#----------------------------------------------------------------------------
-# Usage      |
-#            |
-# Purpose    |
-# Returns    |
-#----------------------------------------------------------------------------
-sub id{
-my $node = shift;
-return $$node;
-}
-
-sub DESTROY {
-    my $node = shift;
-
-    #warn 'del node ' . $node->type . " [ $$node ]\n";
-    delete $attr->{input}->{$$node};
-    delete $attr->{output}->{$$node};
-
-    return 1;
-}
+sub init { return 1; }
+sub task { return 1; }
 
 1;
-__END__
-
-=head1 NAME
-
-PNI::Node
-
-=head1 DESCRIPTION
-
-This is the base class every PNI::Node must inherit from . 
-It declares two abstract methods: init and task . 
-
-Don't use this module, call PNI::NODE instead and use the reference it returns .
-
-=head1 SUBROUTINES/METHODS
-
-=over
-
-=item add_input
-
-Declares node has the given input .
-
-=item add_output
-
-Declares node has the given output .
-
-=item input_names
-
-Returns the node input names list .
-
-=item output_names
-
-Returns the node output names list .
-
-=item type
-
-Returns the PNI node type, i.e. package name minus PNI::Node .
-
-=back
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2010 by G. Casati
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself .
-
-=cut
 

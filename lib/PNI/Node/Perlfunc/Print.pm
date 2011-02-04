@@ -3,15 +3,15 @@ package PNI::Node::Perlfunc::Print;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.1';
 
 our @ISA = ('PNI::Node');
 
 sub init {
     my $node = shift;
 
-    $node->add_input( 'list'     => 'hello' );
-    $node->add_input( 'do_print' => 0 );
+    $node->add_input('list');
+    $node->add_input( 'do_print', data => 0 );
 
     return 1;
 }
@@ -19,33 +19,15 @@ sub init {
 sub task {
     my $node = shift;
 
-    return 1
-      unless $node->get_input('do_print')
-          and defined $node->get_input('list');
+    # return unless do_print flag is 1
+    return 1 unless $node->get_input('do_print')->get_data;
 
-    print STDOUT $node->get_input('list');
+    my $rv = print STDOUT $node->get_input('list')->get_data;
 
-    $node->set_input( do_print => 0 );
+    # reset do_print flag
+    $node->get_input('do_print')->set_data(0);
 
     return 1;
 }
 
 1;
-__END__
-
-=head1 NAME
-
-PNI::Node::Perlfunc::Print - PNI node that implements Perl print builtin function.
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2010 by G. Casati
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut

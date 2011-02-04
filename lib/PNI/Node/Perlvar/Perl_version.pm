@@ -1,4 +1,4 @@
-package PNI::Node::Perlvar::Osname;
+package PNI::Node::Perlvar::Perl_version;
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ our @ISA = ('PNI::Node');
 sub init {
     my $node = shift;
 
-    $node->add_output( 'out', data => $^O );
+    $node->add_output( 'out', data => $^V );
 
     return 1;
 }

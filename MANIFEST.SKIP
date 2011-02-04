@@ -3,6 +3,9 @@
 \.swp$
 \.gz$
 
+# exclude PNI/Node/Test.pm
+Test\.pm
+
 # 
 # Follows original MANIFEST.SKIP
 ###########################################
