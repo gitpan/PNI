@@ -1,14 +1,17 @@
 use strict;
-use warnings;
 use Test::More;
+use PNI;
 
-use PNI::Hierarchy;
-
-my $root = PNI::Hierarchy->new;
-
-my $node = $root->add_node( type => 'Perlop::Or' );
-
+my $node = PNI::NODE 'Perlop::Or';
 isa_ok( $node, 'PNI::Node' );
+
+# check slots
+isa_ok($node->get_input('in1'),'PNI::Slot::In');
+isa_ok($node->get_input('in2'),'PNI::Slot::In');
+isa_ok($node->get_output('out'),'PNI::Slot::Out');
+
+# check default values
+ok( $node->task );
 
 $node->get_input('in1')->set_data(1);
 $node->get_input('in2')->set_data(0);

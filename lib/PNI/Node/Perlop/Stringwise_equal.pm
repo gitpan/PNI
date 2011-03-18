@@ -1,18 +1,14 @@
 package PNI::Node::Perlop::Stringwise_equal;
-
 use strict;
 use warnings;
-
-our $VERSION = '0.1';
-
-our @ISA = ('PNI::Node');
+our $VERSION = '0.11';
+use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
     $node->add_input('in1');
     $node->add_input('in2');
-
     $node->add_output('out');
 
     return 1;
@@ -21,9 +17,16 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->get_output('out')
-      ->set_data( $node->get_input('in1')->get_data eq
-          $node->get_input('in2')->get_data );
+    my $in1_data = $node->get_input('in1')->get_data;
+    my $in2_data = $node->get_input('in2')->get_data;
+    my $out      = $node->get_output('out');
+
+    if ( defined $in1_data and $in2_data ) {
+        $out->set_data( $in1_data eq $in2_data );
+    }
+    else {
+        $out->set_data(undef);
+    }
 
     return 1;
 }

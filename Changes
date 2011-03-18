@@ -1,4 +1,9 @@
-Revision history for Perl extension PNI.
+Revision history for Perl Node Interface.
+
+0.11  2011-04
+    - added PNI::Error
+    - perlcritic ok
+    - PNI::Node::Tk 0.11
 
 0.1   2011-02-01
     - interface restiling and cleanup
@@ -11,7 +16,7 @@ Revision history for Perl extension PNI.
     - added blog at http://perl-node-interface.blogspot.com/
 
 0.03  2010-05-31
-    - added PNI::NODECOLLECTION so you can find nodes at runtime
+    - some bug fixing
     - backported from perl 5.10 to 5.8.8
 
 0.02  2010-05-12

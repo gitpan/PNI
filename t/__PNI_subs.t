@@ -1,6 +1,5 @@
 use strict;
 use Test::More;
-
 use PNI;
 
 my $node1 = PNI::NODE 'Perlop::Not';

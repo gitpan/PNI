@@ -1,7 +1,8 @@
 package PNI::Item;
 use strict;
 use warnings;
-our $VERSION = '0.1';
+our $VERSION = '0.11';
+use PNI::Error;
 
 my $next_id;
 
@@ -23,16 +24,25 @@ sub add {
     my $self = shift;
     my $id   = $self->id;
 
-    my $attribute_name = shift or return;
+    my $attribute_name = shift or return PNI::Error::missing_required_argument;
 
     # attribute names are unique and cannot be overridden
     exists $attr{$id}{$attribute_name} and return;
 
-    # value can be undef
+    # attribute value can be undef
     my $attribute_value = shift;
 
     $attr{$id}{$attribute_name} = $attribute_value;
 
+    return 1;
+}
+
+sub del {
+    my $self           = shift;
+    my $id             = $self->id;
+    my $attribute_name = shift or return PNI::Error::missing_required_argument;
+
+    delete $attr{$id}{$attribute_name};
     return 1;
 }
 

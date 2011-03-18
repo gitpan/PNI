@@ -1,11 +1,8 @@
 package PNI::Node::Perlvar::Process_id;
-
 use strict;
 use warnings;
-
-our $VERSION = '0.1';
-
-our @ISA = ('PNI::Node');
+our $VERSION = '0.11';
+use base 'PNI::Node';
 
 sub init {
     my $node = shift;

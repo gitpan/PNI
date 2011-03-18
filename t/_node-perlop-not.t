@@ -4,14 +4,14 @@ use Test::More;
 use PNI;
 
 my $node = PNI::NODE 'Perlop::Not';
-
 isa_ok( $node, 'PNI::Node' );
 
-# inputs in
-isa_ok( $node->get_input('in') , 'PNI::Slot::In');
+# check slots
+isa_ok($node->get_input('in'),'PNI::Slot::In');
+isa_ok($node->get_output('out'),'PNI::Slot::Out');
 
-# output out
-isa_ok( $node->get_output('out') , 'PNI::Slot::Out');
+# check default values
+ok( $node->task );
 
 ok( $node->get_input('in')->set_data(1) );
 ok( $node->task );

@@ -1,0 +1,56 @@
+Future plans for Perl Node Interface.
+
+0.11  2011-04
+    - abstract gui and scenario model
+    - scenario items: node link and text
+    # togli la cartella PerlNodeInterface, prima metti tutti i nodi che hai li nella PNI
+
+0.12  2011-06
+    - scenario loader
+    - dynamic node finding with PNI::NODES
+    - pod coverage ok
+    - pod snippets ok
+    - PNI::Node::Sys::Hostname
+    - PNI::GUI::Tk 0.11
+    - sourceforge release
+
+0.14  2011-08
+    - PNI::Event - per creare nodi e tutto quando lo dico io cioè all' inizio del giro
+    quindi i create node vanno in una coda che viene smaltita tutta insieme
+    - PNI::Config
+    - use Module::Load
+    - PNI::Trace ??
+    - PNI::Exception ??
+
+0.15  2011-10
+    - scenario writer
+    - .pni example files for every node
+    - slot type contraints
+    - slot change flag
+    - PNI::Node::List::Util
+
+0.16  2011-12
+    - node inheritance
+    - more more more nodes
+
+0.17  2012-02
+    - automatic cpan updates with any PNI::GUI
+    - PNI::Node::PPI
+    - PNI::Node::Log::Dispatch
+
+0.19  2012-06
+
+0.2   2012-08
+
+> 0.2
+    - PNI::Syntax - source filter for nodes
+    - Perl::Critic custom policies
+    - Perl::Node::BioPerl
+    - PNI::GUI::Model PNI::GUI::View PNI::GUI::Controller
+        with PNI::GUI::*::View PNI::GUI::*::Controller
+    - PNI::Node::WebGL
+    - PNI::GUI::WebGL
+    - node editor
+    - PNI::GUI::Model::Point
+
+

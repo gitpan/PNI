@@ -1,11 +1,8 @@
 package PNI::Node::Perlfunc::Sleep;
-
 use strict;
 use warnings;
-
-our $VERSION = '0.1';
-
-our @ISA = ('PNI::Node');
+our $VERSION = '0.11';
+use base 'PNI::Node';
 
 sub init {
     my $node = shift;
@@ -18,9 +15,11 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $sleeping_time = $node->get_input('in')->get_data;
+    my $in_data = $node->get_input('in')->get_data;
 
-    sleep $sleeping_time;
+    if ( defined $in_data ) {
+        sleep $in_data;
+    }
 
     return 1;
 }

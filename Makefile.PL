@@ -1,10 +1,12 @@
-use 5.8.8;
+use 5.008008008;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME         => 'PNI',
     VERSION_FROM => 'lib/PNI.pm',
     PREREQ_PM    => {
+		# TODO English viene usato solo nei test, toglilo
+        English => 0,
         File::Find  => 0,
         File::Spec  => 0,
         Time::HiRes => 0,

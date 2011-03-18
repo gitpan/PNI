@@ -1,0 +1,14 @@
+use strict;
+use Test::More;
+use PNI::Error;
+
+TODO: { local $TODO = 'TODO'; ok(0) }
+
+ok(0,'not included in PNI distribution');
+
+# tell PNI::Error to be silent for next tests
+PNI::Error::verbose_off;
+
+done_testing;
+__END__
+

@@ -1,11 +1,8 @@
 package PNI::Node::Perlfunc::Sqrt;
-
 use strict;
 use warnings;
-
-our $VERSION = '0.1';
-
-our @ISA = ('PNI::Node');
+our $VERSION = '0.11';
+use base 'PNI::Node';
 
 sub init {
     my $node = shift;
@@ -19,7 +16,15 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->get_output('out')->set_data( sqrt $node->get_input('in')->get_data );
+    my $in_data = $node->get_input('in')->get_data;
+    my $out     = $node->get_output('out');
+
+    if ( defined $in_data ) {
+        $out->set_data( sqrt $in_data );
+    }
+    else {
+        $out->set_data(undef);
+    }
 
     return 1;
 }

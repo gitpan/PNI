@@ -3,11 +3,14 @@ use Test::More;
 use PNI;
 
 my $node = PNI::NODE 'Perlfunc::Ref';
-
 isa_ok( $node, 'PNI::Node' );
 
+# check slots
 isa_ok($node->get_input('in'),'PNI::Slot::In');
 isa_ok($node->get_output('out'),'PNI::Slot::Out');
+
+# check default values
+ok( $node->task );
 
 my @array = qw( foo bar );
 my $array_ref = \@array;

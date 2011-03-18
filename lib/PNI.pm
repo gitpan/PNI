@@ -1,9 +1,11 @@
 package PNI;
 use strict;
 use warnings;
-our $VERSION = '0.1';
-use 5.8.8;
+our $VERSION = '0.11';
+use 5.008008008;
 use PNI::Hierarchy;
+use PNI::Link;
+use PNI::Node;
 use File::Find;
 use Time::HiRes('usleep');
 
@@ -21,12 +23,59 @@ sub LINK {
     my $source_output = $source_node->get_output($source_output_name);
     my $target_input  = $target_node->get_input($target_input_name);
 
-    return ROOT->add_link( source => $source_output, target => $target_input );
+    my $link = PNI::Link->new(
+        source => $source_output,
+        target => $target_input
+    ) or return;
+
+    return ROOT->add_link($link);
 }
 
 sub NODE {
-    my $node_type = shift;
-    return ROOT->add_node( type => $node_type, @_ );
+
+    # return an empty node if no arg is provided
+    my $type = shift or return PNI::Node->new;
+
+    my $node = PNI::Node->new( type => $type, @_ ) or return;
+
+    return ROOT->add_node($node);
+}
+
+sub NODES {
+    return {
+        Perlfunc => [
+            qw(
+              Chomp
+              Chop
+              Cos
+              Exp
+              Length
+              Log
+              Print
+              Ref
+              Sin
+              Sqrt
+              )
+        ],
+        Perlop => [
+            qw(
+              And
+              Backticks
+              Not
+              Numerically_equal
+              Or
+              Range
+              Stringwise_equal
+              )
+        ],
+        Perlvar => [
+            qw(
+              Osname
+              Perl_version
+              Process_id
+              )
+        ]
+    };
 }
 
 sub RUN {
@@ -49,15 +98,19 @@ __END__
 
 PNI - Perl Node Interface
 
+=head1 ATTENTION
+
+This module it was created to be used by a GUI, anyway you are free to use the scripting api if it does make sense.
+
 =head1 SYNOPSIS
 
-  use PNI;
+    use PNI;
 
-  my $node = PNI::NODE 'Perlfunc::Print';
-  $node->set_input( list => 'Hello World !' );
-  $node->set_input( do_print => 1 );
+    my $node = PNI::NODE 'Perlfunc::Print';
+    $node->get_input('list')->set_data('Hello World !');
+    $node->get_input('do_print')->set_data(1);
 
-  PNI::RUN;
+    PNI::RUN;
 
 =head1 DESCRIPTION
 
@@ -90,18 +143,18 @@ to people who don't know the Perl language.
 
 Blah blah blah. ( this was the h2xs command :-)
 
+=head1 METHODS
+
 =head2 EXPORT
 
 PNI module does not export subs, you have to call them directly. 
 They are all uppercase and you can omit parenthesis, like
 
-  PNI::NODE 'Some::Node';
+    PNI::NODE 'Some::Node';
 
-  PNI::RUN;
+    PNI::RUN;
 
 They often delegates to other modules methods inside the PNI namespace.
-
-=head1 SUBROUTINES/METHODS
 
 =over
 
@@ -109,17 +162,21 @@ They often delegates to other modules methods inside the PNI namespace.
 
 Connects an output of a node to an input of another node.
 
-  my $source_node = PNI::NODE 'Some::Node';
+    my $source_node = PNI::NODE 'Some::Node';
 
-  my $target_node = PNI::NODE 'Another::Node';
+    my $target_node = PNI::NODE 'Another::Node';
 
-  PNI::LINK $source_node => $target_node , 'source_output_name' => 'target_input_name';
+    my $link = PNI::LINK 
+      $source_node => $target_node , 
+      'source_output_name' => 'target_input_name';
+
+Delegates to PNI::Link constructor .
 
 =item PNI::NODE
 
 Creates a node by its pni type. If you write
 
-  PNI::NODE 'Some::Node'
+    my $node = PNI::NODE 'Some::Node';
 
 PNI do the following steps:
 
@@ -140,17 +197,29 @@ calls the init method as implemented in the PNI::Node::Some::Node package .
 
 =item 4
 
-adds the node to the root hierarchy
+adds the node to the root hierarchy .
 
 =back
 
+If no type is passed, and you just write
+
+    my $node = PNI::NODE;
+    
+PNI creates an empty node that can be decorated later .
+
+Delegates to PNI::Node constructor .
+
+=item PNI::ROOT
+
+Returns the root hierarchy which is a PNI::Hierarchy created at startup .
+
 =item PNI::RUN
 
-Updates the tree node hierarchy and calls the task method for every loaded node.
+Updates the root hierarchy and calls the task method for every loaded node .
 
 =item PNI::LOOP
 
-Starts the PNI main loop, it keeps calling PNI::RUN as fast as it can.
+Starts the PNI main loop . It keeps calling PNI::RUN as fast as it can.
 
 =back
 
@@ -176,7 +245,7 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 
 Copyright (C) 2010 by G. Casati
 
-This library is free software; you can redistribute it and/or modify
+This library is free software, you can redistribute it and/or modify
 it under the same terms as Perl itself .
 
 =cut

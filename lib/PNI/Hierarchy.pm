@@ -1,8 +1,9 @@
 package PNI::Hierarchy;
 use strict;
 use warnings;
-our $VERSION = '0.1';
+our $VERSION = '0.11';
 use base 'PNI::Item';
+use PNI::Error;
 use PNI::Link;
 use PNI::Node;
 
@@ -14,46 +15,58 @@ sub new {
     return $self;
 }
 
-sub add_node {
-    my $self = shift;
-    my $node = PNI::Node->new( @_, hierarchy => $self ) or return;
-    $self->get('nodes')->{ $node->id } = $node;
-    return $node;
-}
-
 sub add_link {
     my $self = shift;
-    my $link = PNI::Link->new( @_, hierarchy => $self ) or return;
+
+    # arg is required and it must be a PNI::Link
+    my $link = shift
+      or PNI::Error::missing_required_argument and return;
+    $link->isa('PNI::Link')
+      or PNI::Error::invalid_argument_type and return;
+
     $self->get('links')->{ $link->id } = $link;
     return $link;
 }
 
-sub del_node { }
-sub del_link { }
+sub add_node {
+    my $self = shift;
+
+    # arg is required and it must be a PNI::Node
+    my $node = shift
+      or PNI::Error::missing_required_argument and return;
+    $node->isa('PNI::Node')
+      or PNI::Error::invalid_argument_type and return;
+
+    $self->get('nodes')->{ $node->id } = $node;
+    return $node;
+}
 
 sub get_node {
-    my $self    = shift;
-    my $node_id = shift or return;
-    my $node    = $self->get('nodes')->{$node_id} or return;
+    my $self = shift;
+
+    # arg is required
+    my $node_id = shift
+      or PNI::Error::missing_required_argument and return;
+    my $node = $self->get('nodes')->{$node_id} or return;
     return $node;
 }
 
 sub get_link {
-    my $self    = shift;
-    my $link_id = shift or return;
-    my $link    = $self->get('links')->{$link_id};
+    my $self = shift;
+
+    # arg is required
+    my $link_id = shift
+      or PNI::Error::missing_required_argument and return;
+    my $link = $self->get('links')->{$link_id};
     defined $link or return;
     return $link;
 }
 
-sub get_nodes {
-    return values %{ shift->get('nodes') };
-}
+sub get_nodes { return values %{ shift->get('nodes') }; }
 
-sub get_links {
-    return values %{ shift->get('links') };
-}
+sub get_links { return values %{ shift->get('links') }; }
 
+# Here we are, this is one of the PNI most important subs
 sub task {
     my $self = shift;
 
@@ -83,7 +96,15 @@ sub task {
         if ($node_can_run_task) {
 
             # ok, now it's time to run node task
-            eval { $node->task } or warn "unable to run $node task";
+            eval { $node->task } or do {
+
+                # if it fails reset node
+                $node->init;
+
+                #and raise error without return
+                PNI::Error::unable_to_run_task;
+            };
+
             $has_run_task_of{$node} = 1;
 
             # after node task, trigger all its output links

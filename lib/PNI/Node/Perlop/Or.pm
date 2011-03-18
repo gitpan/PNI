@@ -1,11 +1,8 @@
 package PNI::Node::Perlop::Or;
-
 use strict;
 use warnings;
-
-our $VERSION = '0.1';
-
-our @ISA = ('PNI::Node');
+our $VERSION = '0.11';
+use base 'PNI::Node';
 
 sub init {
     my $node = shift;
@@ -21,10 +18,16 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->get_output('out')->set_data(
-             $node->get_input('in1')->get_data
-          or $node->get_input('in2')->get_data
-    );
+    my $in1_data = $node->get_input('in1')->get_data;
+    my $in2_data = $node->get_input('in2')->get_data;
+    my $out      = $node->get_output('out');
+
+    if ( defined $in1_data and defined $in2_data ) {
+        $out->set_data( $in1_data or $in2_data );
+    }
+    else {
+        $out->set_data(undef);
+    }
 
     return 1;
 }
