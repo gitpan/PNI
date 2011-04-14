@@ -2,12 +2,15 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Exp';
-isa_ok( $node, 'PNI::Node' );
+my $node = PNI::node 'Perlfunc::Exp';
+isa_ok $node, 'PNI::Node';
+
+# check default values
+ok $node->task;
 
 # check slots
-isa_ok($node->get_input('in'),'PNI::Slot::In');
-isa_ok($node->get_output('out'),'PNI::Slot::Out');
+isa_ok( $node->get_input('in'),   'PNI::Slot::In' );
+isa_ok( $node->get_output('out'), 'PNI::Slot::Out' );
 
 # check default values
 ok( $node->task );
@@ -20,5 +23,5 @@ $node->get_input('in')->set_data(1);
 ok( $node->task );
 is( $node->get_output('out')->get_data, ( exp(1) ), 'exp(1)' );
 
-done_testing();
-
+done_testing;
+__END__

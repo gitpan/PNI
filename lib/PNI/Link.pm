@@ -1,13 +1,13 @@
 package PNI::Link;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Item';
 use PNI::Error;
 
 sub new {
     my $class = shift;
-    my $arg = {@_} or return;
+    my $arg   = {@_};
 
     # source arg is required and it must be a PNI::Slot::Out
     my $source = $arg->{source}
@@ -34,9 +34,9 @@ sub new {
 
 sub get_source { return shift->get('source'); }
 
-sub get_target { return shift->get('target'); }
-
 sub get_source_node { return shift->get_source->get_node; }
+
+sub get_target { return shift->get('target'); }
 
 sub get_target_node { return shift->get_target->get_node; }
 
@@ -46,4 +46,3 @@ sub task {
 }
 
 1;
-

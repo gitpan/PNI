@@ -2,37 +2,35 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlop::And';
-isa_ok( $node, 'PNI::Node' );
-
-# check slots
-isa_ok( $node->get_input('in1'), 'PNI::Slot::In' );
-isa_ok( $node->get_input('in2'), 'PNI::Slot::In' );
-isa_ok( $node->get_output('out'), 'PNI::Slot::Out' );
+my $node = PNI::node 'Perlop::And';
+isa_ok $node, 'PNI::Node';
 
 # check default values
-ok( $node->task );
+ok $node->task;
 
-ok( $node->get_input('in1')->set_data(1), 'set_data' );
-ok( $node->get_input('in2')->set_data(0), 'set_data' );
+my $in1 = $node->get_input('in1');
+my $in2 = $node->get_input('in2');
+my $out = $node->get_output('out');
 
-ok( $node->task, 'task' );
-is( $node->get_output('out')->get_data, ( 1 and 0 ), '1 and 0' );
+$in1->set_data(1);
+$in2->set_data(0);
+ok $node->task;
+is $out->get_data, ( 1 and 0 ), '1 and 0';
 
-$node->get_input('in1')->set_data(1);
-$node->get_input('in2')->set_data(1);
-ok( $node->task, 'task' );
-is( $node->get_output('out')->get_data, ( 1 and 1 ), '1 and 1' );
+$in1->set_data(0);
+$in2->set_data(1);
+ok $node->task;
+is $out->get_data, ( 0 and 1 ), '0 and 1';
 
-$node->get_input('in1')->set_data(0);
-$node->get_input('in2')->set_data(0);
-ok( $node->task, 'task' );
-is( $node->get_output('out')->get_data, ( 0 and 0 ), '0 and 0' );
+$in1->set_data(0);
+$in2->set_data(0);
+ok $node->task;
+is $out->get_data, ( 0 and 0 ), '0 and 0';
 
-$node->get_input('in1')->set_data(0);
-$node->get_input('in2')->set_data(1);
-ok( $node->task, 'task' );
-is( $node->get_output('out')->get_data, ( 0 and 1 ), '0 and 1' );
+$in1->set_data(1);
+$in2->set_data(1);
+ok $node->task;
+is $out->get_data, ( 1 and 1 ), '1 and 1';
 
-done_testing();
-
+done_testing;
+__END__

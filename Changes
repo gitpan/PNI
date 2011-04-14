@@ -1,9 +1,20 @@
 Revision history for Perl Node Interface.
 
-0.11  2011-04
+0.12  2011-06
+    - more Perlop nodes
+    - Cwd::Getcwd, Scalar::Util::Looks_like_number, List::Util::Max nodes
+    - PNI::Find
+    - every node has a test
+    - code generation with Template Toolkit
+    - PNI::RUN renamed in PNI::step
+    - PNI synopsis test
+
+0.11  2011-03-19
     - added PNI::Error
     - perlcritic ok
     - PNI::Node::Tk 0.11
+    - abstract gui and scenario model
+    - scenario items: node and link
 
 0.1   2011-02-01
     - interface restiling and cleanup

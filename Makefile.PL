@@ -5,12 +5,14 @@ WriteMakefile(
     NAME         => 'PNI',
     VERSION_FROM => 'lib/PNI.pm',
     PREREQ_PM    => {
-		# TODO English viene usato solo nei test, toglilo
-        English => 0,
-        File::Find  => 0,
-        File::Spec  => 0,
-        Time::HiRes => 0,
-        Test::More  => 0.94,
+        File::Find        => 0,
+        File::Spec        => 0,
+        List::Util        => 0,
+		Math::Complex     => 0,
+        Module::Pluggable => 0,
+        Scalar::Util      => 0,
+        Time::HiRes       => 0,
+        Test::More        => 0,
     },
     (
         $] >= 5.005

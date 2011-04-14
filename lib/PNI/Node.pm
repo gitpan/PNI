@@ -1,8 +1,9 @@
 package PNI::Node;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Item';
+use PNI::Error;
 use PNI::Slot::In;
 use PNI::Slot::Out;
 
@@ -33,7 +34,6 @@ sub new {
 
     # seems better than $class->SUPER::new
     my $self = PNI::Item::new($class);
-
     $self->add( 'inputs'  => {} );
     $self->add( 'outputs' => {} );
 
@@ -45,27 +45,25 @@ sub new {
 
 sub add_input {
     my $self = shift;
-    my $input_name = shift or return;
-
-    # cannot have two inputs with the same name
-    exists $self->get('inputs')->{$input_name} and return;
+    my $input_name = shift or return PNI::Error::missing_required_argument;
 
     my $input = PNI::Slot::In->new( node => $self, name => $input_name, @_ )
-      or return;
+      or return PNI::Error::unable_to_create_item;
+
     $self->get('inputs')->{ $input->get_name } = $input;
+
     return $input;
 }
 
 sub add_output {
     my $self = shift;
-    my $output_name = shift or return;
-
-    # cannot have two outputs with the same name
-    exists $self->get('outputs')->{$output_name} and return;
+    my $output_name = shift or return PNI::Error::missing_required_argument;
 
     my $output = PNI::Slot::Out->new( node => $self, name => $output_name, @_ )
-      or return;
+      or return PNI::Error::unable_to_create_item;
+
     $self->get('outputs')->{ $output->get_name } = $output;
+
     return $output;
 }
 
@@ -74,23 +72,19 @@ sub del_output { return 1; }
 
 sub get_input {
     my $self = shift;
-    my $input_name = shift or return;
+    my $input_name = shift or return PNI::Error::missing_required_argument;
     return $self->get('inputs')->{$input_name};
 }
 
 sub get_output {
     my $self = shift;
-    my $output_name = shift or return;
+    my $output_name = shift or return PNI::Error::missing_required_argument;
     return $self->get('outputs')->{$output_name};
 }
 
-sub get_inputs {
-    return values %{ shift->get('inputs') };
-}
+sub get_inputs { return values %{ shift->get('inputs') }; }
 
-sub get_outputs {
-    return values %{ shift->get('outputs') };
-}
+sub get_outputs { return values %{ shift->get('outputs') }; }
 
 sub get_input_links {
     my $self        = shift;
@@ -121,3 +115,16 @@ sub task { return 1; }
 
 1;
 
+=head1 NAME
+
+PNI::Node
+
+=head1 DESCRIPTION
+
+Basic unit of code . This class has an init method called at creation and a task method called at every PNI::RUN .
+
+=head1 SEE ALSO
+
+<PNI::Link>
+
+=cut

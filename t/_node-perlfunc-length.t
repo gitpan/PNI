@@ -1,17 +1,15 @@
 use strict;
-use Test::More tests => 12;
+use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Length';
+my $node = PNI::node 'Perlfunc::Length';
 isa_ok $node, 'PNI::Node';
 
-# check slots
+# check default values
+ok $node->task;
+
 my $in  = $node->get_input('in');
 my $out = $node->get_output('out');
-isa_ok $in,  'PNI::Slot::In';
-isa_ok $out, 'PNI::Slot::Out';
-
-# check default values
 ok $node->task;
 
 $in->set_data('12345');
@@ -31,3 +29,5 @@ $in->set_data('12345');
 ok $node->task;
 is $out->get_data, ( length('12345') ), 'length(\'12345\')';
 
+done_testing;
+__END__

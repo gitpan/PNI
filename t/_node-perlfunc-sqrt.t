@@ -2,20 +2,26 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Sqrt';
-isa_ok( $node, 'PNI::Node' );
-
-# check slots
-isa_ok($node->get_input('in'),'PNI::Slot::In');
-isa_ok($node->get_output('out'),'PNI::Slot::Out');
+my $node = PNI::node 'Perlfunc::Sqrt';
+isa_ok $node, 'PNI::Node';
 
 # check default values
-ok( $node->task );
+ok $node->task;
 
-$node->get_input('in')->set_data(1);
-ok( $node->task );
-is( $node->get_output('out')->get_data, (sqrt(1)), 'sqrt(1)' );
+my $in  = $node->get_input('in');
+my $out = $node->get_output('out');
 
-done_testing();
+$in->set_data(1);
+ok $node->task;
+is $out->get_data, ( sqrt(1) ), 'sqrt(1)';
 
+$in->set_data(0);
+ok $node->task;
+is $out->get_data, ( sqrt(0) ), 'sqrt(0)';
 
+$in->set_data(-1);
+ok $node->task;
+is $out->get_data, undef, 'sqrt(-1)';
+
+done_testing;
+__END__

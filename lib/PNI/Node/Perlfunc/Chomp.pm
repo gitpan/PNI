@@ -1,13 +1,14 @@
 package PNI::Node::Perlfunc::Chomp;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
     $node->add_input('in');
+
     $node->add_output('out');
 
     return 1;
@@ -43,3 +44,12 @@ sub task {
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlfunc::Chomp - PNI node wrapping the Perl chomp function
+
+
+
+
+=cut

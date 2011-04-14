@@ -3,7 +3,7 @@ use Test::More;
 
 use_ok($_) for qw(
   PNI
-  PNI::GUI
+  PNI::Find
   PNI::Error
   PNI::Hierarchy
   PNI::Item
@@ -20,7 +20,6 @@ use_ok($_) for qw(
 
 # checking inheritance
 isa_ok( "PNI::$_", 'PNI::Item' ) for qw(
-  GUI
   Hierarchy
   Link
   Node
@@ -78,10 +77,10 @@ can_ok( 'PNI::Hierarchy', $_ ) for qw(
   task
 );
 can_ok( 'PNI', $_ ) for qw(
-  ROOT
+  root
   LINK
-  NODE
-  RUN
+  node
+  step
   LOOP
 );
 can_ok( 'PNI::Error', $_ ) for qw(
@@ -120,6 +119,13 @@ can_ok( 'PNI::Slot', $_ ) for qw(
   get_data
   get_name
   get_node
+  get_type
+  is_array
+  is_hash
+  is_number
+  is_scalar
+  is_string
+  is_undef
   set_data
 );
 can_ok( 'PNI::Slot::In', $_ ) for qw(

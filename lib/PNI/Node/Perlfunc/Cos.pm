@@ -1,13 +1,14 @@
 package PNI::Node::Perlfunc::Cos;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
     $node->add_input('in');
+
     $node->add_output('out');
 
     return 1;
@@ -16,19 +17,26 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in_data = $node->get_input('in')->get_data;
-    my $out     = $node->get_output('out');
+    my $in  = $node->get_input('in');
+    my $out = $node->get_output('out');
+    my $result;
 
-    if ( defined $in_data ) {
-        my $cos_result = cos $in_data;
+    if ( $in->is_number ) {
+        $result = cos $in->get_data;
+    }
 
-        $out->set_data($cos_result);
-    }
-    else {
-        $out->set_data(undef);
-    }
+    $out->set_data($result);
 
     return 1;
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlfunc::Cos - PNI node wrapping the Perl cos function
+
+
+
+
+=cut

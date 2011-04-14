@@ -1,8 +1,9 @@
 package PNI::Slot;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Item';
+use Scalar::Util;
 
 sub new {
     my $class = shift;
@@ -29,12 +30,93 @@ sub get_name {
     return shift->get('name');
 }
 
+sub get_data {
+    return shift->get('data');
+}
+
 sub get_node {
     return shift->get('node');
 }
 
-sub get_data {
-    return shift->get('data');
+sub get_type {
+    my $data = shift->get_data;
+    return 'UNDEF' if not defined $data;
+    my $type = ref $data;
+    return 'SCALAR' unless $type;
+    return $type;
+}
+
+sub is_array {
+    my $type = shift->get_type;
+    if ( $type eq 'ARRAY' ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+sub is_code {
+    my $type = shift->get_type;
+    if ( $type eq 'CODE' ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+sub is_hash {
+    my $type = shift->get_type;
+    if ( $type eq 'HASH' ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+sub is_number {
+    my $self = shift;
+    if ( $self->is_scalar ) {
+        my $data = $self->get_data;
+        if ( Scalar::Util::looks_like_number($data) ) {
+            return 1;
+        }
+        else { return 0; }
+    }
+    else { return 0; }
+}
+
+sub is_scalar {
+    my $type = shift->get_type;
+    if ( $type eq 'SCALAR' ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+sub is_string {
+    my $self = shift;
+    if ( $self->is_scalar ) {
+        if ( $self->is_number ) {
+            return 0;
+        }
+        else { return 1; }
+    }
+    else { return 0; }
+}
+
+sub is_undef {
+    my $type = shift->get_type;
+    if ( $type eq 'UNDEF' ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 sub set_data {
@@ -46,4 +128,3 @@ sub set_data {
 }
 
 1;
-

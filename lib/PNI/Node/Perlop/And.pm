@@ -9,7 +9,6 @@ sub init {
 
     $node->add_input('in1');
     $node->add_input('in2');
-
     $node->add_output('out');
 
     return 1;

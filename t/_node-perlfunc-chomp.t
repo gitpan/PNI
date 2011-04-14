@@ -2,17 +2,14 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Chomp';
+my $node = PNI::node 'Perlfunc::Chomp';
 isa_ok $node, 'PNI::Node';
-
-# check slots
-my $in  = $node->get_input('in');
-my $out = $node->get_output('out');
-isa_ok $in,  'PNI::Slot::In';
-isa_ok $out, 'PNI::Slot::Out';
 
 # check default values
 ok $node->task;
+
+my $in  = $node->get_input('in');
+my $out = $node->get_output('out');
 
 my $string = 'abc';
 ok $in->set_data($string);
@@ -31,5 +28,3 @@ is_deeply $out->get_data, $same_list_ref;
 
 done_testing;
 __END__
-
-

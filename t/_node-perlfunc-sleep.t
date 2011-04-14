@@ -2,16 +2,11 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Sleep';
-isa_ok( $node, 'PNI::Node' );
-
-# check slots
-isa_ok($node->get_input('in'),'PNI::Slot::In');
+my $node = PNI::node 'Perlfunc::Sleep';
+isa_ok $node, 'PNI::Node';
 
 # check default values
-ok( $node->task );
+ok $node->task;
 
-done_testing();
-
-
-
+done_testing;
+__END__

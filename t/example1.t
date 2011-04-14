@@ -4,15 +4,20 @@ use PNI;
 
 # calculate sin( cos( x ) )
 
-my $sin = PNI::NODE 'Perlfunc::Sin';
-my $cos = PNI::NODE 'Perlfunc::Cos';
+my $sin = PNI::node 'Perlfunc::Sin';
+my $cos = PNI::node 'Perlfunc::Cos';
 
-PNI::LINK $cos => $sin , 'out' => 'in';
+PNI::LINK $cos => $sin, 'out' => 'in';
 
-PNI::RUN;
+for my $in_data ( 0, 1, 0.5 ) {
+    
+	$cos->get_input('in')->set_data($in_data);
+    
+	ok PNI::step;
+    
+	is $sin->get_output('out')->get_data, sin( cos($in_data) ),
+      "sin( cos( $in_data ) )";
+}
 
-TODO: { local $TODO = 'add appropiate checks to complete example'; ok(0) }
-
-done_testing();
-
+done_testing;
 

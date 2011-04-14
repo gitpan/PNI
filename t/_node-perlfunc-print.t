@@ -2,18 +2,20 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Print';
-isa_ok( $node, 'PNI::Node' );
-
-# check slots
-isa_ok( $node->get_input('do_print') , 'PNI::Slot::In');
-isa_ok( $node->get_input('list') , 'PNI::Slot::In');
+my $node = PNI::node 'Perlfunc::Print';
+isa_ok $node, 'PNI::Node';
 
 # check default values
-ok( $node->task );
+ok $node->task;
 
-ok($node->get_input('list')->set_data('Hello'));
-#$node->task;
+my $do_print = $node->get_input('do_print');
+my $list     = $node->get_input('list');
 
-done_testing();
+ok $list->set_data('Hello');
+TODO: {
+    local $TODO = 'need to check stdout output witn Test::More';
+    $node->task;
+}
 
+done_testing;
+__END__

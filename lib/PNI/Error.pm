@@ -1,7 +1,7 @@
 package PNI::Error;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 my $verbose = 1;
 
@@ -44,5 +44,9 @@ sub unable_to_run_task {
     return;
 }
 
-1;
+sub unimplemented_abstract_method {
+    $say->('unable to run task');
+    return;
+}
 
+1;

@@ -1,7 +1,7 @@
 package PNI::Item;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use PNI::Error;
 
 my $next_id;
@@ -19,6 +19,20 @@ sub id {
     my $self = shift;
     return $$self;
 }
+
+sub cleanup {
+    my $self = shift;
+    my $id   = $self->id;
+
+    for my $attribute_name ( keys %{ $attr{$id} } ) {
+        delete $attr{$id}{$attribute_name};
+    }
+
+    return 1;
+}
+
+# init is abstract ...
+sub init { return PNI::Error::unimplemented_abstract_method; }
 
 sub add {
     my $self = shift;
@@ -72,16 +86,9 @@ sub get {
 }
 
 sub DESTROY {
-    my $self = shift;
-    my $id   = $self->id;
 
     # garbage all item attributes
-    for my $attribute_name ( keys %{ $attr{$id} } ) {
-        delete $attr{$id}{$attribute_name};
-    }
-
-    return 1;
+    return shift->cleanup;
 }
 
 1;
-

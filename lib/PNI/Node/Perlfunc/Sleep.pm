@@ -1,7 +1,7 @@
 package PNI::Node::Perlfunc::Sleep;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 use base 'PNI::Node';
 
 sub init {
@@ -25,3 +25,12 @@ sub task {
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlfunc::Sleep - PNI node wrapping the Perl sleep function
+
+
+
+
+=cut

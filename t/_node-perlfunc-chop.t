@@ -2,8 +2,11 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Chop';
+my $node = PNI::node 'Perlfunc::Chop';
 isa_ok $node, 'PNI::Node';
+
+# check default values
+ok $node->task;
 
 # check slots
 my $in             = $node->get_input('in');
@@ -24,3 +27,4 @@ is $out->get_data, $string, 'chop($string)';
 is $last_character->get_data, $last_character_test, 'last_character';
 
 done_testing;
+__END__

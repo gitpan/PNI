@@ -1,0 +1,15 @@
+=head1 NAME
+
+PNI::Node::Cwd - PNI node collection
+
+
+
+
+=head1 SEE ALSO
+
+L<PNI>
+
+L<[ 'also' ]>
+
+
+=cut

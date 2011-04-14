@@ -8,10 +8,10 @@ isa_ok $root, 'PNI::Hierarchy';
 
 ok $root->task, 'hierarchy task without nodes';
 
-my $node1 = PNI::NODE;
+my $node1 = PNI::node;
 ok $root->add_node($node1), 'add empty node';
 
-my $node2 = PNI::NODE;
+my $node2 = PNI::node;
 ok $root->add_node($node2), 'add another empty node';
 
 # decorate nodes

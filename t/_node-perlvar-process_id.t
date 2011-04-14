@@ -1,18 +1,14 @@
 use strict;
-use English;
-use PNI;
 use Test::More;
+use PNI;
 
-my $node = PNI::NODE 'Perlvar::Process_id';
-isa_ok( $node, 'PNI::Node' );
+my $node = PNI::node 'Perlvar::Process_id';
+isa_ok $node, 'PNI::Node';
 
-# check slots
-isa_ok($node->get_output('out'),'PNI::Slot::Out');
+# check default values
+ok $node->task;
 
-# just run once the task to evaluate the variable
-ok( $node->task );
-is($node->get_output('out')->get_data , $PROCESS_ID);
+is $node->get_output('out')->get_data, $$;
 
-done_testing();
-
-
+done_testing;
+__END__

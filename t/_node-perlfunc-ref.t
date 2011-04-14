@@ -2,27 +2,25 @@ use strict;
 use Test::More;
 use PNI;
 
-my $node = PNI::NODE 'Perlfunc::Ref';
-isa_ok( $node, 'PNI::Node' );
-
-# check slots
-isa_ok($node->get_input('in'),'PNI::Slot::In');
-isa_ok($node->get_output('out'),'PNI::Slot::Out');
+my $node = PNI::node 'Perlfunc::Ref';
+isa_ok $node, 'PNI::Node';
 
 # check default values
-ok( $node->task );
+ok $node->task;
 
-my @array = qw( foo bar );
+my $in  = $node->get_input('in');
+my $out = $node->get_output('out');
+
+my @array     = qw( foo bar );
 my $array_ref = \@array;
-ok($node->get_input('in')->set_data($array_ref));
-ok($node->task);
-is($node->get_output('out')->get_data,'ARRAY');
+ok $in->set_data($array_ref);
+ok $node->task;
+is $out->get_data, 'ARRAY';
 
 my $hash_ref = {};
-ok($node->get_input('in')->set_data($hash_ref));
-ok($node->task);
-is($node->get_output('out')->get_data,'HASH');
+ok $in->set_data($hash_ref);
+ok $node->task;
+is $out->get_data, 'HASH';
 
-done_testing();
-
-
+done_testing;
+__END__

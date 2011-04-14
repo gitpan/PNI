@@ -1,10 +1,10 @@
+
 \.tt2$
 \.json$
 \.swp$
 \.gz$
-
-# exclude PNI/Node/Test.pm
-Test\.pm
+\.exe$
+^process_templates$
 
 # 
 # Follows original MANIFEST.SKIP

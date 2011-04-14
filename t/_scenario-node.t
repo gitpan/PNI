@@ -6,7 +6,7 @@ use PNI::Scenario;
 use PNI::Scenario::Node;
 
 my ( $x, $y ) = ( 100, 100 );
-my $pni_node = PNI::NODE;
+my $pni_node = PNI::node;
 my $scenario = PNI::Scenario->new;
 my $node     = PNI::Scenario::Node->new(
     node     => $pni_node,
