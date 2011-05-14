@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlvar::Perl_version';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlvar::Perl_version';
 
 # check default values
 ok $node->task;

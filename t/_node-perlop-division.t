@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlop::Division';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlop::Division';
 
 # check default values
 ok $node->task;

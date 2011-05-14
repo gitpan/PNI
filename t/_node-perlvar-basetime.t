@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlvar::Basetime';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlvar::Basetime';
 
 # check default values
 ok $node->task;

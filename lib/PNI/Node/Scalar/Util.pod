@@ -5,11 +5,12 @@ PNI::Node::Scalar::Util - PNI node collection
 
 
 
-=head1 SEE ALSO
+=head1 NODES
 
-L<PNI>
+=over 4
 
-L<[ 'also' ]>
+=item L<PNI::Node::Scalar::Util::Looks_like_number>
 
+=back
 
 =cut

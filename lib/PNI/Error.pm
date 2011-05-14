@@ -1,7 +1,7 @@
 package PNI::Error;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 
 my $verbose = 1;
 
@@ -39,14 +39,44 @@ sub unable_to_create_item {
     return;
 }
 
+sub unable_to_init_node {
+    $say->('unable to init node');
+    return;
+}
+
+sub unable_to_load_node {
+    $say->('unable to load node');
+    return;
+}
+
 sub unable_to_run_task {
     $say->('unable to run task');
     return;
 }
 
 sub unimplemented_abstract_method {
-    $say->('unable to run task');
+    $say->('unimplemented abstract method');
     return;
 }
 
 1;
+
+=head1 NAME
+
+PNI::Error - errors catalogue
+
+
+
+
+=head1 AUTHOR
+
+G. Casati , E<lt>fibo@cpan.orgE<gt>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (C) 2009-2011, Gianluca Casati
+
+This program is free software, you can redistribute it and/or modify it
+under the same terms of the Artistic License version 2.0 .
+
+=cut

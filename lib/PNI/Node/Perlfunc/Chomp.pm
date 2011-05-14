@@ -1,7 +1,7 @@
 package PNI::Node::Perlfunc::Chomp;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -17,27 +17,24 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in_data = $node->get_input('in')->get_data;
-    my $out     = $node->get_output('out');
+    my $in  = $node->get_input('in');
+    my $out = $node->get_output('out');
 
-    if ( defined $in_data ) {
+    if ( $in->is_undef ) {
+        $out->set_data(undef);
+    }
+    else {
+        my $in_data = $in->get_data;
 
-        my $in_data_type = ref $in_data;
-
-        # if input data is a scalar
-        if ( $in_data_type eq '' ) {
+        if ( $in->is_scalar ) {
             chomp $in_data;
             $out->set_data($in_data);
         }
 
-        # otherwise if it is an array reference
-        elsif ( $in_data_type eq 'ARRAY' ) {
+        elsif ( $in->is_array ) {
             chomp @{$in_data};
             $out->set_data($in_data);
         }
-    }
-    else {
-        $out->set_data(undef);
     }
 
     return 1;
@@ -48,6 +45,8 @@ sub task {
 =head1 NAME
 
 PNI::Node::Perlfunc::Chomp - PNI node wrapping the Perl chomp function
+
+
 
 
 

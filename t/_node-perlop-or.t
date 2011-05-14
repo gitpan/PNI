@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlop::Or';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlop::Or';
 
 # check default values
 ok $node->task;

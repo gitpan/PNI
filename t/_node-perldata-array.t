@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perldata::Array';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perldata::Array';
 
 # check default values
 ok $node->task;

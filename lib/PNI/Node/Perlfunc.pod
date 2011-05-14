@@ -1,26 +1,33 @@
-
 =head1 NAME
 
-PNI::Node::Perlfunc
+PNI::Node::Perlfunc - PNI node collection
+
+
 
 =head1 DESCRIPTION
 
 It's a basic collection of PNI nodes implementing Perl builtin functions.
 
-=head1 SEE ALSO
 
-perlfunc
 
-=head1 AUTHOR
+=head1 NODES
 
-G. Casati , E<lt>fibo@cpan.orgE<gt>
+=over 4
 
-=head1 COPYRIGHT AND LICENSE
+=item L<PNI::Node::Perlfunc::Chomp>
 
-Copyright (C) 2010 by G. Casati
+=item L<PNI::Node::Perlfunc::Chop>
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself .
+=item L<PNI::Node::Perlfunc::Cos>
+
+=item L<PNI::Node::Perlfunc::Sin>
+
+=item L<PNI::Node::Perlfunc::Exp>
+
+=item L<PNI::Node::Perlfunc::Int>
+
+=item L<PNI::Node::Perlfunc::Length>
+
+=back
 
 =cut
-

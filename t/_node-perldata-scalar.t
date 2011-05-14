@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perldata::Scalar';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perldata::Scalar';
 
 # check default values
 ok $node->task;

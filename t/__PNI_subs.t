@@ -1,16 +1,17 @@
 use strict;
+use PNI ':-D';
 use Test::More;
-use PNI;
 
-my $node1 = PNI::node 'Perlop::Not';
-isa_ok($node1,'PNI::Node');
+my $node = node;
+isa_ok $node , 'PNI::Node';
 
-my $node2 = PNI::node 'Perlop::Not';
-isa_ok($node2,'PNI::Node');
+my $node2 = node;
+$node->add_output('out');
+$node2->add_input('in');
 
-my $link = PNI::LINK $node1 => $node2 , 'out' => 'in';
-isa_ok($link,'PNI::Link');
+my $edge = edge $node => $node2, 'out' => 'in';
+isa_ok $edge , 'PNI::Edge';
 
-ok PNI::step;
+ok step;
 
 done_testing;

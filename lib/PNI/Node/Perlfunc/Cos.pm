@@ -1,7 +1,7 @@
 package PNI::Node::Perlfunc::Cos;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -35,6 +35,8 @@ sub task {
 =head1 NAME
 
 PNI::Node::Perlfunc::Cos - PNI node wrapping the Perl cos function
+
+
 
 
 

@@ -1,9 +1,20 @@
 Revision history for Perl Node Interface.
 
-0.12  2011-06
+0.14  2011-05-14
+    - PNI::Node::List::Util
+    - PNI::Node::Scalar::Util
+    - PNI subs in lower case
+    - renamed PNI::Link as PNI::Edge ... link is a reserved word so 
+      if I want to export PNI subs I would have node and edge
+    - PNI code uses a template system to auto generate code
+    - PNI::Slot data method returns raw data
+    - PNI::Slot data_ref method
+    - PNI::Slot is_connected
+
+0.12  2011-04-15
     - more Perlop nodes
     - Cwd::Getcwd, Scalar::Util::Looks_like_number, List::Util::Max nodes
-    - PNI::Find
+
     - every node has a test
     - code generation with Template Toolkit
     - PNI::RUN renamed in PNI::step

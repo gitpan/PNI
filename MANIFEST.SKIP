@@ -4,6 +4,8 @@
 \.swp$
 \.gz$
 \.exe$
+\.dia$
+\.autosave$
 ^process_templates$
 
 # 

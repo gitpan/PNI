@@ -1,14 +1,15 @@
 package PNI::Node::Perlfunc::Print;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
+    $node->add_input('handle');
     $node->add_input('list');
-    $node->add_input( 'do_print', data => 0 );
+    $node->add_input('do_print');
 
     return 1;
 }
@@ -16,30 +17,36 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $do_print      = $node->get_input('do_print');
-    my $do_print_data = $do_print->get_data;
+    my $do_print = $node->get_input('do_print');
 
-    if ($do_print_data) {
+    if ( $do_print->is_defined ) {
 
-        my $list_data = $node->get_input('list')->get_data;
+        my $list = $node->get_input('list');
 
-        if ( defined $list_data ) {
+        if ( $list->is_array ) {
+            my $rv = print STDOUT @{ $list->get_data };
+        }
 
-            my $list_data_type = ref $list_data;
-            if ( $list_data_type eq '' ) {
-                my $rv = print STDOUT $list_data;
-            }
-            elsif ( $list_data_type eq 'ARRAY' ) {
-                my @list_data = @{$list_data};
-                my $rv        = print STDOUT @list_data;
-            }
+        if ( $list->is_scalar ) {
+            my $rv = print STDOUT $list->get_data;
         }
     }
 
     # reset do_print flag
-    $do_print->set_data(0);
+    $do_print->set_data(undef);
 
     return 1;
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlfunc::Print - PNI node wrapping the Perl print function
+
+
+
+
+
+
+=cut

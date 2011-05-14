@@ -10,11 +10,16 @@ It's a basic collection of PNI nodes implementing Perl operators.
 
 
 
-=head1 SEE ALSO
+=head1 NODES
 
-L<PNI>
+=over 4
 
-L<[ 'also' ]>
+=item L<PNI::Node::Perlop::Addition>
 
+=item L<PNI::Node::Perlop::And>
+
+=item L<PNI::Node::Perlop::Backticks>
+
+=back
 
 =cut

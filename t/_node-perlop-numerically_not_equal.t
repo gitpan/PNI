@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlop::Numerically_not_equal';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlop::Numerically_not_equal';
 
 # check default values
 ok $node->task;

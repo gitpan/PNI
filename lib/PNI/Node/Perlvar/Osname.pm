@@ -1,7 +1,7 @@
 package PNI::Node::Perlvar::Osname;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -13,6 +13,8 @@ sub init {
 }
 
 sub task {
+    my $node = shift;
+
     return 1;
 }
 

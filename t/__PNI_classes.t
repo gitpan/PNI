@@ -3,16 +3,11 @@ use Test::More;
 
 use_ok($_) for qw(
   PNI
-  PNI::Find
+  PNI::Edge
   PNI::Error
-  PNI::Hierarchy
   PNI::Item
-  PNI::Link
   PNI::Node
   PNI::Scenario
-  PNI::Scenario::Item
-  PNI::Scenario::Link
-  PNI::Scenario::Node
   PNI::Slot
   PNI::Slot::In
   PNI::Slot::Out
@@ -20,151 +15,100 @@ use_ok($_) for qw(
 
 # checking inheritance
 isa_ok( "PNI::$_", 'PNI::Item' ) for qw(
-  Hierarchy
-  Link
+  Edge
   Node
-  Scenario
-  Scenario::Item
   Slot
-  Slot::In
-  Slot::Out
 );
-isa_ok( "PNI::Scenario::$_", 'PNI::Scenario::Item' ) for qw(
-  Link
-  Node
-);
+isa_ok 'PNI::Scenario', 'PNI::Node';
 isa_ok( "PNI::Slot::$_", 'PNI::Slot' ) for qw(
   In
   Out
 );
 
 # checking subs
-can_ok( 'PNI::Scenario', $_ ) for qw(
-  new
-  add_node
-  add_link
-  get_hierarchy
-);
-can_ok( 'PNI::Scenario::Item', $_ ) for qw(
-  new
-  get_scenario
-  get_hierarchy
-);
-can_ok( 'PNI::Scenario::Link', $_ ) for qw(
-  new
-);
-can_ok( 'PNI::Scenario::Node', $_ ) for qw(
-  new
-  get_center
-  get_center_x
-  get_center_y
-  get_height
-  get_label
-  get_node
-  get_width
-  set_center
-  set_height
-  set_width
-);
-can_ok( 'PNI::Hierarchy', $_ ) for qw(
-  new
-  add_node
-  add_link
-  get_node
-  get_link
-  get_nodes
-  get_links
-  task
-);
 can_ok( 'PNI', $_ ) for qw(
-  root
-  LINK
+  edge
+  loop
   node
+  root
   step
-  LOOP
 );
-can_ok( 'PNI::Error', $_ ) for qw(
-  generic
-  missing_required_argument
-);
-can_ok( 'PNI::Item', $_ ) for qw(
-  new
-  id
-  DESTROY
-);
-can_ok( 'PNI::Link', $_ ) for qw(
+can_ok( 'PNI::Edge', $_ ) for qw(
   new
   get_source
   get_target
   get_source_node
   get_target_node
-  task
+);
+can_ok( 'PNI::Error', $_ ) for qw(
+  generic
+  invalid_argument_type
+  missing_required_argument
+  unable_to_create_item
+  unable_to_init_node
+  unable_to_load_node
+  unable_to_run_task
+  unimplemented_abstract_method
+);
+can_ok( 'PNI::Item', $_ ) for qw(
+  new
+  id
+  add
+  cleanup
+  del
+  get
+  set
 );
 can_ok( 'PNI::Node', $_ ) for qw(
   new
   add_input
   add_output
-  del_input
-  del_output
   get_input
-  get_output
+  get_input_edges
   get_inputs
+  get_output
+  get_output_edges
   get_outputs
-  get_input_links
-  get_output_links
+  init
+  task
+);
+can_ok( 'PNI::Scenario', $_ ) for qw(
+  new
+  add_node
+  add_edge
   task
 );
 can_ok( 'PNI::Slot', $_ ) for qw(
   new
+  data
+  data_ref
   get_data
   get_name
   get_node
   get_type
   is_array
+  is_connected
   is_hash
   is_number
   is_scalar
   is_string
   is_undef
+  join_to
   set_data
 );
 can_ok( 'PNI::Slot::In', $_ ) for qw(
   new
+  add_edge
+  get_edge
+  is_connected
+  join_to
 );
 can_ok( 'PNI::Slot::Out', $_ ) for qw(
   new
-);
-can_ok( 'PNI::Scenario', $_ ) for qw(
-  new
-  add_link
-  add_node
-);
-can_ok( 'PNI::Scenario::Item', $_ ) for qw(
-  new
-);
-can_ok( 'PNI::Scenario::Link', $_ ) for qw(
-  new
-);
-can_ok( 'PNI::Scenario::Node', $_ ) for qw(
-  new
-  get_center
-  get_height
-  get_width
-  set_center
-  set_height
-  set_width
-);
-can_ok( 'PNI::Slot::In', $_ ) for qw(
-  new
-  add_link
-  del_link
-  get_link
-);
-can_ok( 'PNI::Slot::Out', $_ ) for qw(
-  new
-  add_link
-  del_link
-  get_links
+  add_edge
+  get_edges
+  is_connected
+  join_to
 );
 
 done_testing;

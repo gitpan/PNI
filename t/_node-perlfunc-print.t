@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlfunc::Print';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlfunc::Print';
 
 # check default values
 ok $node->task;
@@ -13,7 +14,7 @@ my $list     = $node->get_input('list');
 
 ok $list->set_data('Hello');
 TODO: {
-    local $TODO = 'need to check stdout output witn Test::More';
+    local $TODO = 'need to check stdout output with Test::More';
     $node->task;
 }
 

@@ -1,7 +1,7 @@
-package PNI::Find;
+package PNI::Finder;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use Module::Pluggable search_path => 'PNI::Node', require => 1, inner => 0;
 
 # singleton

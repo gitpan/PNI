@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlfunc::Chomp';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlfunc::Chomp';
 
 # check default values
 ok $node->task;

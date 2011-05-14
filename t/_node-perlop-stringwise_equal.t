@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlop::Stringwise_equal';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlop::Stringwise_equal';
 
 # check default values
 ok $node->task;

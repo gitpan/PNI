@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlfunc::Ref';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlfunc::Ref';
 
 # check default values
 ok $node->task;

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               PNI
-version:            0.12
+version:            0.14
 abstract:           Perl Node Interface
 author:
     - G. Casati <fibo@cpan.org>
@@ -12,7 +12,6 @@ build_requires:
     ExtUtils::MakeMaker:  0
 requires:
     File::Find:         0
-    File::Spec:         0
     List::Util:         0
     Math::Complex:      0
     Module::Pluggable:  0

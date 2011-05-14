@@ -1,3 +1,0 @@
-[% node = '' %]
-[% WRAPPER t/node.tt2 %]
-[% END %]

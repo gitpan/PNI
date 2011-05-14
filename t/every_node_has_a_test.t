@@ -1,14 +1,14 @@
 use strict;
 use Test::More;
 use File::Spec;
-use PNI::Find;
+use PNI::Finder;
 
 if ( not $ENV{TEST_AUTHOR} ) {
     my $msg = 'Author test.  Set $ENV{TEST_AUTHOR} to a true value to run.';
     plan( skip_all => $msg );
 }
 
-my $find = PNI::Find->new;
+my $find = PNI::Finder->new;
 
 my @core_nodes_dirs;
 my $node_dir_path = File::Spec->catfile(qw(lib PNI Node));

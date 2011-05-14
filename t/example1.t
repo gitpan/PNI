@@ -1,23 +1,23 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
 # calculate sin( cos( x ) )
 
-my $sin = PNI::node 'Perlfunc::Sin';
-my $cos = PNI::node 'Perlfunc::Cos';
+ok my $sin = node 'Perlfunc::Sin';
+ok my $cos = node 'Perlfunc::Cos';
 
-PNI::LINK $cos => $sin, 'out' => 'in';
+edge $cos => $sin, 'out' => 'in';
 
 for my $in_data ( 0, 1, 0.5 ) {
     
 	$cos->get_input('in')->set_data($in_data);
     
-	ok PNI::step;
+	ok step;
     
 	is $sin->get_output('out')->get_data, sin( cos($in_data) ),
       "sin( cos( $in_data ) )";
 }
 
 done_testing;
-
+__END__

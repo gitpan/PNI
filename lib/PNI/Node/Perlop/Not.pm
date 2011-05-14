@@ -1,7 +1,7 @@
 package PNI::Node::Perlop::Not;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -31,3 +31,14 @@ sub task {
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlop::Not - PNI node wrapping the Perl not operator
+
+
+
+
+
+
+=cut

@@ -1,34 +1,22 @@
 Future plans for Perl Node Interface
 
-0.14  2011-06
+0.15  2011-08
     - scenario loader
     - pod coverage ok
     - pod snippets ok
-    - scenario item text and image
-    - PNI subs in lower case
-    - renamed PNI::Link as PNI::Edge ... link is a reserved word so 
-        if I want to export PNI subs I would have node and edge
-    - PNI::Command ?  node edge step loop ... load quit
-      basta anche fare 
-       use PNI;
-       node 
-       edge
-
-    
-0.15  2011-08
     - PNI::Event - per creare nodi e tutto quando lo dico io cioè all' inizio del giro
     quindi i create node vanno in una coda che viene smaltita tutta insieme
     - PNI::Config
-    - use Module::Load
     - PNI::Trace ??
     - PNI::Exception ??
+    - PNI::Command ?  node edge step loop ... load quit
 
 0.16  2011-10
     - scenario writer
     - .pni example files for every node
     - slot type contraints
     - slot change flag
-    - PNI::Node::List::Util
+    - scenario item text and image
 
 0.17  2011-12
     - node inheritance

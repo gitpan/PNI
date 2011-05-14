@@ -4,6 +4,7 @@ use PNI;
 
 my $node = PNI::node 'Perlvar::Process_id';
 isa_ok $node, 'PNI::Node';
+isa_ok $node, 'PNI::Node::Perlvar::Process_id';
 
 # check default values
 ok $node->task;

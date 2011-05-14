@@ -1,7 +1,7 @@
 package PNI::Node::Perlfunc::Sub;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -51,7 +51,7 @@ sub task {
         $do_eval->set_data(0);
     }
     else {
-        $code->set_data(undef);
+        $code->set_data(0);
     }
 
     return 1;
@@ -62,6 +62,8 @@ sub task {
 =head1 NAME
 
 PNI::Node::Perlfunc::Sub - PNI node wrapping the Perl sub function
+
+
 
 
 

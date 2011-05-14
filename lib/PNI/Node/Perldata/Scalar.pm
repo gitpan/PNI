@@ -1,7 +1,7 @@
 package PNI::Node::Perldata::Scalar;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
@@ -34,7 +34,9 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perldata::Scalar
+PNI::Node::Perldata::Scalar - PNI node wrapping the Perl builtin SCALAR data type
+
+
 
 
 

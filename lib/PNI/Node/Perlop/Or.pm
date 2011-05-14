@@ -1,13 +1,14 @@
 package PNI::Node::Perlop::Or;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
     $node->add_input('in1');
+
     $node->add_input('in2');
 
     $node->add_output('out');
@@ -18,11 +19,13 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in1_data = $node->get_input('in1')->get_data;
-    my $in2_data = $node->get_input('in2')->get_data;
-    my $out      = $node->get_output('out');
+    my $in1 = $node->get_input('in1');
+    my $in2 = $node->get_input('in2');
+    my $out = $node->get_output('out');
 
-    if ( defined $in1_data and defined $in2_data ) {
+    if ( $in1->is_defined and $in2->is_defined ) {
+        my $in1_data = $in1->get_data;
+        my $in2_data = $in2->get_data;
         $out->set_data( $in1_data or $in2_data );
     }
     else {
@@ -33,3 +36,14 @@ sub task {
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlop::Or - PNI node wrapping the Perl or operator
+
+
+
+
+
+
+=cut

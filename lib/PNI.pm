@@ -1,23 +1,30 @@
 package PNI;
 use strict;
 use warnings;
-our $VERSION = '0.12';
-use 5.008008008;
-use PNI::Find;
-use PNI::Hierarchy;
-use PNI::Link;
+our $VERSION = '0.14';
+use Exporter 'import';
+use PNI::Edge;
+use PNI::Finder;
 use PNI::Node;
-use File::Spec;
-use Time::HiRes('usleep');
+use PNI::Scenario;
+use Time::HiRes;
 
-# PNI::Find is a singleton
-sub find { return PNI::Find->new; }
+# use PNI ':-D';
+# exports edge, node and step
+our @EXPORT_OK = qw(edge node step);
+our %EXPORT_TAGS = ( '-D' => \@EXPORT_OK );
 
-# there is only one PNI root
-my $root = PNI::Hierarchy->new;
-sub root { return $root; }
+# root scenario
+my $root = PNI::Scenario->new;
 
-sub LINK {
+my $find = PNI::Finder->new;
+
+sub node_list {
+    return $find->node_list;
+}
+
+# edge $source_node => $target_node, 'out_slot_name' => 'in_slot_name'
+sub edge {
     my $source_node        = shift;
     my $target_node        = shift;
     my $source_output_name = shift;
@@ -26,36 +33,28 @@ sub LINK {
     my $source_output = $source_node->get_output($source_output_name);
     my $target_input  = $target_node->get_input($target_input_name);
 
-    my $link = PNI::Link->new(
+    return $root->add_edge(
         source => $source_output,
         target => $target_input
-    ) or return;
+    );
+}
 
-    return root->add_link($link);
+sub loop {
+    while (1) {
+        step();
+        Time::HiRes::usleep(1);
+    }
+    return 1;
 }
 
 sub node {
-
-    # return an empty node if no arg is provided
-    my $type = shift or return PNI::Node->new;
-
-    my $node = PNI::Node->new( type => $type, @_ ) or return;
-
-    return root->add_node($node);
+    my $type = shift;
+    return $root->add_node( type => $type, @_ );
 }
 
-sub step {
-    return root->task;
-}
+sub root { return $root; }
 
-sub LOOP {
-    while (1) {
-        step;
-        usleep(1);
-    }
-
-    return 1;
-}
+sub step { return $root->task; }
 
 1;
 
@@ -63,19 +62,21 @@ sub LOOP {
 
 PNI - Perl Node Interface
 
+
+
 =head1 ATTENTION
 
-This module was created to be used by a GUI, anyway you are free to use the scripting api if it does make sense.
+This module was created to be used internally by a GUI, anyway you are free to use the scripting api if it does make sense.
 
 =head1 SYNOPSIS
 
-use PNI;
+    use PNI ':-D';
 
-    my $node = PNI::node 'Perlfunc::Print';
+    my $node = node 'Perlfunc::Print';
     $node->get_input('list')->set_data('Hello World !');
     $node->get_input('do_print')->set_data(1);
 
-    PNI::step;
+    step;
 
 =head1 DESCRIPTION
 
@@ -110,31 +111,25 @@ Blah blah blah. ( this was the h2xs command :-)
 
 =head1 METHODS
 
-No method is exported by PNI, you have to call them directly .
-
-=item PNI::find
-
-
-
-=item PNI::LINK
+=head2 C<edge>
 
 Connects an output of a node to an input of another node.
 
-    my $source_node = PNI::node 'Some::Node';
+    my $source_node = node 'Some::Node';
 
-    my $target_node = PNI::node 'Another::Node';
+    my $target_node = node 'Another::Node';
 
-    my $link = PNI::LINK 
+    my $edge = edge 
       $source_node => $target_node , 
       'source_output_name' => 'target_input_name';
 
-Delegates to PNI::Link constructor .
+This method delegates to L<PNI::Edge> constructor.
 
-=item PNI::node
+=head2 C<node>
 
 Creates a node by its pni type. If you write
 
-    my $node = PNI::node 'Some::Node';
+    my $node = node 'Some::Node';
 
 PNI do the following steps:
 
@@ -142,44 +137,39 @@ PNI do the following steps:
 
 =item 1
 
-requires the PNI/Node/Some/Node.pm module .
+requires the PNI/Node/Some/Node.pm module.
 
 =item 2
 
 creates a new PNI::Node, assigns it an id 
-and bless it as a PNI::Node::Some::Node .
+and bless it as a PNI::Node::Some::Node.
 
 =item 3
 
-calls the init method as implemented in the PNI::Node::Some::Node package .
+calls the init method as implemented in the PNI::Node::Some::Node package.
 
 =item 4
 
-adds the node to the root hierarchy .
+adds the node to the root scenario.
 
 =back
 
 If no type is passed, and you just write
 
-    my $node = PNI::node;
+    my $node = node;
     
-PNI creates an empty node that can be decorated later .
+PNI creates an empty node.
 
-Delegates to PNI::Node constructor .
+This method delegates to L<PNI::Node> constructor.
 
-=item PNI::root
+=head2 C<task>
 
-Returns the root hierarchy which is a PNI::Hierarchy created at startup .
+Calls the task method for every loaded node.
+This method delegates to the root scenario task method.
 
-=item PNI::step
+=head2 C<loop>
 
-Updates the root hierarchy and calls the task method for every loaded node .
-
-=item PNI::LOOP
-
-Starts the PNI main loop . It keeps calling PNI::step as fast as it can.
-
-=back
+Starts the PNI main loop. It keeps calling C<task> as fast as it can.
 
 =head1 SEE ALSO
 

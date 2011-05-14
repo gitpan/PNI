@@ -5,11 +5,12 @@ PNI::Node::Cwd - PNI node collection
 
 
 
-=head1 SEE ALSO
+=head1 NODES
 
-L<PNI>
+=over 4
 
-L<[ 'also' ]>
+=item L<PNI::Node::Cwd::Getcwd>
 
+=back
 
 =cut

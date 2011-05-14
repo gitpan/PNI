@@ -1,7 +1,7 @@
 package PNI::Node::List::Util::Max;
 use strict;
 use warnings;
-our $VERSION = '0.12';
+our $VERSION = '0.14';
 use base 'PNI::Node';
 
 use List::Util 'max';
@@ -9,9 +9,7 @@ use List::Util 'max';
 sub init {
     my $node = shift;
 
-    $node->add_input('in1');
-
-    $node->add_input('in2');
+    $node->add_input('in');
 
     $node->add_output('out');
 
@@ -21,6 +19,16 @@ sub init {
 sub task {
     my $node = shift;
 
+    my $in  = $node->get_input('in');
+    my $out = $node->get_output('out');
+    my $result;
+
+    if ( $in->is_array ) {
+        $result = max $in->data;
+    }
+
+    $out->set_data($result);
+
     return 1;
 }
 
@@ -28,7 +36,9 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::List::Util::Max
+PNI::Node::List::Util::Max - PNI node wrapping the List::Util max function
+
+
 
 
 
