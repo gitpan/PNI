@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
-my $node = PNI::node 'Perlvar::Basetime';
+my $node = node 'Perlvar::Basetime';
 isa_ok $node, 'PNI::Node';
 isa_ok $node, 'PNI::Node::Perlvar::Basetime';
 

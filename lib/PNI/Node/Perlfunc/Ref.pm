@@ -1,14 +1,16 @@
 package PNI::Node::Perlfunc::Ref;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
-    $node->add_output('out');
+    my $in = $node->add_input('in');
+
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -16,8 +18,44 @@ sub init {
 sub task {
     my $node = shift;
 
-    $node->get_output('out')->set_data( ref $node->get_input('in')->get_data );
+    my $in = $node->get_input('in');
+
+    my $out = $node->get_output('out');
+
+    my $result;
+
+    if ( $in->is_defined ) {
+        $result = ref $in->get_data;
+    }
+
+    $out->set_data($result);
+
     return 1;
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlfunc::Ref - PNI node wrapping the Perl C<ref> function
+
+
+
+
+=head1 INPUTS
+
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
+
+=cut

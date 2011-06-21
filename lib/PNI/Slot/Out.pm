@@ -1,16 +1,17 @@
 package PNI::Slot::Out;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Slot';
-use PNI::Error 0.14;
+use PNI::Error 0.15;
 
 sub new {
     my $class = shift;
     my $arg   = {@_};
+    my $self  = $class->SUPER::new(@_)
+      or return PNI::Error::unable_to_create_item;
 
-    # call the Slot constructor and check result
-    my $self = $class->SUPER::new(@_) or return;
     $self->add( edges => {} );
 
     return $self;
@@ -27,6 +28,7 @@ sub add_edge {
 
 sub get_edges { return values %{ shift->get('edges') }; }
 
+# return 0 or 1
 sub is_connected {
     my $self  = shift;
     my @edges = $self->get_edges;
@@ -34,12 +36,37 @@ sub is_connected {
     else          { return 0; }
 }
 
+# return $edge
+sub join_to {
+    my $self = shift;
+
+    # input_slot arg is required
+    my $input_slot = shift or return PNI::Error::missing_required_argument;
+
+    return PNI::Edge->new( target => $input_slot, source => $self );
+}
+
 1;
+__END__
 
 =head1 NAME
 
 PNI::Slot::Out - output slot
 
+
+=head1 ATTRIBUTES
+
+=head2 C<edges>
+
+=head1 METHODS
+
+=head2 C<add_edge>
+
+=head2 C<get_edges>
+
+=head2 C<is_connected>
+
+=head2 C<join_to>
 
 
 

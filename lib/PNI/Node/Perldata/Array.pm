@@ -1,15 +1,16 @@
 package PNI::Node::Perldata::Array;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -17,8 +18,10 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in  = $node->get_input('in');
+    my $in = $node->get_input('in');
+
     my $out = $node->get_output('out');
+
     my $in_data;
 
     if ( $in->is_array ) {
@@ -39,6 +42,20 @@ PNI::Node::Perldata::Array - PNI node wrapping the Perl builtin ARRAY data type
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
 
 =cut

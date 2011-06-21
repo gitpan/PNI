@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
-my $node = PNI::node 'Perlop::Addition';
+my $node = node 'Perlop::Addition';
 isa_ok $node, 'PNI::Node';
 isa_ok $node, 'PNI::Node::Perlop::Addition';
 

@@ -1,15 +1,16 @@
 package PNI::Node::Perlop::Not;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -17,8 +18,11 @@ sub init {
 sub task {
     my $node = shift;
 
+    my $in = $node->get_input('in');
+
+    my $out = $node->get_output('out');
+
     my $in_data = $node->get_input('in')->get_data;
-    my $out     = $node->get_output('out');
 
     if ( defined $in_data ) {
         $out->set_data( not $in_data );
@@ -34,11 +38,25 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlop::Not - PNI node wrapping the Perl not operator
+PNI::Node::Perlop::Not - PNI node wrapping the Perl C<not> operator
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
 
 =cut

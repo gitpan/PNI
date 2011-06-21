@@ -12,6 +12,8 @@ $node2->add_input('in');
 my $edge = edge $node => $node2, 'out' => 'in';
 isa_ok $edge , 'PNI::Edge';
 
-ok step;
+ok task;
 
 done_testing;
+__END__
+

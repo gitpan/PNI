@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
-my $node = PNI::node 'Perlvar::Process_id';
+my $node = node 'Perlvar::Process_id';
 isa_ok $node, 'PNI::Node';
 isa_ok $node, 'PNI::Node::Perlvar::Process_id';
 

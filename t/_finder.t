@@ -10,3 +10,4 @@ is $find , $find2, 'PNI::Finder is a singleton';
 ok $find->nodes, 'nodes';
 
 done_testing;
+__END__

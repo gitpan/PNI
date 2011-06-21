@@ -28,6 +28,20 @@ It's a basic collection of PNI nodes implementing Perl builtin functions.
 
 =item L<PNI::Node::Perlfunc::Length>
 
+=item L<PNI::Node::Perlfunc::Log>
+
+=item L<PNI::Node::Perlfunc::Print>
+
+=item L<PNI::Node::Perlfunc::Ref>
+
+=item L<PNI::Node::Perlfunc::Sin>
+
+=item L<PNI::Node::Perlfunc::Sleep>
+
+=item L<PNI::Node::Perlfunc::Sqrt>
+
+=item L<PNI::Node::Perlfunc::Sub>
+
 =back
 
 =cut

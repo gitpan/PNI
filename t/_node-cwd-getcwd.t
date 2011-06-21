@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
-my $node = PNI::node 'Cwd::Getcwd';
+my $node = node 'Cwd::Getcwd';
 isa_ok $node, 'PNI::Node';
 isa_ok $node, 'PNI::Node::Cwd::Getcwd';
 

@@ -1,0 +1,16 @@
+# this is the first PNI file :-D
+# 2011-06-01, by Gianluca Casati on train from Milan to Genoa
+{
+  PNI => '0.15',
+  file => {
+  # put here file name, creation date etc
+  },
+  nodes => {
+    1 => {
+      type => 'Perlfunc::Print',
+      inputs => { list => [ 'Hello' , 'World' , '!' ] },
+    },
+  },
+  edges => {},
+  canvas => {},
+}

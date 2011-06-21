@@ -26,7 +26,7 @@ my $core_nodes_dirs_regexp = join '|', @core_nodes_dirs;
 
 for my $node_class ( $find->nodes ) {
 
-    # skip check on nodes not included in PNI
+    # skip check on nodes not included in PNI core
     next if $node_class !~ /^($core_nodes_dirs_regexp)/;
 
     # naming convention for test of PNI::Node::Foo::Bar is _node-foo-bar.t

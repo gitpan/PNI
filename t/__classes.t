@@ -1,21 +1,31 @@
 use strict;
 use Test::More;
 
-use_ok($_) for qw(
-  PNI
-  PNI::Edge
-  PNI::Error
-  PNI::Item
-  PNI::Node
-  PNI::Scenario
-  PNI::Slot
-  PNI::Slot::In
-  PNI::Slot::Out
-);
+BEGIN {
+    use_ok($_)
+      or BAIL_OUT(" $_ module does not compile :-(")
+      for qw(
+      PNI
+      PNI::Edge
+      PNI::Error
+      PNI::File
+      PNI::Finder
+      PNI::GUI::Edge
+      PNI::GUI::Node
+      PNI::GUI::Scenario
+      PNI::Item
+      PNI::Node
+      PNI::Scenario
+      PNI::Slot
+      PNI::Slot::In
+      PNI::Slot::Out
+    );
+}
 
 # checking inheritance
 isa_ok( "PNI::$_", 'PNI::Item' ) for qw(
   Edge
+  File
   Node
   Slot
 );
@@ -31,16 +41,18 @@ can_ok( 'PNI', $_ ) for qw(
   loop
   node
   root
-  step
+  task
 );
 can_ok( 'PNI::Edge', $_ ) for qw(
   new
   get_source
-  get_target
   get_source_node
+  get_target
   get_target_node
 );
 can_ok( 'PNI::Error', $_ ) for qw(
+  attribute_does_not_exists
+  check_data_failed
   generic
   invalid_argument_type
   missing_required_argument
@@ -50,6 +62,37 @@ can_ok( 'PNI::Error', $_ ) for qw(
   unable_to_run_task
   unimplemented_abstract_method
 );
+can_ok( 'PNI::File', $_ ) for qw(
+  get_dir
+  get_name
+  get_scenario
+  path
+  set_dir
+  set_name
+);
+can_ok( 'PNI::GUI::Edge', $_ ) for qw(
+  new
+);
+can_ok( 'PNI::GUI::Node', $_ ) for qw(
+  new
+  get_center_y
+  get_center_x
+  get_height
+  get_label
+  get_node
+  get_width
+  move
+  set_center_y
+  set_center_x
+  set_height
+  set_label
+  set_width
+);
+can_ok( 'PNI::GUI::Scenario', $_ ) for qw(
+  new
+  add_edge
+  add_node
+);
 can_ok( 'PNI::Item', $_ ) for qw(
   new
   id
@@ -57,7 +100,9 @@ can_ok( 'PNI::Item', $_ ) for qw(
   cleanup
   del
   get
+  has
   set
+  type
 );
 can_ok( 'PNI::Node', $_ ) for qw(
   new
@@ -66,22 +111,30 @@ can_ok( 'PNI::Node', $_ ) for qw(
   get_input
   get_input_edges
   get_inputs
+  get_ordered_inputs
+  get_ordered_outputs
   get_output
   get_output_edges
   get_outputs
+  get_type
+  some_input_is_connected
   init
   task
 );
 can_ok( 'PNI::Scenario', $_ ) for qw(
   new
-  add_node
   add_edge
+  add_node
+  add_scenario
+  get_edges
+  get_nodes
+  set_file
+  load_file
   task
 );
 can_ok( 'PNI::Slot', $_ ) for qw(
   new
   data
-  data_ref
   get_data
   get_name
   get_node

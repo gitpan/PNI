@@ -1,15 +1,18 @@
 package PNI::Node::Perlfunc::Print;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('handle');
-    $node->add_input('list');
-    $node->add_input('do_print');
+    my $handle = $node->add_input('handle');
+
+    my $list = $node->add_input('list');
+
+    my $do_print = $node->add_input('do_print');
 
     return 1;
 }
@@ -17,11 +20,13 @@ sub init {
 sub task {
     my $node = shift;
 
+    my $handle = $node->get_input('handle');
+
+    my $list = $node->get_input('list');
+
     my $do_print = $node->get_input('do_print');
 
     if ( $do_print->is_defined ) {
-
-        my $list = $node->get_input('list');
 
         if ( $list->is_array ) {
             my $rv = print STDOUT @{ $list->get_data };
@@ -42,11 +47,27 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Print - PNI node wrapping the Perl print function
+PNI::Node::Perlfunc::Print - PNI node wrapping the Perl C<print> function
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item handle
+
+=item list
+
+=item do_print
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=back
 
 =cut

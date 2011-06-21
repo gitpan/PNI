@@ -1,15 +1,16 @@
 package PNI::Node::Perlfunc::Log;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -17,8 +18,10 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in  = $node->get_input('in');
+    my $in = $node->get_input('in');
+
     my $out = $node->get_output('out');
+
     my $result;
 
     if ( $in->is_number ) {
@@ -34,11 +37,25 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Log - PNI node wrapping the Perl log function
+PNI::Node::Perlfunc::Log - PNI node wrapping the Perl C<log> function
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
 
 =cut

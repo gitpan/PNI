@@ -1,8 +1,8 @@
 use strict;
 use Test::More;
-use PNI;
+use PNI ':-D';
 
-my $node = PNI::node 'Perlfunc::Print';
+my $node = node 'Perlfunc::Print';
 isa_ok $node, 'PNI::Node';
 isa_ok $node, 'PNI::Node::Perlfunc::Print';
 

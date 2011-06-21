@@ -1,19 +1,20 @@
 package PNI::Node::Perlfunc::Sub;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in_rows');
+    my $in_rows = $node->add_input('in_rows');
 
-    $node->add_input('do_eval');
+    my $do_eval = $node->add_input('do_eval');
 
-    $node->add_output('code');
+    my $code = $node->add_output('code');
 
-    $node->add_output('error');
+    my $error = $node->add_output('error');
 
     return 1;
 }
@@ -21,17 +22,22 @@ sub init {
 sub task {
     my $node = shift;
 
-    # nothing to do if do_eval flag is not on
-    my $do_eval = $node->get_input('do_eval');
-    return 1 unless $do_eval->get_data;
-
     my $in_rows = $node->get_input('in_rows');
-    return 1 if $in_rows->is_undef;
 
-    my $error = $node->get_output('error');
-    $error->set_data(undef);
+    my $do_eval = $node->get_input('do_eval');
 
     my $code = $node->get_output('code');
+
+    my $error = $node->get_output('error');
+
+    # nothing to do if do_eval flag is not on
+    return 1 unless $do_eval->get_data;
+
+    return 1 if $in_rows->is_undef;
+
+    # reset error output
+    $error->set_data(undef);
+
     my $code_ref;
     if ( $in_rows->is_scalar ) {
         my $row = $in_rows->get_data;
@@ -61,11 +67,29 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Sub - PNI node wrapping the Perl sub function
+PNI::Node::Perlfunc::Sub - PNI node wrapping the Perl C<sub> function
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in_rows
+
+=item do_eval
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item code
+
+=item error
+
+=back
 
 =cut

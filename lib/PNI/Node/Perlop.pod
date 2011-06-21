@@ -20,6 +20,26 @@ It's a basic collection of PNI nodes implementing Perl operators.
 
 =item L<PNI::Node::Perlop::Backticks>
 
+=item L<PNI::Node::Perlop::Division>
+
+=item L<PNI::Node::Perlop::Multiplication>
+
+=item L<PNI::Node::Perlop::Not>
+
+=item L<PNI::Node::Perlop::Numerically_equal>
+
+=item L<PNI::Node::Perlop::Numerically_not_equal>
+
+=item L<PNI::Node::Perlop::Or>
+
+=item L<PNI::Node::Perlop::Range>
+
+=item L<PNI::Node::Perlop::Stringwise_equal>
+
+=item L<PNI::Node::Perlop::Stringwise_not_equal>
+
+=item L<PNI::Node::Perlop::Suntraction>
+
 =back
 
 =cut

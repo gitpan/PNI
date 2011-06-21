@@ -1,15 +1,16 @@
 package PNI::Node::Perlfunc::Chomp;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -17,7 +18,8 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in  = $node->get_input('in');
+    my $in = $node->get_input('in');
+
     my $out = $node->get_output('out');
 
     if ( $in->is_undef ) {
@@ -44,11 +46,25 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Chomp - PNI node wrapping the Perl chomp function
+PNI::Node::Perlfunc::Chomp - PNI node wrapping the Perl C<chomp> function
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
 
 =cut

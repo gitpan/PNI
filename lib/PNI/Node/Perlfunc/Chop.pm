@@ -1,17 +1,18 @@
 package PNI::Node::Perlfunc::Chop;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
-    $node->add_output('last_char');
+    my $last_char = $node->add_output('last_char');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -19,9 +20,11 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in        = $node->get_input('in');
+    my $in = $node->get_input('in');
+
     my $last_char = $node->get_output('last_char');
-    my $out       = $node->get_output('out');
+
+    my $out = $node->get_output('out');
 
     if ( $in->is_undef ) {
         $out->set_data(undef);
@@ -49,11 +52,27 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlfunc::Chop - PNI node wrapping the Perl chop function
+PNI::Node::Perlfunc::Chop - PNI node wrapping the Perl C<chop> function
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item last_char
+
+=item out
+
+=back
 
 =cut

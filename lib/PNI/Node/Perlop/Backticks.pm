@@ -1,13 +1,14 @@
 package PNI::Node::Perlop::Backticks;
 use strict;
 use warnings;
-our $VERSION = '0.11';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in');
+    my $in = $node->add_input('in');
 
     return 1;
 }
@@ -15,7 +16,9 @@ sub init {
 sub task {
     my $node = shift;
 
-    my $in_data = $node->get_input('in')->get_data;
+    my $in = $node->get_input('in');
+
+    my $in_data = $in->get_data;
 
     if ( defined $in_data ) {
 
@@ -29,3 +32,26 @@ sub task {
 }
 
 1;
+
+=head1 NAME
+
+PNI::Node::Perlop::Backticks - PNI node wrapping the Perl C<..> operator
+
+
+
+
+=head1 INPUTS
+
+=over 4
+
+=item in
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=back
+
+=cut

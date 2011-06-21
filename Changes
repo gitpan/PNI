@@ -1,5 +1,15 @@
 Revision history for Perl Node Interface.
 
+0.15  2011-06-21
+    - use PNI ':-D'; # exports node, edge, ..
+    - pod coverage ok
+    - pod files ok
+    - better code templates
+    - PNI::step replaced by PNI::task
+    - PNI::File, load/save scenario
+    - $node->get_ordered_inputs $node->get_ordered_outputs
+    - abstract views: PNI::GUI::Node, PNI::GUI::Edge, PNI::GUI::Scenario
+
 0.14  2011-05-14
     - PNI::Node::List::Util
     - PNI::Node::Scalar::Util
@@ -14,7 +24,6 @@ Revision history for Perl Node Interface.
 0.12  2011-04-15
     - more Perlop nodes
     - Cwd::Getcwd, Scalar::Util::Looks_like_number, List::Util::Max nodes
-
     - every node has a test
     - code generation with Template Toolkit
     - PNI::RUN renamed in PNI::step

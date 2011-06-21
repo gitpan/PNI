@@ -1,17 +1,18 @@
 package PNI::Node::Perlop::Numerically_not_equal;
 use strict;
 use warnings;
-our $VERSION = '0.14';
+our $VERSION = '0.15';
+### use Smart::Comments;
 use base 'PNI::Node';
 
 sub init {
     my $node = shift;
 
-    $node->add_input('in1');
+    my $in1 = $node->add_input('in1');
 
-    $node->add_input('in2');
+    my $in2 = $node->add_input('in2');
 
-    $node->add_output('out');
+    my $out = $node->add_output('out');
 
     return 1;
 }
@@ -20,7 +21,9 @@ sub task {
     my $node = shift;
 
     my $in1 = $node->get_input('in1');
+
     my $in2 = $node->get_input('in2');
+
     my $out = $node->get_output('out');
 
     if ( $in1->is_defined and $in2->is_defined ) {
@@ -39,11 +42,27 @@ sub task {
 
 =head1 NAME
 
-PNI::Node::Perlop::Numerically_not_equal - PNI node wrapping the Perl != operator
+PNI::Node::Perlop::Numerically_not_equal - PNI node wrapping the Perl C<!=> operator
 
 
 
 
+=head1 INPUTS
 
+=over 4
+
+=item in1
+
+=item in2
+
+=back
+
+=head1 OUTPUTS
+
+=over 4
+
+=item out
+
+=back
 
 =cut
