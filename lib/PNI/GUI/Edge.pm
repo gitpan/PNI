@@ -1,10 +1,9 @@
 package PNI::GUI::Edge;
 use strict;
 use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 use base 'PNI::Item';
-use PNI::Error 0.15;
+use PNI::Edge;
+use PNI::Error;
 
 sub new {
     my $class = shift;
@@ -12,18 +11,29 @@ sub new {
     my $self  = $class->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
 
-    # $edge is required
-    my $edge = $arg->{edge} or return PNI::Error::missing_required_argument;
-
-    # $edge must be a PNI::Edge
-    $edge->isa('PNI::Edge') or return PNI::Error::invalid_argument_type;
-
+    my $edge = PNI::Edge->new;
     $self->add( edge => $edge );
 
     return $self;
 }
 
 sub get_edge { return shift->get('edge') }
+
+sub get_end_y { return PNI::Error::unimplemented_abstract_method; }
+
+sub get_end_x { return PNI::Error::unimplemented_abstract_method; }
+
+sub get_start_y { return PNI::Error::unimplemented_abstract_method; }
+
+sub get_start_x { return PNI::Error::unimplemented_abstract_method; }
+
+sub set_end_y { return PNI::Error::unimplemented_abstract_method; }
+
+sub set_end_x { return PNI::Error::unimplemented_abstract_method; }
+
+sub set_start_y { return PNI::Error::unimplemented_abstract_method; }
+
+sub set_start_x { return PNI::Error::unimplemented_abstract_method; }
 
 1;
 __END__
@@ -36,6 +46,22 @@ PNI::GUI::Edge - is an edge abstract view
 =head1 METHODS
 
 =head2 C<get_edge>
+
+=head2 C<get_end_x>
+
+=head2 C<get_end_y>
+
+=head2 C<get_start_x>
+
+=head2 C<get_start_y>
+
+=head2 C<set_end_y>
+
+=head2 C<set_end_x>
+
+=head2 C<set_start_y>
+
+=head2 C<set_start_x>
 
 
 

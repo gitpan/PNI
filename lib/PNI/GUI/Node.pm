@@ -1,10 +1,8 @@
 package PNI::GUI::Node;
 use strict;
 use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 use base 'PNI::Item';
-use PNI::Error 0.15;
+use PNI::Error;
 
 sub new {
     my $class = shift;
@@ -21,12 +19,11 @@ sub new {
     my $height = $arg->{height};
     $self->add( height => $height );
 
-    # $node is required
-    my $node = $arg->{node} or return PNI::Error::missing_required_argument;
-
-    # $node must be a PNI::Node
-    $node->isa('PNI::Node') or return PNI::Error::invalid_argument_type;
-
+    # $node is not required but should be a PNI::Node
+    my $node = $arg->{node};
+    if ( defined $node and not $node->isa('PNI::Node') ) {
+        return PNI::Error::invalid_argument_type;
+    }
     $self->add( node => $node );
 
     # type is delegated to node
@@ -79,6 +76,12 @@ sub set_label {
     my $self = shift;
     my $label = shift or return PNI::Error::missing_required_argument;
     return $self->set( label => $label );
+}
+
+sub set_node {
+    my $self = shift;
+    my $node = shift or return PNI::Error::missing_required_argument;
+    return $self->set( node => $node );
 }
 
 sub set_width {

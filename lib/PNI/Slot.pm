@@ -1,10 +1,7 @@
 package PNI::Slot;
 use strict;
-use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 use base 'PNI::Item';
-use PNI::Error 0.15;
+use PNI::Error;
 use Scalar::Util;
 
 sub new {
@@ -13,18 +10,21 @@ sub new {
     my $self  = $class->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
 
-    # $node is not required but should be a PNI::Node
-    my $node = $arg->{node};
-    if ( defined $node ) {
-        $node->isa('PNI::Node') or return PNI::Error::invalid_argument_type;
-    }
-    $self->add( node => $node );
+    $self->add( changed => 0 );
+
+    # TODO should be renamed as data_ref
+    my $data = $arg->{data};
+    $self->add( data => $data );
 
     my $name = $arg->{name};
     $self->add( name => $name );
 
-    my $data = $arg->{data};
-    $self->add( data => $data );
+    # $node is not required but should be a PNI::Node
+    my $node = $arg->{node};
+    if ( defined $node and not $node->isa('PNI::Node') ) {
+        return PNI::Error::invalid_argument_type;
+    }
+    $self->add( node => $node );
 
     #    # data_check can be undef
     #    my $data_check = $arg->{data_check};
@@ -125,6 +125,17 @@ sub is_array {
 }
 
 # return 0 or 1
+sub is_changed {
+    my $self = shift;
+    if ( $self->get('changed') ) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+# return 0 or 1
 sub is_code {
     my $type = shift->get_type;
     if ( $type eq 'CODE' ) {
@@ -216,6 +227,9 @@ sub set_data {
     #      try to implement to implement that if passed an array or an hash
     #      set_data understands and put a reference
 
+    # set changed flag
+    $self->set( changed => 1 );
+
     # slot data can be undef
     return $self->set( data => $data );
 }
@@ -226,7 +240,6 @@ __END__
 =head1 NAME
 
 PNI::Slot - is a basic unit of data
-
 
 =head1 METHODS
 
@@ -243,6 +256,10 @@ PNI::Slot - is a basic unit of data
 =head2 C<join_to>
 
 =head2 C<is_array>
+
+=head2 C<is_changed>
+
+Returns 1 if slot data is changed.
 
 =head2 C<is_code>
 
@@ -261,18 +278,5 @@ PNI::Slot - is a basic unit of data
 =head2 C<is_undef>
 
 =head2 C<set_data>
-
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
 
 =cut

@@ -1,8 +1,6 @@
 package PNI;
 use strict;
-use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
+our $VERSION = '0.16';
 use Exporter 'import';
 use PNI::Edge;
 use PNI::Finder;
@@ -50,7 +48,7 @@ sub node {
 }
 
 # node finder
-my $find = PNI::Finder->new;
+my $find = PNI::Finder->instance;
 
 # return @nodes
 sub node_list { return $find->nodes; }
@@ -68,10 +66,15 @@ __END__
 
 PNI - Perl Node Interface
 
-
 =head1 ATTENTION
 
 This module was created to be used internally by a GUI, anyway you are free to use the scripting api if it does make sense.
+
+=head1 INSTALLATION
+
+To install PNI module plus a basic set of PNI nodes, do:
+    
+    cpan PNI::Core
 
 =head1 SYNOPSIS
 
@@ -81,12 +84,12 @@ This module was created to be used internally by a GUI, anyway you are free to u
     $node->get_input('list')->set_data('Hello World !');
     $node->get_input('do_print')->set_data(1);
 
-    task;
+    task; # prints Hello World !
 
 =head1 DESCRIPTION
 
 Hi! I'm an italian mathematician. 
-I really like Perl phylosophy as Larry jokes a lot even if 
+I really like Perl philosophy as Larry jokes a lot even if 
 he is one of the masters of hacking.
 
 PNI stands for Perl Node Interface.
@@ -96,7 +99,7 @@ Node programming is really interesting since makes possible to realize
 a program even if you have no idea about programming. 
 
 Think about genetic researchers, for example. 
-They need to focus on protein chains, not on what is a package.
+They need to focus on protein chains, not on what a package is.
 Maybe they can do an extra effort and say the world "variable" or "string" 
 or even "regular expression" and that makes them proud, 
 but they don't care about inheritance.
@@ -193,13 +196,9 @@ Returns the root PNI::Scenario.
 
 =head1 SEE ALSO
 
-L<PNI::Edge>
+L<PNI::Core>
 
-L<PNI::Node>
-
-L<PNI::Scenario>
-
-
+L<PNI::GUI::Tk>
 
 =head1 AUTHOR
 
@@ -213,3 +212,4 @@ This program is free software, you can redistribute it and/or modify it
 under the same terms of the Artistic License version 2.0 .
 
 =cut
+

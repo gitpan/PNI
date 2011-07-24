@@ -49,6 +49,7 @@ can_ok( 'PNI::Edge', $_ ) for qw(
   get_source_node
   get_target
   get_target_node
+  task
 );
 can_ok( 'PNI::Error', $_ ) for qw(
   attribute_does_not_exists
@@ -56,6 +57,7 @@ can_ok( 'PNI::Error', $_ ) for qw(
   generic
   invalid_argument_type
   missing_required_argument
+  overridden_attribute_name
   unable_to_create_item
   unable_to_init_node
   unable_to_load_node
@@ -63,12 +65,14 @@ can_ok( 'PNI::Error', $_ ) for qw(
   unimplemented_abstract_method
 );
 can_ok( 'PNI::File', $_ ) for qw(
-  get_dir
-  get_name
-  get_scenario
-  path
-  set_dir
-  set_name
+  get_content
+  get_path
+  set_content
+  set_path
+);
+can_ok( 'PNI::Finder', $_ ) for qw(
+  instance
+  nodes
 );
 can_ok( 'PNI::GUI::Edge', $_ ) for qw(
   new
@@ -92,6 +96,12 @@ can_ok( 'PNI::GUI::Scenario', $_ ) for qw(
   new
   add_edge
   add_node
+  del_edge
+  del_node
+  clear_all
+  load_file
+  save_file
+  set_file
 );
 can_ok( 'PNI::Item', $_ ) for qw(
   new
@@ -126,10 +136,7 @@ can_ok( 'PNI::Scenario', $_ ) for qw(
   add_edge
   add_node
   add_scenario
-  get_edges
   get_nodes
-  set_file
-  load_file
   task
 );
 can_ok( 'PNI::Slot', $_ ) for qw(
@@ -140,6 +147,7 @@ can_ok( 'PNI::Slot', $_ ) for qw(
   get_node
   get_type
   is_array
+  is_changed
   is_connected
   is_hash
   is_number

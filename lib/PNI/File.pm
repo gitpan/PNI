@@ -1,12 +1,10 @@
 package PNI::File;
 use strict;
-use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 use base 'PNI::Item';
-use Cwd;
 use File::Spec;
-use PNI::Error 0.15;
+use File::Temp;
+use JSON;
+use PNI::Error;
 
 my $extension = 'pni';
 
@@ -16,74 +14,57 @@ sub new {
     my $self  = $class->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
 
-    # $dir defaults to getcwd
-    my $dir = $arg->{dir} || getcwd;
-
-    $self->add( dir => $dir );
-
-    # $name defaults to 'Untitled'
-    my $name = $arg->{name} || 'Untitled';
-
-    $self->add( name => $name );
-
-    # $scenario is not required but should be a PNI::Scenario
-    my $scenario = $arg->{scenario};
-    if ( defined $scenario ) {
-        $scenario->isa('PNI::Scenario')
-          or return PNI::Error::invalid_argument_type;
-    }
-    $self->add( scenario => $scenario );
+    $self->add('path');
+    $self->set( path => $arg->{path} );
 
     return $self;
 }
 
-sub get_dir { return shift->get('dir') }
+# return \%content
+sub get_content {
+    my $self = shift;
 
-sub get_name { return shift->get('name') }
+    # return content stored in $path
+    my $path = $self->get_path;
+    local $/;
+    ### TODO don't want to die but raise exception and fix the problem at runtime
+    open my $fh, '<', $path;
+    my $text    = <$fh>;
+    my $content = decode_json($text);
+    close $fh;
 
-sub get_scenario { return shift->get('scenario') }
-
-# return \%edges
-sub get_edges {
-    my $self    = shift;
-    my $content = do $self->path;
-
-    return $content->{edges};
-}
-
-# return \%nodes
-sub get_nodes {
-    my $self    = shift;
-    my $content = do $self->path;
-
-    return $content->{nodes};
+    return $content;
 }
 
 # return $path
-sub path {
-    my $self = shift;
+sub get_path { shift->get('path') }
 
-    my @dir  = @{ $self->get('dir') };
-    my $name = $self->get('name');
+sub set_content {
+    my $self    = shift;
+    my $content = shift
+      or return PNI::Error::missing_required_argument;
+    my $fh;
+    my $path = $self->get_path;
 
-    my $path = File::Spec->catfile( @dir, $name . '.' . $extension );
+    if ( defined $path ) {
+        open $fh, '>', $path;
+    }
+    else {
+        ( $fh, $path ) = File::Temp::tempfile;
+    }
+    print $fh encode_json($content);
 
-    return $path;
+    close $fh;
+
+    return 1;
 }
 
-# input $dir = [ qw( path of my dir ) ]
-# return 1
-sub set_dir {
+sub set_path {
     my $self = shift;
-    my $dir = shift or return PNI::Error::missing_required_argument;
-    ref($dir) eq 'ARRAY' or return PNI::Error::invalid_argument_type;
-    return $self->set( dir => $dir );
-}
+    my $path = shift
+      or return PNI::Error::missing_required_argument;
 
-sub set_name {
-    my $self = shift;
-    my $name = shift or return PNI::Error::missing_required_argument;
-    return $self->set( name => $name );
+    $self->set( path => $path );
 }
 
 1;
@@ -91,38 +72,20 @@ __END__
 
 =head1 NAME
 
-PNI::File - 
+PNI::File - stores a scenario in a .pni file
 
+=head1 SYNOPSIS
+
+    my $file = PNI::File->new( path => '/path/to/my/file.pni' );
 
 =head1 METHODS
 
-=head2 C<get_dir>
+=head2 C<get_content>
 
-=head2 C<get_edges>
+=head2 C<get_path>
 
-=head2 C<get_name>
+=head2 C<set_content>
 
-=head2 C<get_nodes>
-
-=head2 C<get_scenario>
-
-=head2 C<path>
-
-=head2 C<set_dir>
-
-=head2 C<set_name>
-
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
+=head2 C<set_path>
 
 =cut

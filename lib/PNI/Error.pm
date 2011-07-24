@@ -1,22 +1,19 @@
 package PNI::Error;
 use strict;
-use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 
 my $verbose = 1;
 
-sub verbose_off { $verbose = 0; return 1; }
+sub verbose_off { return not $verbose = 0; }
 
-sub verbose_on { $verbose = 1; return 1; }
+sub verbose_on { return $verbose = 1; }
 
 my $say = sub {
-    my ( $package, $filename, $line ) = caller 2;
+    my ( $package, $filename, $line ) = caller 1;
     if ($verbose) {
         my $message = shift;
-        warn "[PNI::Error] message: $message\n";
-        warn
-"[PNI::Error] from package $package in file $filename at line $line\n";
+        warn "[PNI::Error] message: $message\n"
+          . "[PNI::Error] from package $package "
+          . "in file $filename at line $line\n";
     }
     return 1;
 };
@@ -43,6 +40,11 @@ sub invalid_argument_type {
 
 sub missing_required_argument {
     $say->('missing required argument');
+    return;
+}
+
+sub overridden_attribute_name {
+    $say->('overridden attribute name');
     return;
 }
 
@@ -78,7 +80,6 @@ __END__
 
 PNI::Error - PNI errors catalogue
 
-
 =head1 METHODS
 
 =head2 C<verbose_off>
@@ -97,6 +98,8 @@ PNI::Error - PNI errors catalogue
 
 =head2 C<missing_required_argument>
 
+=head2 C<overridden_attribute_name>
+
 =head2 C<unable_to_create_item>
 
 =head2 C<unable_to_init_node>
@@ -107,17 +110,5 @@ PNI::Error - PNI errors catalogue
 
 =head2 C<unimplemented_abstract_method>
 
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
-
 =cut
+

@@ -1,12 +1,9 @@
 package PNI::Node;
 use strict;
-use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
 use base 'PNI::Item';
-use PNI::Error 0.15;
-use PNI::Slot::In 0.15;
-use PNI::Slot::Out 0.15;
+use PNI::Error;
+use PNI::Slot::In;
+use PNI::Slot::Out;
 
 sub new {
     my $class = shift;
@@ -50,20 +47,6 @@ sub add_output {
     return $output;
 }
 
-# TODO consider to deprecate this
-# return 1
-#sub check_inputs {
-#    my $self = shift;
-#
-#    for my $input ( $self->get_inputs ) {
-#        if( my $data = $input->get_data ) {
-#            $input->check_data( $data ) or return PNI::Error::check_data_failed;
-#        }
-#    }
-#
-#    return 1;
-#}
-
 # return $input
 sub get_input {
     my $self = shift;
@@ -86,15 +69,7 @@ sub get_outputs { return values %{ shift->get('outputs') }; }
 
 # return @input_edges
 sub get_input_edges {
-    my $self        = shift;
-    my @input_edges = ();
-    for my $input ( $self->get_inputs ) {
-        my $edge = $input->get_edge;
-        if ( defined $edge ) {
-            push @input_edges, $edge;
-        }
-    }
-    return @input_edges;
+    return grep { defined } map { $_->get_edge } shift->get_inputs;
 }
 
 # return @inputs
@@ -119,15 +94,7 @@ sub get_ordered_outputs {
 
 # return @output_edges
 sub get_output_edges {
-    my $self         = shift;
-    my @output_edges = ();
-    for my $output ( $self->get_outputs ) {
-        my @edges = $output->get_edges;
-        if (@edges) {
-            push @output_edges, @edges;
-        }
-    }
-    return @output_edges;
+    return grep { defined } map { $_->get_edges } shift->get_outputs;
 }
 
 # return $type
@@ -208,27 +175,9 @@ Creates a new L<PNI::Slot::Out>.
 
 =head2 C<get_type>
 
+Returns the PNI node type, which is the name of the node package minus the leading 'PNI::Node::' string;
+
 =head2 C<some_input_is_connected>
 
-=head1 SEE ALSO
-
-L<PNI::Node::Perlfunc>
-
-L<PNI::Node::Perlop>
-
-L<PNI::Node::Perlvar>
-
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
-
 =cut
+

@@ -7,6 +7,10 @@ use PNI::Slot;
 my $slot = PNI::Slot->new( node => PNI::node, name => 'slot_test' );
 isa_ok $slot, 'PNI::Slot';
 
+is $slot->is_changed, 0;
+$slot->set_data;
+is $slot->is_changed, 1;
+
 ok $slot->set_data(1), 'set_data 1';
 is $slot->get_data, 1, 'get_data 1';
 is $slot->get_type , 'SCALAR' , 'get_type';

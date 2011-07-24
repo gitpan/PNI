@@ -1,9 +1,7 @@
 package PNI::Item;
 use strict;
 use warnings;
-our $VERSION = '0.15';
-### use Smart::Comments;
-use PNI::Error 0.15;
+use PNI::Error;
 
 my $next_id;
 
@@ -12,23 +10,20 @@ my %attr;
 
 # return $self
 sub new {
-    my $class = shift;
-    ### new: $class
+    my $class   = shift;
     my $item_id = ++$next_id;
-    ### id: $item_id
     return bless \$item_id, $class;
 }
 
 # return 1
 sub add {
-    my $self = shift;
-    my $id   = $self->id;
+    my $id = shift->id;
 
     my $attribute_name = shift or return PNI::Error::missing_required_argument;
-    ### add: $attribute_name
 
     # attribute names are unique and cannot be overridden
-    exists $attr{$id}{$attribute_name} and return PNI::Error::generic;
+    exists $attr{$id}{$attribute_name}
+      and return PNI::Error::overridden_attribute_name;
 
     # attribute value can be undef
     my $attribute_value = shift;
@@ -40,13 +35,12 @@ sub add {
 
 # return 1
 sub cleanup {
-    my $self = shift;
-    my $id   = $self->id;
+    my $id = shift->id;
 
-    ### cleanup: $id
     for my $attribute_name ( keys %{ $attr{$id} } ) {
-        ### delete: $attribute_name
+        my $attribute_value = $attr{$id}{$attribute_name};
         delete $attr{$id}{$attribute_name};
+        undef $attribute_value;
     }
 
     return 1;
@@ -54,8 +48,7 @@ sub cleanup {
 
 # return 1
 sub del {
-    my $self           = shift;
-    my $id             = $self->id;
+    my $id = shift->id;
     my $attribute_name = shift or return PNI::Error::missing_required_argument;
 
     my $attribute_value = delete $attr{$id}{$attribute_name};
@@ -78,8 +71,7 @@ sub get {
 
 # return 1 or 0
 sub has {
-    my $self           = shift;
-    my $id             = $self->id;
+    my $id = shift->id;
     my $attribute_name = shift or return PNI::Error::missing_required_argument;
 
     return exists $attr{$id}{$attribute_name} || 0;
@@ -91,6 +83,12 @@ sub id {
     return ${$self};
 }
 
+# TODO every package should define an $attribute hash_ref
+# so this init sub could be called after constructor by default
+# this should give introspection and a lot of cool things
+# also need an $init_args
+# so nodes could just have a "our $attributes" or "our $inputs" "out $outputs"
+# do this before 1.0 !!!!!!
 sub init { return PNI::Error::unimplemented_abstract_method; }
 
 # return 1
@@ -127,10 +125,29 @@ __END__
 
 PNI::Item - is the base class
 
+=head1 SYNOPSIS
+
+    package PNI::Point;
+
+    use strict;
+    use base 'PNI::Item';
+
+=head1 DESCRIPTION
+
+This is an inside out object, to provide encapsulation for PNI classes.
+
+Every object has an id, for instance, the reference to the object itself is a blessed id.
+
+Objects can be (un)decorated adding/removing attributes at runtime.
+
+Every attribute value is a scalar or a reference.
 
 =head1 METHODS
 
 =head2 C<add>
+
+    $self->add('x'); 
+    $self->add( y => 1 );
 
 =head2 C<cleanup>
 
@@ -138,25 +155,22 @@ PNI::Item - is the base class
 
 =head2 C<get>
 
+    my $x = $self->get('x');
+
 =head2 C<has>
 
 =head2 C<id>
 
+    my $id = $self->id;
+
+=head2 C<init>
+
 =head2 C<set>
+
+    $self->set( x => 10 );
 
 =head2 C<type>
 
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
+    my $type = $self->type; # the package name
 
 =cut

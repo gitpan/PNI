@@ -21,5 +21,7 @@ ok $slot->add_edge( $edge );
 # at this point slot should be connected
 is $slot->is_connected , 1;
 
+isa_ok $out->join_to($in),'PNI::Edge','join_to';
+
 done_testing;
 __END__

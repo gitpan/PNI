@@ -19,7 +19,8 @@ all_pod_coverage_ok(
     {
         # TODO uncomment nonwhitespace option when documentation is complete
         #nonwhitespace => 1,
-        trustme => [qr/^(init|new|task)$/]
+        #trustme => [qr/^(init|new|task)$/]
+        trustme => [qr/^(new)$/]
     }
 );
 
