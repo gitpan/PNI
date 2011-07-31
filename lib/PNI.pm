@@ -1,6 +1,6 @@
 package PNI;
 use strict;
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 use Exporter 'import';
 use PNI::Edge;
 use PNI::Finder;
@@ -68,7 +68,8 @@ PNI - Perl Node Interface
 
 =head1 ATTENTION
 
-This module was created to be used internally by a GUI, anyway you are free to use the scripting api if it does make sense.
+This module was created to be used internally by a GUI, anyway you are free to
+use the scripting api if it does make sense.
 
 =head1 INSTALLATION
 
@@ -95,22 +96,22 @@ he is one of the masters of hacking.
 PNI stands for Perl Node Interface.
 
 It is my main project, my contribution to the great Perl community. 
-Node programming is really interesting since makes possible to realize
-a program even if you have no idea about programming. 
+Node programming is really interesting since makes possible to realize a program
+even if you have no idea about programming. 
 
-Think about genetic researchers, for example. 
-They need to focus on protein chains, not on what a package is.
-Maybe they can do an extra effort and say the world "variable" or "string" 
-or even "regular expression" and that makes them proud, 
-but they don't care about inheritance.
+Think about genetic researchers, for example. They need to focus on protein 
+chains, not on what a package is. Maybe they can do an extra effort and say the
+world "variable" or "string" or even "regular expression" and that makes them 
+proud, but they don't care about inheritance.
 
 They want things working and they need Perl ... 
+
 but if you say Strawberry they think about yogurt, not about Windows.
 
-There are a lot of node programming languages (VVVV, Puredata, Max/Msp) 
-but normally they target artists and interaction designers.
-I saw a lot of vjs and musicians do really complex programs
-with those software, and they never wrote a line of code.
+There are a lot of node programming languages (VVVV, Puredata, Max/Msp) but
+normally they target artists and interaction designers. I saw a lot of vjs and
+musicians do really complex programs with those software, and they never wrote 
+a line of code.
 
 This is my effort to provide a node interface that brings Perl power 
 to people who don't know the Perl language.
@@ -121,55 +122,28 @@ Blah blah blah. ( this was the h2xs command :-)
 
 =head2 C<edge>
 
-Connects an output of a node to an input of another node.
-
     my $source_node = node 'Some::Node';
-
     my $target_node = node 'Another::Node';
 
-    my $edge = edge 
-      $source_node         => $target_node , 
-      'source_output_name' => 'target_input_name';
+    my $edge = edge $source_node    => $target_node , 
+               'source_output_name' => 'target_input_name';
 
-This method delegates to L<PNI::Edge> constructor.
+Connects an output of a node to an input of another node.
 
 =head2 C<node>
 
-Creates a node by its PNI type, that is the name of a package 
-under the PNI::Node namespace. If you write
+Creates a node by its PNI type, that is the name of a package under the
+PNI::Node namespace, and adds it to the root scenario. If you write
 
-    my $node = node 'Some::Node';
+    my $node = node 'Foo::Bar';
 
-PNI do the following steps:
-
-=over 4
-
-=item 1)
-
-requires the PNI/Node/Some/Node.pm module.
-
-=item 2)
-
-creates a new PNI::Node, assigns it an id 
-and bless it as a PNI::Node::Some::Node.
-
-=item 3)
-
-calls the init method as implemented in the PNI::Node::Some::Node package.
-
-=item 4)
-
-adds the node to the root PNI::Scenario.
-
-=back
+PNI loads and inits PNI::Node::Foo::Bar node. 
 
 If no PNI type is passed, and you just write
 
     my $node = node;
     
 PNI creates an empty node.
-
-This method delegates to L<PNI::Node> constructor.
 
 =head2 C<node_list>
 

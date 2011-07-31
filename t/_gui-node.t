@@ -21,7 +21,7 @@ isa_ok $gui_node, 'PNI::GUI::Node';
 is $gui_node->get_center_y, $center_y;
 is $gui_node->get_center_x, $center_x;
 is $gui_node->get_height, $height;
-is $gui_node->get_label, $node->get_type, 'label defaults to $self->get_node->get_type';
+is $gui_node->get_label, $node->get_type, 'label defaults to node type';
 is $gui_node->get_node, $node;
 is $gui_node->get_width, $width;
 

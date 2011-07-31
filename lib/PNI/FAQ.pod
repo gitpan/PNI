@@ -1,0 +1,17 @@
+
+=head1 PNI F.A.Q.
+
+=head2 What is PNI ?
+
+PNI stands for Perl Node Interface. It is a node based visual programming 
+language, so it permits you to build programs graphically even if you are
+not a programmer.
+
+=head2 What are nodes and edges?
+
+Consider a node just like a lego block of code that you can wire with other 
+nodes using edges. This allow you to rapidly create a program since code is 
+executed while you are adding nodes and edges.
+
+=cut
+

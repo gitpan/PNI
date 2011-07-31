@@ -13,6 +13,7 @@ BEGIN {
       PNI::GUI::Edge
       PNI::GUI::Node
       PNI::GUI::Scenario
+      PNI::GUI::Slot
       PNI::Item
       PNI::Node
       PNI::Scenario
@@ -26,6 +27,10 @@ BEGIN {
 isa_ok( "PNI::$_", 'PNI::Item' ) for qw(
   Edge
   File
+  GUI::Edge
+  GUI::Node
+  GUI::Scenario
+  GUI::Slot
   Node
   Slot
 );
@@ -53,7 +58,6 @@ can_ok( 'PNI::Edge', $_ ) for qw(
 );
 can_ok( 'PNI::Error', $_ ) for qw(
   attribute_does_not_exists
-  check_data_failed
   generic
   invalid_argument_type
   missing_required_argument
@@ -68,7 +72,6 @@ can_ok( 'PNI::File', $_ ) for qw(
   get_content
   get_path
   set_content
-  set_path
 );
 can_ok( 'PNI::Finder', $_ ) for qw(
   instance
@@ -102,6 +105,9 @@ can_ok( 'PNI::GUI::Scenario', $_ ) for qw(
   load_file
   save_file
   set_file
+);
+can_ok( 'PNI::GUI::Slot', $_ ) for qw(
+  get_node
 );
 can_ok( 'PNI::Item', $_ ) for qw(
   new

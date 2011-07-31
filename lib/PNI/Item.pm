@@ -19,7 +19,8 @@ sub new {
 sub add {
     my $id = shift->id;
 
-    my $attribute_name = shift or return PNI::Error::missing_required_argument;
+    my $attribute_name = shift
+      or return PNI::Error::missing_required_argument;
 
     # attribute names are unique and cannot be overridden
     exists $attr{$id}{$attribute_name}
@@ -48,8 +49,9 @@ sub cleanup {
 
 # return 1
 sub del {
-    my $id = shift->id;
-    my $attribute_name = shift or return PNI::Error::missing_required_argument;
+    my $id             = shift->id;
+    my $attribute_name = shift
+      or return PNI::Error::missing_required_argument;
 
     my $attribute_value = delete $attr{$id}{$attribute_name};
     undef $attribute_value;
@@ -60,19 +62,21 @@ sub del {
 # return $attribute_value
 sub get {
     my $self           = shift;
-    my $id             = $self->id;
-    my $attribute_name = shift or return PNI::Error::missing_required_argument;
+    my $attribute_name = shift
+      or return PNI::Error::missing_required_argument;
 
     # check if attribute exists
-    $self->has($attribute_name) or return PNI::Error::attribute_does_not_exists;
+    $self->has($attribute_name)
+      or return PNI::Error::attribute_does_not_exists;
 
-    return $attr{$id}{$attribute_name};
+    return $attr{ $self->id }{$attribute_name};
 }
 
 # return 1 or 0
 sub has {
-    my $id = shift->id;
-    my $attribute_name = shift or return PNI::Error::missing_required_argument;
+    my $id             = shift->id;
+    my $attribute_name = shift
+      or return PNI::Error::missing_required_argument;
 
     return exists $attr{$id}{$attribute_name} || 0;
 }
@@ -87,24 +91,24 @@ sub id {
 # so this init sub could be called after constructor by default
 # this should give introspection and a lot of cool things
 # also need an $init_args
-# so nodes could just have a "our $attributes" or "our $inputs" "out $outputs"
+# so nodes could just have a "our $attributes" or "our $inputs" "our $outputs"
 # do this before 1.0 !!!!!!
 sub init { return PNI::Error::unimplemented_abstract_method; }
 
 # return 1
 sub set {
     my $self           = shift;
-    my $id             = $self->id;
-    my $attribute_name = shift or return PNI::Error::missing_required_argument;
-    ### set: $attribute_name
+    my $attribute_name = shift
+      or return PNI::Error::missing_required_argument;
 
     # check if attribute exists
-    $self->has($attribute_name) or return PNI::Error::attribute_does_not_exists;
+    $self->has($attribute_name)
+      or return PNI::Error::attribute_does_not_exists;
 
     # attribute value can be undef
     my $attribute_value = shift;
 
-    $attr{$id}{$attribute_name} = $attribute_value;
+    $attr{ $self->id }{$attribute_name} = $attribute_value;
 
     return 1;
 }
@@ -115,7 +119,7 @@ sub type { return ref shift; }
 sub DESTROY {
 
     # garbage all item attributes
-    return shift->cleanup;
+    shift->cleanup;
 }
 
 1;

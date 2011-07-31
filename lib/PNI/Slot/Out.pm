@@ -23,10 +23,10 @@ sub add_edge {
     return 1;
 }
 
-sub get_edges { return values %{ shift->get('edges') }; }
+sub get_edges { values %{ shift->get('edges') }; }
 
 # return 0 or 1
-sub is_connected { return shift->get_edges ? 1 : 0; }
+sub is_connected { shift->get_edges ? 1 : 0; }
 
 # return $edge
 sub join_to {

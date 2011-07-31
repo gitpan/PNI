@@ -2,11 +2,15 @@ Changes
 lib/PNI.pm
 lib/PNI/Edge.pm
 lib/PNI/Error.pm
+lib/PNI/FAQ.pod
 lib/PNI/File.pm
 lib/PNI/Finder.pm
 lib/PNI/GUI/Edge.pm
 lib/PNI/GUI/Node.pm
 lib/PNI/GUI/Scenario.pm
+lib/PNI/GUI/Slot.pm
+lib/PNI/GUI/Slot/In.pm
+lib/PNI/GUI/Slot/Out.pm
 lib/PNI/Item.pm
 lib/PNI/Node.pm
 lib/PNI/Scenario.pm
@@ -24,6 +28,7 @@ t/_finder.t
 t/_gui-edge.t
 t/_gui-node.t
 t/_gui-scenario.t
+t/_gui-slot.t
 t/_item.t
 t/_node.t
 t/_pni.t

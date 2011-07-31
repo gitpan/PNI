@@ -7,19 +7,12 @@ use PNI::File;
 use PNI::Node;
 
 sub new {
-    my $class = shift;
-    my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
+    my $self = shift->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
+    my $arg = {@_};
 
+    # TODO questa parte dovrei metterla in un init
     $self->add( edges => {} );
-
-    # $file is not required but should be a PNI::File
-    my $file = $arg->{file};
-    if ( defined $file and not $file->isa('PNI::File') ) {
-        return PNI::Error::invalid_argument_type;
-    }
-    $self->add( file => $file );
 
     $self->add( nodes => {} );
 
@@ -47,11 +40,16 @@ sub add_node {
     my $node_class = "PNI::Node::$type";
     my $node_path  = "$node_class.pm";
     $node_path =~ s/::/\//g;
-    eval { require $node_path; } or return PNI::Error::unable_to_load_node;
-    my $node = $node_class->new(@_) or return PNI::Error::unable_to_create_item;
 
-    # at this point the node is created, so you can initialize it
-    $node->init or return PNI::Error::unable_to_init_node;
+    eval { require $node_path; }
+      or return PNI::Error::unable_to_load_node;
+
+    my $node = $node_class->new(@_)
+      or return PNI::Error::unable_to_create_item;
+
+    # at this point the node is created, so it can initialized
+    $node->init
+      or return PNI::Error::unable_to_init_node;
 
     my $inputs = $arg->{inputs};
     if ( defined $inputs ) {
@@ -63,7 +61,7 @@ sub add_node {
     return $self->get('nodes')->{ $node->id } = $node;
 }
 
-# return 1
+# return $scenario : PNI::Scenario
 sub add_scenario {
     my $self     = shift;
     my $scenario = PNI::Scenario->new(@_)
@@ -72,8 +70,19 @@ sub add_scenario {
     return $self->get('scenarios')->{ $scenario->id } = $scenario;
 }
 
+sub del_scenario {
+    my $self=shift;
+    my $scenario = shift;
+    # TODO FIXME
+    delete $self->get('scenario')->{$scenario->id};
+    undef $scenario;
+}
+
 # return @nodes: PNI::Node
 sub get_nodes { values %{ shift->get('nodes') } }
+
+# return @scenarios: PNI::Scenario
+sub get_scenarios { values %{ shift->get('scenarios') } }
 
 # return 1
 sub task {
@@ -107,7 +116,8 @@ sub task {
 
             # retrieve slot data coming from input edges
             for my $edge ( $node->get_input_edges ) {
-                $edge->get_target->set_data( $edge->get_source->get_data );
+                $edge->task;
+                #$edge->get_target->set_data( $edge->get_source->get_data );
             }
 
             # ok, now it's time to run node task
@@ -124,9 +134,9 @@ sub task {
 
     # check if all tasks run
     for my $node ( $self->get_nodes ) {
-        if   ( $has_run_task_of{$node} ) { }
+        if ( $has_run_task_of{$node} ) { }
         ### TODO apply Marcos patches !!!!
-        else                             { goto RUN_TASKS; }
+        else { goto RUN_TASKS; }
     }
 
     # at this point all tasks are run so reset all slots "changed" flag
@@ -136,18 +146,18 @@ sub task {
         }
     }
 
+    # finally, run all scenarios task
+    $_->task for $self->get_scenarios;
+
     return 1;
 }
 
 1;
 __END__
 
-################################
-# TODO consider rename this package as PNI::Tree
-
 =head1 NAME
 
-PNI::Scenario - is a persistent PNI graph
+PNI::Scenario - is a set of nodes connected by edges
 
 =head1 METHODS
 

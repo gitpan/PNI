@@ -5,19 +5,14 @@ use base 'PNI::Item';
 use PNI::Error;
 
 sub new {
-    my $class = shift;
-    my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
+    my $self = shift->SUPER::new;
+    my $arg  = {@_};
 
-    my $center_y = $arg->{center_y};
-    $self->add( center_y => $center_y );
+    $self->add( center_y => $arg->{center_y} );
 
-    my $center_x = $arg->{center_x};
-    $self->add( center_x => $center_x );
+    $self->add( center_x => $arg->{center_x} );
 
-    my $height = $arg->{height};
-    $self->add( height => $height );
+    $self->add( height => $arg->{height} );
 
     # $node is not required but should be a PNI::Node
     my $node = $arg->{node};
@@ -33,60 +28,73 @@ sub new {
 
     $self->add( label => $label );
 
-    my $width = $arg->{width};
-    $self->add( width => $width );
+    $self->add( width => $arg->{width} );
 
     return $self;
 }
 
-sub get_center_y { return shift->get('center_y') }
+# TODO sub add_input, add_output, del_input, del_output sono ABSTRACT ??
 
-sub get_center_x { return shift->get('center_x') }
+sub get_center_y { shift->get('center_y') }
 
-sub get_height { return shift->get('height') }
+sub get_center_x { shift->get('center_x') }
 
-sub get_label { return shift->get('label') }
+sub get_height { shift->get('height') }
 
-sub get_node { return shift->get('node') }
+sub get_label { shift->get('label') }
 
-sub get_width { return shift->get('width') }
+sub get_node { shift->get('node') }
+
+sub get_width { shift->get('width') }
 
 # return 1
 sub move { return PNI::Error::unimplemented_abstract_method; }
 
 sub set_center_y {
-    my $self = shift;
-    my $center_y = shift or return PNI::Error::missing_required_argument;
+    my $self     = shift;
+    my $center_y = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( center_y => $center_y );
 }
 
 sub set_center_x {
-    my $self = shift;
-    my $center_x = shift or return PNI::Error::missing_required_argument;
+    my $self     = shift;
+    my $center_x = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( center_x => $center_x );
 }
 
 sub set_height {
-    my $self = shift;
-    my $height = shift or return PNI::Error::missing_required_argument;
+    my $self   = shift;
+    my $height = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( height => $height );
 }
 
 sub set_label {
-    my $self = shift;
-    my $label = shift or return PNI::Error::missing_required_argument;
+    my $self  = shift;
+    my $label = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( label => $label );
 }
 
 sub set_node {
     my $self = shift;
-    my $node = shift or return PNI::Error::missing_required_argument;
+    my $node = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( node => $node );
 }
 
 sub set_width {
-    my $self = shift;
-    my $width = shift or return PNI::Error::missing_required_argument;
+    my $self  = shift;
+    my $width = shift
+      or return PNI::Error::missing_required_argument;
+
     return $self->set( width => $width );
 }
 
@@ -96,7 +104,6 @@ __END__
 =head1 NAME
 
 PNI::GUI::Node - is a node abstract view
-
 
 =head1 METHODS
 
@@ -126,17 +133,5 @@ PNI::GUI::Node - is a node abstract view
 
 =head2 C<set_width>
 
-
-
-=head1 AUTHOR
-
-G. Casati , E<lt>fibo@cpan.orgE<gt>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2009-2011, Gianluca Casati
-
-This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
-
 =cut
+

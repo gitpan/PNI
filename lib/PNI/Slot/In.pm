@@ -5,10 +5,9 @@ use PNI::Edge;
 use PNI::Error;
 
 sub new {
-    my $class = shift;
-    my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
+    my $self = shift->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
+    my $arg = {@_};
 
     $self->add('edge');
 
@@ -17,8 +16,10 @@ sub new {
 
 sub add_edge {
     my $self = shift;
-    my $edge = shift or return PNI::Error::missing_required_argument;
-    $edge->isa('PNI::Edge') or return PNI::Error::invalid_argument_type;
+    my $edge = shift
+      or return PNI::Error::missing_required_argument;
+    $edge->isa('PNI::Edge')
+      or return PNI::Error::invalid_argument_type;
     return $self->set( edge => $edge );
 }
 
@@ -32,8 +33,9 @@ sub is_connected { defined( shift->get_edge ) ? 1 : 0 }
 sub join_to {
     my $self = shift;
 
-    # output_slot arg is required
-    my $output_slot = shift or return PNI::Error::missing_required_argument;
+    # output_slot is required
+    my $output_slot = shift
+      or return PNI::Error::missing_required_argument;
 
     return PNI::Edge->new( source => $output_slot, target => $self );
 }
@@ -60,3 +62,4 @@ PNI::Slot::In - input slot
     my $new_edge = $in->join_to( $out );
 
 =cut
+

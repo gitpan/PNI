@@ -6,10 +6,8 @@ use PNI::Slot::In;
 use PNI::Slot::Out;
 
 sub new {
-    my $class = shift;
+    my $self  = shift->SUPER::new;
     my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
 
     $self->add( inputs        => {} );
     $self->add( inputs_order  => [] );
@@ -22,7 +20,8 @@ sub new {
 # return $input
 sub add_input {
     my $self = shift;
-    my $input_name = shift or return PNI::Error::missing_required_argument;
+    my $input_name = shift 
+        or return PNI::Error::missing_required_argument;
 
     my $input = PNI::Slot::In->new( node => $self, name => $input_name, @_ )
       or return PNI::Error::unable_to_create_item;
@@ -36,7 +35,8 @@ sub add_input {
 # return $output
 sub add_output {
     my $self = shift;
-    my $output_name = shift or return PNI::Error::missing_required_argument;
+    my $output_name = shift 
+        or return PNI::Error::missing_required_argument;
 
     my $output = PNI::Slot::Out->new( node => $self, name => $output_name, @_ )
       or return PNI::Error::unable_to_create_item;
@@ -47,30 +47,32 @@ sub add_output {
     return $output;
 }
 
-# return $input
+# return $input : PNI::Slot::In
 sub get_input {
     my $self = shift;
-    my $input_name = shift or return PNI::Error::missing_required_argument;
+    my $input_name = shift 
+        or return PNI::Error::missing_required_argument;
+
     return $self->get('inputs')->{$input_name};
 }
 
-# return $output
+# return $output : PNI::Slot::Out
 sub get_output {
     my $self = shift;
-    my $output_name = shift or return PNI::Error::missing_required_argument;
+    my $output_name = shift 
+        or return PNI::Error::missing_required_argument;
+
     return $self->get('outputs')->{$output_name};
 }
 
-# return @inputs
-sub get_inputs { return values %{ shift->get('inputs') }; }
+# return @inputs : PNI::Slot::In
+sub get_inputs { values %{ shift->get('inputs') } }
 
-# return @outputs
-sub get_outputs { return values %{ shift->get('outputs') }; }
+# return @outputs : PNI::Slot:Out
+sub get_outputs { values %{ shift->get('outputs') } }
 
-# return @input_edges
-sub get_input_edges {
-    return grep { defined } map { $_->get_edge } shift->get_inputs;
-}
+# return @input_edges : PNI::Edge
+sub get_input_edges { grep { defined } map { $_->get_edge } shift->get_inputs }
 
 # return @inputs
 sub get_ordered_inputs {
@@ -105,10 +107,10 @@ sub get_type {
 }
 
 # return undef
-sub init { return PNI::Error::unimplemented_abstract_method; }
+sub init { PNI::Error::unimplemented_abstract_method }
 
 # return undef
-sub task { return PNI::Error::unimplemented_abstract_method; }
+sub task { PNI::Error::unimplemented_abstract_method }
 
 # return 1 or 0
 sub some_input_is_connected {
@@ -125,7 +127,6 @@ __END__
 =head1 NAME
 
 PNI::Node - is a basic unit of code
-
 
 =head1 DESCRIPTION
 
@@ -175,7 +176,8 @@ Creates a new L<PNI::Slot::Out>.
 
 =head2 C<get_type>
 
-Returns the PNI node type, which is the name of the node package minus the leading 'PNI::Node::' string;
+Returns the PNI node type, which is the name of the node package minus the
+leading 'PNI::Node::' string.
 
 =head2 C<some_input_is_connected>
 

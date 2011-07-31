@@ -5,19 +5,16 @@ use PNI::Error;
 use Scalar::Util;
 
 sub new {
-    my $class = shift;
+    my $self  = shift->SUPER::new;
     my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
 
     $self->add( changed => 0 );
 
     # TODO should be renamed as data_ref
-    my $data = $arg->{data};
-    $self->add( data => $data );
+    $self->add( data => $arg->{data} );
 
-    my $name = $arg->{name};
-    $self->add( name => $name );
+    # TODO arg name is not required , maybe it should be, or it should default to slot id or something
+    $self->add( name => $arg->{name} );
 
     # $node is not required but should be a PNI::Node
     my $node = $arg->{node};

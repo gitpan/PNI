@@ -7,23 +7,15 @@ use PNI::Error;
 sub new {
     my $class = shift;
     my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
+    my $self  = $class->SUPER::new;
 
     $self->add( edges => {} );
     $self->add( nodes => {} );
 
-    # $file is not required but should be a PNI::File
-    # and defaults to an brand new PNI::File.
-    $self->add('file');
-    my $file = $arg->{file};
-    if ( defined $file and not $file->isa('PNI::File') ) {
-        return PNI::Error::invalid_argument_type;
-    }
-    else {
-        $file = PNI::File->new;
-    }
-    $self->set_file($file);
+    # $file is not required
+    # and defaults to a brand new PNI::File.
+    my $file = $arg->{file} || PNI::File->new;
+    $self->add( file => $file );
 
     # $scenario is required
     my $scenario = $arg->{scenario}
@@ -46,7 +38,6 @@ sub add_edge { return PNI::Error::unimplemented_abstract_method; }
 # return $node: PNI::GUI::Node
 sub add_node { return PNI::Error::unimplemented_abstract_method; }
 
-# my $previous_content = $self->clear_all;
 # return \%content
 sub clear_all {
     my $self             = shift;
@@ -76,21 +67,21 @@ sub get_scenario { shift->get('scenario') }
 sub load_file {
     my $self = shift;
 
-    my $file    = $self->get_file;
-    my $content = $file->get_content;
+    my $previous_content = $self->clear_all;
+
+    my $content      = $self->get_file->get_content;
+    my $stored_edges = $content->{edges};
+    my $stored_nodes = $content->{nodes};
 
     my %new_id_of;
     my %get_node_by_id;
-    my $previous_content = $self->clear_all;
-
-    my $stored_edges = $content->{edges};
-    my $stored_nodes = $content->{nodes};
 
     # create nodes
     for my $stored_node_id ( keys %{$stored_nodes} ) {
 
         my $stored_node = $stored_nodes->{$stored_node_id};
 
+        # retrieve stored data
         my $center_y = $stored_node->{center_y};
         my $center_x = $stored_node->{center_x};
         my $inputs   = $stored_node->{inputs};
@@ -105,9 +96,14 @@ sub load_file {
         );
 
         my $node_id = $node->id;
+
+        # TODO si potrebbe ssaltare un passaggio ?
+        #      e usare un solo hash stored_node_id <--> node
+
+        # remember  stored_node_id <--> node_id  relation
         $new_id_of{$stored_node_id} = $node_id;
 
-        # remember node <--> node_id relation
+        # remember  node_id <--> node  relation
         $get_node_by_id{$node_id} = $node;
     }
 
@@ -116,23 +112,21 @@ sub load_file {
 
         my $stored_edge = $stored_edges->{$stored_edge_id};
 
-        # stored_egde => { source_id => x, target_id => y,
-        #                  source_name => 'foo', target_name => 'bar' }
-        my $stored_source_id = $stored_edge->{source_id};
-        my $stored_target_id = $stored_edge->{target_id};
-        my $source_name      = $stored_edge->{source_name};
-        my $target_name      = $stored_edge->{target_name};
+        # retrieve stored data
+        my $stored_source_node_id = $stored_edge->{source_node_id};
+        my $stored_target_node_id = $stored_edge->{target_node_id};
+        my $stored_source_name    = $stored_edge->{source_name};
+        my $stored_target_name    = $stored_edge->{target_name};
 
-        my $source_id   = $new_id_of{$stored_source_id};
-        my $source_node = $get_node_by_id{$source_id};
-        my $source      = $source_node->get_input($source_name);
-
-        my $target_id   = $new_id_of{$stored_target_id};
-        my $target_node = $get_node_by_id{$target_id};
-        my $target      = $target_node->get_input($target_name);
+        my $source_node_id = $new_id_of{$stored_source_node_id};
+        my $target_node_id = $new_id_of{$stored_target_node_id};
+        my $source_node    = $get_node_by_id{$source_node_id};
+        my $target_node    = $get_node_by_id{$target_node_id};
+        my $source         = $source_node->get_output($stored_source_name);
+        my $target         = $target_node->get_input($stored_target_name);
 
         # N.B. : add_edge method is abstract, should be defined in child classes
-        my $edge = $self->add_edge(
+        $self->add_edge(
             source => $source,
             target => $target
         );
@@ -145,10 +139,45 @@ sub save_file {
     my $self = shift;
     my $file = $self->get_file;
 
-    my $edges = $self->get('edges');
-    my $nodes = $self->get('nodes');
+    my $content = {};
+    my $edges   = {};
+    my $nodes   = {};
 
-    return $file->set_content( { edges => $edges, nodes => $nodes, } );
+    # get info about nodes
+    while ( my ( $gui_node_id, $gui_node ) = each %{ $self->get('nodes') } ) {
+        my $center_y = $gui_node->get_center_y;
+        my $center_x = $gui_node->get_center_x;
+        my $node     = $gui_node->get_node;
+        my $type     = $node->get_type;
+
+        $nodes->{$gui_node_id} = {
+            center_y => $center_y,
+            center_x => $center_x,
+
+            # TODO persistence for input values
+            inputs => {},
+            type   => $type,
+        };
+    }
+
+    # get info about edges
+    while ( my ( $edge_id, $edge ) = each %{ $self->get('edges') } ) {
+        my $source_name    = $edge->get_source->get_name;
+        my $source_node_id = $edge->get_source_node->id;
+        my $target_name    = $edge->get_target->get_name;
+        my $target_node_id = $edge->get_target_node->id;
+
+        $edges->{$edge_id} = {
+            source_name    => $source_name,
+            source_node_id => $source_node_id,
+            target_name    => $target_name,
+            target_node_id => $target_node_id,
+        };
+    }
+
+    $content->{edges} = $edges;
+    $content->{nodes} = $nodes;
+    return $file->set_content($content);
 }
 
 sub set_file {
@@ -186,8 +215,6 @@ PNI::GUI::Scenario - is a scenario abstract view
 =head2 C<load_file>
 
 =head2 C<save_file>
-
-=head2 C<set_file>
 
 =cut
 

@@ -15,16 +15,10 @@ my $say = sub {
           . "[PNI::Error] from package $package "
           . "in file $filename at line $line\n";
     }
-    return 1;
 };
 
 sub attribute_does_not_exists {
     $say->('attribute does not exists');
-    return;
-}
-
-sub check_data_failed {
-    $say->('check data failed');
     return;
 }
 
@@ -89,8 +83,6 @@ PNI::Error - PNI errors catalogue
 =head1 ERRORS
 
 =head2 C<attribute_does_not_exists>
-
-=head2 C<check_data_failed>
 
 =head2 C<generic>
 
