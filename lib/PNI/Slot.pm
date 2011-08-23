@@ -1,19 +1,19 @@
 package PNI::Slot;
+use parent 'PNI::Item';
 use strict;
-use base 'PNI::Item';
 use PNI::Error;
 use Scalar::Util;
 
 sub new {
-    my $self  = shift->SUPER::new;
-    my $arg   = {@_};
+    my $self = shift->SUPER::new;
+    my $arg  = {@_};
 
     $self->add( changed => 0 );
 
     # TODO should be renamed as data_ref
     $self->add( data => $arg->{data} );
 
-    # TODO arg name is not required , maybe it should be, or it should default to slot id or something
+# TODO arg name is not required , maybe it should be, or it should default to slot id or something
     $self->add( name => $arg->{name} );
 
     # $node is not required but should be a PNI::Node
@@ -73,34 +73,39 @@ sub new {
 #    return 1;
 #}
 
-sub get_data { return shift->get('data') }
+sub get_data { shift->get('data') }
 
-sub get_name { return shift->get('name') }
+sub get_name { shift->get('name') }
 
-sub get_node { return shift->get('node') }
+# return $node : PNI::Node
+sub get_node { shift->get('node') }
 
 # return $type
-# $type can be UNDEF SCALAR, the output of a Perl ref function ( ARRAY, HASH, CODE ... )
+# $type can be UNDEF, SCALAR, the output of a Perl ref function ( ARRAY, HASH, CODE ... )
 sub get_type {
     my $data = shift->get_data;
+
     return 'UNDEF' if not defined $data;
+
     my $type = ref $data;
+
     return 'SCALAR' unless $type;
+
     return $type;
 }
 
 sub data {
     my $self = shift;
 
-    if ( $self->is_array ) { return @{ $self->get_data }; }
+    if ( $self->is_array ) { return @{ $self->get_data } }
 
-    if ( $self->is_hash ) { return %{ $self->get_data }; }
+    if ( $self->is_hash ) { return %{ $self->get_data }}
 
-    if ( $self->is_scalar ) { return $self->get_data; }
+    if ( $self->is_scalar ) { return $self->get_data }
 
-    if ( $self->is_undef ) { return $self->get_data; }
+    if ( $self->is_undef ) { return $self->get_data }
 
-    # never reach here
+    # Never reach here!
     return PNI::Error::generic;
 }
 
@@ -143,8 +148,7 @@ sub is_code {
     }
 }
 
-# return 0 or 1
-sub is_connected { return PNI::Error::unimplemented_abstract_method; }
+sub is_connected { PNI::Error::unimplemented_abstract_method; }
 
 # return 0 or 1
 sub is_defined {

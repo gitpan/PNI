@@ -1,6 +1,6 @@
 package PNI::Slot::In;
+use parent 'PNI::Slot';
 use strict;
-use base 'PNI::Slot';
 use PNI::Edge;
 use PNI::Error;
 
@@ -23,13 +23,15 @@ sub add_edge {
     return $self->set( edge => $edge );
 }
 
-# return $edge: PNI::Edge
+sub del_edge { shift->set( edge => undef ) }
+
+# return $edge : PNI::Edge
 sub get_edge { shift->get('edge') }
 
 # return 0 or 1
 sub is_connected { defined( shift->get_edge ) ? 1 : 0 }
 
-# return $edge: PNI::Edge
+# return $edge : PNI::Edge
 sub join_to {
     my $self = shift;
 
@@ -50,6 +52,8 @@ PNI::Slot::In - input slot
 =head1 METHODS
 
 =head2 C<add_edge>
+
+=head2 C<del_edge>
 
 =head2 C<get_edge>
 

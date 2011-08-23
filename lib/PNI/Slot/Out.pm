@@ -1,13 +1,12 @@
 package PNI::Slot::Out;
+use parent 'PNI::Slot';
 use strict;
-use base 'PNI::Slot';
 use PNI::Error;
 
 sub new {
-    my $class = shift;
-    my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
+    my $self = shift->SUPER::new(@_)
       or return PNI::Error::unable_to_create_item;
+    my $arg = {@_};
 
     $self->add( edges => {} );
 
@@ -16,24 +15,38 @@ sub new {
 
 sub add_edge {
     my $self = shift;
-    my $edge = shift or return PNI::Error::missing_required_argument;
-    $edge->isa('PNI::Edge') or return PNI::Error::invalid_argument_type;
+
+    my $edge = shift
+      or return PNI::Error::missing_required_argument;
+
+    $edge->isa('PNI::Edge')
+      or return PNI::Error::invalid_argument_type;
 
     $self->get('edges')->{ $edge->id } = $edge;
-    return 1;
 }
 
+sub del_edge {
+    my $self = shift;
+
+    my $edge = shift
+      or return PNI::Error::missing_required_argument;
+
+    delete $self->get('edges')->{ $edge->id };
+}
+
+# return @edges : PNI::Edge
 sub get_edges { values %{ shift->get('edges') }; }
 
 # return 0 or 1
 sub is_connected { shift->get_edges ? 1 : 0; }
 
-# return $edge
+# return $edge : PNI::Edge
 sub join_to {
     my $self = shift;
 
     # input_slot arg is required
-    my $input_slot = shift or return PNI::Error::missing_required_argument;
+    my $input_slot = shift
+      or return PNI::Error::missing_required_argument;
 
     return PNI::Edge->new( source => $self, target => $input_slot );
 }
@@ -52,6 +65,8 @@ PNI::Slot::Out - output slot
 =head1 METHODS
 
 =head2 C<add_edge>
+
+=head2 C<del_edge>
 
 =head2 C<get_edges>
 

@@ -6,6 +6,7 @@ WriteMakefile
   AUTHOR        => 'G. Casati <fibo@cpan.org>',
   NAME          => 'PNI',
   PREREQ_PM     => {
+    Carp              => 0,
     Exporter          => 0,
     File::Find        => 0,
     File::Temp        => '0.22',

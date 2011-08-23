@@ -10,6 +10,7 @@ BEGIN {
       PNI::Error
       PNI::File
       PNI::Finder
+      PNI::GUI::Comment
       PNI::GUI::Edge
       PNI::GUI::Node
       PNI::GUI::Scenario
@@ -27,6 +28,7 @@ BEGIN {
 isa_ok( "PNI::$_", 'PNI::Item' ) for qw(
   Edge
   File
+  GUI::Comment
   GUI::Edge
   GUI::Node
   GUI::Scenario
@@ -51,9 +53,7 @@ can_ok( 'PNI', $_ ) for qw(
 can_ok( 'PNI::Edge', $_ ) for qw(
   new
   get_source
-  get_source_node
   get_target
-  get_target_node
   task
 );
 can_ok( 'PNI::Error', $_ ) for qw(
@@ -77,6 +77,13 @@ can_ok( 'PNI::Finder', $_ ) for qw(
   instance
   nodes
 );
+can_ok( 'PNI::GUI::Comment', $_ ) for qw(
+  new
+  get_center_y
+  get_center_x
+  get_content
+
+);
 can_ok( 'PNI::GUI::Edge', $_ ) for qw(
   new
 );
@@ -87,8 +94,8 @@ can_ok( 'PNI::GUI::Node', $_ ) for qw(
   get_height
   get_label
   get_node
+  get_type
   get_width
-  move
   set_center_y
   set_center_x
   set_height
@@ -97,6 +104,7 @@ can_ok( 'PNI::GUI::Node', $_ ) for qw(
 );
 can_ok( 'PNI::GUI::Scenario', $_ ) for qw(
   new
+  add_comment
   add_edge
   add_node
   del_edge
@@ -133,8 +141,8 @@ can_ok( 'PNI::Node', $_ ) for qw(
   get_output_edges
   get_outputs
   get_type
-  some_input_is_connected
   init
+  parents
   task
 );
 can_ok( 'PNI::Scenario', $_ ) for qw(
@@ -166,6 +174,7 @@ can_ok( 'PNI::Slot', $_ ) for qw(
 can_ok( 'PNI::Slot::In', $_ ) for qw(
   new
   add_edge
+  del_edge
   get_edge
   is_connected
   join_to
@@ -173,6 +182,7 @@ can_ok( 'PNI::Slot::In', $_ ) for qw(
 can_ok( 'PNI::Slot::Out', $_ ) for qw(
   new
   add_edge
+  del_edge
   get_edges
   is_connected
   join_to

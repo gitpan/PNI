@@ -45,17 +45,16 @@ sub get_label { shift->get('label') }
 
 sub get_node { shift->get('node') }
 
-sub get_width { shift->get('width') }
+sub get_type { shift->get_node->get_type }
 
-# return 1
-sub move { return PNI::Error::unimplemented_abstract_method; }
+sub get_width { shift->get('width') }
 
 sub set_center_y {
     my $self     = shift;
     my $center_y = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( center_y => $center_y );
+    $self->set( center_y => $center_y );
 }
 
 sub set_center_x {
@@ -63,7 +62,7 @@ sub set_center_x {
     my $center_x = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( center_x => $center_x );
+    $self->set( center_x => $center_x );
 }
 
 sub set_height {
@@ -71,7 +70,7 @@ sub set_height {
     my $height = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( height => $height );
+    $self->set( height => $height );
 }
 
 sub set_label {
@@ -79,7 +78,7 @@ sub set_label {
     my $label = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( label => $label );
+    $self->set( label => $label );
 }
 
 sub set_node {
@@ -87,7 +86,7 @@ sub set_node {
     my $node = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( node => $node );
+    $self->set( node => $node );
 }
 
 sub set_width {
@@ -95,7 +94,7 @@ sub set_width {
     my $width = shift
       or return PNI::Error::missing_required_argument;
 
-    return $self->set( width => $width );
+    $self->set( width => $width );
 }
 
 1;
@@ -117,9 +116,9 @@ PNI::GUI::Node - is a node abstract view
 
 =head2 C<get_node>
 
-=head2 C<get_width>
+=head2 C<get_type>
 
-=head2 C<move>
+=head2 C<get_width>
 
 =head2 C<set_center_x>
 

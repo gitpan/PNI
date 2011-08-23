@@ -1,5 +1,6 @@
 package PNI::Error;
 use strict;
+use Carp;
 
 my $verbose = 1;
 
@@ -8,12 +9,9 @@ sub verbose_off { return not $verbose = 0; }
 sub verbose_on { return $verbose = 1; }
 
 my $say = sub {
-    my ( $package, $filename, $line ) = caller 1;
     if ($verbose) {
         my $message = shift;
-        warn "[PNI::Error] message: $message\n"
-          . "[PNI::Error] from package $package "
-          . "in file $filename at line $line\n";
+        Carp::cluck( $message, "\n" );
     }
 };
 

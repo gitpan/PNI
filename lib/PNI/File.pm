@@ -1,6 +1,6 @@
 package PNI::File;
+use parent 'PNI::Item';
 use strict;
-use base 'PNI::Item';
 use File::Spec;
 use File::Temp;
 use JSON;
@@ -10,10 +10,8 @@ my $empty_content = { edges => {}, nodes => {}, };
 my $extension = 'pni';
 
 sub new {
-    my $class = shift;
-    my $arg   = {@_};
-    my $self  = $class->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
+    my $self = shift->SUPER::new;
+    my $arg  = {@_};
 
     my $path = $arg->{path};
 
@@ -58,6 +56,7 @@ sub get_content {
 # return $path
 sub get_path { shift->get('path') }
 
+# return \%content
 sub set_content {
     my $self    = shift;
     my $content = shift
@@ -72,7 +71,7 @@ sub set_content {
 
     close $fh;
 
-    return 1;
+    return $content;
 }
 
 1;

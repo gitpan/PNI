@@ -1,5 +1,11 @@
 Revision history for Perl Node Interface.
 
+0.18  2011-08-23
+    - PNI::GUI::Comment
+    - can remove stuff with del_node, del_scenario, del_edge
+    - use parent instead of use base pragma
+    - use Carp in PNI::Error
+
 0.17  2011-07-31
     - ready for first PNI::GUI::Tk usable version
     - added PNI::FAQ pod

@@ -1,6 +1,9 @@
 package PNI;
+
 use strict;
-our $VERSION = '0.17';
+
+our $VERSION = '0.18';
+
 use Exporter 'import';
 use PNI::Edge;
 use PNI::Finder;
@@ -8,15 +11,18 @@ use PNI::Node;
 use PNI::Scenario;
 use Time::HiRes;
 
-# use PNI ':-D';
-# exports edge, node and task
-our @EXPORT_OK = qw(edge node task);
+# Smiling is better (:
+# use PNI ':-D'; # exports edge, node and task
+our @EXPORT_OK = qw( edge node task );
 our %EXPORT_TAGS = ( '-D' => \@EXPORT_OK );
 
-# root scenario
+# The node finder.
+my $find = PNI::Finder->instance;
+
+# The root scenario.
 my $root = PNI::Scenario->new;
 
-# return $edge
+# return $edge : PNI::Edge
 sub edge {
     my $source_node        = shift;
     my $target_node        = shift;
@@ -32,32 +38,26 @@ sub edge {
     );
 }
 
-# return 1
 sub loop {
     while (1) {
-        task();
+        &task;
         Time::HiRes::usleep(1);
     }
-    return 1;
 }
 
-# return $node
+# return $node : PNI::Node
 sub node {
     my $type = shift;
     return $root->add_node( type => $type, @_ );
 }
 
-# node finder
-my $find = PNI::Finder->instance;
+# return @nodes : PNI::Node
+sub node_list { $find->nodes }
 
-# return @nodes
-sub node_list { return $find->nodes; }
+# return $root : PNI::Scenario
+sub root { $root }
 
-# return $root
-sub root { return $root; }
-
-# return 1
-sub task { return $root->task; }
+sub task { $root->task }
 
 1;
 __END__
@@ -122,10 +122,10 @@ Blah blah blah. ( this was the h2xs command :-)
 
 =head2 C<edge>
 
-    my $source_node = node 'Some::Node';
-    my $target_node = node 'Another::Node';
+    my $source_node = PNI::node 'Some::Node';
+    my $target_node = PNI::node 'Another::Node';
 
-    my $edge = edge $source_node    => $target_node , 
+    my $edge = PNI::edge $source_node    => $target_node , 
                'source_output_name' => 'target_input_name';
 
 Connects an output of a node to an input of another node.
@@ -135,13 +135,13 @@ Connects an output of a node to an input of another node.
 Creates a node by its PNI type, that is the name of a package under the
 PNI::Node namespace, and adds it to the root scenario. If you write
 
-    my $node = node 'Foo::Bar';
+    my $node = PNI::node 'Foo::Bar';
 
 PNI loads and inits PNI::Node::Foo::Bar node. 
 
 If no PNI type is passed, and you just write
 
-    my $node = node;
+    my $node = PNI::node;
     
 PNI creates an empty node.
 
@@ -155,10 +155,14 @@ This method delegates to L<PNI::Finder> C<nodes> method.
 
 =head2 C<task>
 
+    PNI::task;
+
 Calls the task method for every loaded node.
 This method delegates to the root scenario task method.
 
 =head2 C<loop>
+
+    PNI::loop;
 
 Starts the PNI main loop. It keeps calling C<task> as fast as it can.
 

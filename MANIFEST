@@ -5,12 +5,11 @@ lib/PNI/Error.pm
 lib/PNI/FAQ.pod
 lib/PNI/File.pm
 lib/PNI/Finder.pm
+lib/PNI/GUI/Comment.pm
 lib/PNI/GUI/Edge.pm
 lib/PNI/GUI/Node.pm
 lib/PNI/GUI/Scenario.pm
 lib/PNI/GUI/Slot.pm
-lib/PNI/GUI/Slot/In.pm
-lib/PNI/GUI/Slot/Out.pm
 lib/PNI/Item.pm
 lib/PNI/Node.pm
 lib/PNI/Scenario.pm
@@ -25,6 +24,7 @@ t/_edge.t
 t/_error.t
 t/_file.t
 t/_finder.t
+t/_gui-comment.t
 t/_gui-edge.t
 t/_gui-node.t
 t/_gui-scenario.t

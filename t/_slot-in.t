@@ -10,18 +10,28 @@ my $slot = PNI::Slot::In->new( node => $node, name => 'slot_test' );
 isa_ok $slot, 'PNI::Slot::In';
 
 # at creation, slot should not be connected
-is $slot->is_connected , 0;
+is $slot->is_connected, 0;
 
 # create a fake edge for tests
-my $in = $node->add_input('in');
-my $out = $node->add_output('out');
-my $edge = PNI::Edge->new( source => $out , target => $in );
-ok $slot->add_edge( $edge );
+my $edge = PNI::Edge->new(
+    source => $node->add_output('out'),
+    target => $node->add_input('in'),
+
+);
+ok $slot->add_edge($edge);
+
+is $edge, $slot->get_edge, 'get_edge';
 
 # at this point slot should be connected
-is $slot->is_connected , 1;
+is $slot->is_connected, 1;
 
-isa_ok $out->join_to($in) ,'PNI::Edge','join_to';
+isa_ok $slot->join_to($node->add_output('out2')), 'PNI::Edge', 'join_to';
+
+ok $slot->del_edge, 'del_edge';
+
+# after deleting edge the slot is not connected anymore
+isnt $edge, $slot->get_edge;
+is $slot->is_connected, 0;
 
 done_testing;
 __END__

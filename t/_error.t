@@ -9,12 +9,16 @@ ok PNI::Error::verbose_off, 'verbose_off';
 
 # all PNI errors should return undef
 #is PNI::Error::*, undef, '*';
-is PNI::Error::generic,                   undef, 'generic';
-is PNI::Error::invalid_argument_type,     undef, 'invalid_argument_type';
-is PNI::Error::missing_required_argument, undef, 'missing_required_argument';
-is PNI::Error::unable_to_create_item,     undef, 'unable_to_create_item';
-is PNI::Error::unable_to_run_task,        undef, 'unable_to_run_task';
-is PNI::Error::unimplemented_abstract_method, undef,
-  'unimplemented_abstract_method';
+is PNI::Error::generic,                       undef;
+is PNI::Error::attribute_does_not_exists,     undef;
+is PNI::Error::invalid_argument_type,         undef;
+is PNI::Error::missing_required_argument,     undef;
+is PNI::Error::unable_to_create_item,         undef;
+is PNI::Error::unable_to_init_node,           undef;
+is PNI::Error::unable_to_load_node,           undef;
+is PNI::Error::unable_to_run_task,            undef;
+is PNI::Error::unimplemented_abstract_method, undef;
 
 done_testing;
+__END__
+

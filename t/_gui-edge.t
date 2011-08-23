@@ -1,5 +1,4 @@
 use strict;
-use PNI ':-D';
 use PNI::GUI::Edge;
 use Test::More;
 
