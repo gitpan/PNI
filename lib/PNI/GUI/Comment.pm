@@ -12,14 +12,14 @@ sub new {
 
     $self->add( content => $arg->{content} );
 
-    return $self;
+    return $self
 }
-
-sub get_content { shift->get('content') }
 
 sub get_center_y { shift->get('center_y') }
 
 sub get_center_x { shift->get('center_x') }
+
+sub get_content { shift->get('content') }
 
 sub set_center_y {
     my $self     = shift;
@@ -37,7 +37,7 @@ sub set_center_x {
     $self->set( center_x => $center_x );
 }
 
-1;
+1
 __END__
 
 =head1 NAME

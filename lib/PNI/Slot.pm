@@ -11,6 +11,7 @@ sub new {
     $self->add( changed => 0 );
 
     # TODO should be renamed as data_ref
+    # TODO IMPORTANTE !!! devono essere tutti dei riferimenti, anche gli scalari
     $self->add( data => $arg->{data} );
 
 # TODO arg name is not required , maybe it should be, or it should default to slot id or something
@@ -44,7 +45,7 @@ sub new {
     #    }
     #    $self->add( data_check => $data_check );
 
-    return $self;
+    return $self
 }
 
 ## return 1
@@ -73,6 +74,21 @@ sub new {
 #    return 1;
 #}
 
+sub data {
+    my $self = shift;
+
+    if ( $self->is_array ) { return @{ $self->get_data } }
+
+    if ( $self->is_hash ) { return %{ $self->get_data } }
+
+    if ( $self->is_scalar ) { return $self->get_data }
+
+    if ( $self->is_undef ) { return $self->get_data }
+
+    # Never reach here!
+    PNI::Error::generic
+}
+
 sub get_data { shift->get('data') }
 
 sub get_name { shift->get('name') }
@@ -81,7 +97,6 @@ sub get_name { shift->get('name') }
 sub get_node { shift->get('node') }
 
 # return $type
-# $type can be UNDEF, SCALAR, the output of a Perl ref function ( ARRAY, HASH, CODE ... )
 sub get_type {
     my $data = shift->get_data;
 
@@ -91,135 +106,36 @@ sub get_type {
 
     return 'SCALAR' unless $type;
 
-    return $type;
+    return $type
 }
 
-sub data {
-    my $self = shift;
+sub is_array { shift->get_type eq 'ARRAY' ? 1 : 0 }
 
-    if ( $self->is_array ) { return @{ $self->get_data } }
+sub is_changed { shift->get('changed') }
 
-    if ( $self->is_hash ) { return %{ $self->get_data }}
+sub is_code { shift->get_type eq 'CODE' ? 1 : 0 }
 
-    if ( $self->is_scalar ) { return $self->get_data }
+sub is_connected { PNI::Error::unimplemented_abstract_method }
 
-    if ( $self->is_undef ) { return $self->get_data }
+sub is_defined { shift->get_type eq 'UNDEF' ? 0 : 1 }
 
-    # Never reach here!
-    return PNI::Error::generic;
-}
+sub is_hash { shift->get_type eq 'HASH' ? 1 : 0 }
 
-# return $data_ref
-#sub data_ref { return shift->get('data'); }
+sub is_number { Scalar::Util::looks_like_number(shift->get_data) ? 1 : 0 }
 
-# return PNI::Edge
-sub join_to { return PNI::Error::unimplemented_abstract_method; }
+sub is_scalar { shift->get_type eq 'SCALAR' ? 1 : 0 }
 
-# return 0 or 1
-sub is_array {
-    my $type = shift->get_type;
-    if ( $type eq 'ARRAY' ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-# return 0 or 1
-sub is_changed {
-    my $self = shift;
-    if ( $self->get('changed') ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-# return 0 or 1
-sub is_code {
-    my $type = shift->get_type;
-    if ( $type eq 'CODE' ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-sub is_connected { PNI::Error::unimplemented_abstract_method; }
-
-# return 0 or 1
-sub is_defined {
-    my $type = shift->get_type;
-    if ( $type eq 'UNDEF' ) {
-        return 0;
-    }
-    else {
-        return 1;
-    }
-}
-
-# return 0 or 1
-sub is_hash {
-    my $type = shift->get_type;
-    if ( $type eq 'HASH' ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-# return 0 or 1
-sub is_number {
-    my $self = shift;
-    if ( $self->is_scalar ) {
-        my $data = $self->get_data;
-        if ( Scalar::Util::looks_like_number($data) ) {
-            return 1;
-        }
-        else { return 0; }
-    }
-    else { return 0; }
-}
-
-# return 0 or 1
-sub is_scalar {
-    my $type = shift->get_type;
-    if ( $type eq 'SCALAR' ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
-
-# return 0 or 1
 sub is_string {
     my $self = shift;
-    if ( $self->is_scalar ) {
-        if ( $self->is_number ) {
-            return 0;
-        }
-        else { return 1; }
-    }
-    else { return 0; }
+    $self->is_scalar or return 0;
+    $self->is_number ? 0 : 1
 }
 
-# return 0 or 1
-sub is_undef {
-    my $type = shift->get_type;
-    if ( $type eq 'UNDEF' ) {
-        return 1;
-    }
-    else {
-        return 0;
-    }
-}
+sub is_undef { shift->get_type eq 'UNDEF' ? 1 : 0 }
 
-# return
+# return PNI::Edge
+sub join_to { PNI::Error::unimplemented_abstract_method }
+
 sub set_data {
     my $self = shift;
     my $data = shift;
@@ -228,14 +144,13 @@ sub set_data {
     #      try to implement to implement that if passed an array or an hash
     #      set_data understands and put a reference
 
-    # set changed flag
-    $self->set( changed => 1 );
+    $self->set( changed => 1 ) if $data;
 
-    # slot data can be undef
-    return $self->set( data => $data );
+    # Slot data can be undef.
+    return $self->set( data => $data )
 }
 
-1;
+1
 __END__
 
 =head1 NAME
@@ -253,6 +168,11 @@ PNI::Slot - is a basic unit of data
 =head2 C<get_node>
 
 =head2 C<get_type>
+
+    my $type = $slot->get_type;
+
+Returns a string representing the data type:
+can be UNDEF, SCALAR or the output of Perl ref function ( ARRAY, HASH, CODE ... ).
 
 =head2 C<join_to>
 

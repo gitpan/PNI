@@ -30,7 +30,7 @@ sub new {
 
     $self->add( width => $arg->{width} );
 
-    return $self;
+    return $self
 }
 
 # TODO sub add_input, add_output, del_input, del_output sono ABSTRACT ??
@@ -97,7 +97,7 @@ sub set_width {
     $self->set( width => $width );
 }
 
-1;
+1
 __END__
 
 =head1 NAME

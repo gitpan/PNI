@@ -1,13 +1,12 @@
 package PNI::GUI::Scenario;
+use parent 'PNI::Item';
 use strict;
-use base 'PNI::Item';
 use PNI::File;
 use PNI::Error;
 
 sub new {
-    my $class = shift;
+    my $self  = shift->SUPER::new;
     my $arg   = {@_};
-    my $self  = $class->SUPER::new;
 
     $self->add( comments => {} );
     $self->add( edges    => {} );
@@ -28,20 +27,20 @@ sub new {
 
     $self->add( scenario => $scenario );
 
-    return $self;
+    return $self
 }
 
 # return $comment : PNI::GUI::Comment
-sub add_comment { return PNI::Error::unimplemented_abstract_method; }
+sub add_comment { PNI::Error::unimplemented_abstract_method }
 
 # return $edge : PNI::GUI::Edge
-sub add_edge { return PNI::Error::unimplemented_abstract_method; }
+sub add_edge { PNI::Error::unimplemented_abstract_method }
 
 # return $node : PNI::GUI::Node
-sub add_node { return PNI::Error::unimplemented_abstract_method; }
+sub add_node { PNI::Error::unimplemented_abstract_method }
 
 # return $scenario : PNI::GUI::Scenario
-sub add_scenario { return PNI::Error::unimplemented_abstract_method; }
+sub add_scenario { PNI::Error::unimplemented_abstract_method }
 
 # return \%content
 sub clear_all {
@@ -54,17 +53,19 @@ sub clear_all {
         nodes    => $self->get('nodes'),
     };
 
-    # Clear stuff
+    # Clear stuff.
     $self->set( comments => {} );
     $self->set( edges    => {} );
     $self->set( nodes    => {} );
 
-    return $previous_content;
+    return $previous_content
 }
 
-sub del_edge { return PNI::Error::unimplemented_abstract_method; }
+sub del_edge { PNI::Error::unimplemented_abstract_method }
 
-sub del_node { return PNI::Error::unimplemented_abstract_method; }
+sub del_node { PNI::Error::unimplemented_abstract_method }
+
+sub del_scenario {}
 
 # return $file : PNI::File
 sub get_file { shift->get('file') }
@@ -85,7 +86,8 @@ sub load_file {
     my %new_id_of;
     my %get_node_by_id;
 
-    # Create nodes
+    # Create nodes.
+    #--------------------------------------------------------------------------
     for my $stored_node_id ( keys %{$stored_nodes} ) {
 
         my $stored_node = $stored_nodes->{$stored_node_id};
@@ -109,19 +111,21 @@ sub load_file {
         # TODO si potrebbe ssaltare un passaggio ?
         #      e usare un solo hash stored_node_id <--> node
 
-        # remember  stored_node_id <--> node_id  relation
+        # Remember  stored_node_id <--> node_id  relation.
         $new_id_of{$stored_node_id} = $node_id;
 
-        # remember  node_id <--> node  relation
+        # Remember  node_id <--> node  relation.
         $get_node_by_id{$node_id} = $node;
     }
+    #--------------------------------------------------------------------------
 
-    # Create edges
+    # Create edges.
+    #--------------------------------------------------------------------------
     for my $stored_edge_id ( keys %{$stored_edges} ) {
 
         my $stored_edge = $stored_edges->{$stored_edge_id};
 
-        # Retrieve stored data
+        # Retrieve stored data.
         my $stored_source_node_id = $stored_edge->{source_node_id};
         my $stored_target_node_id = $stored_edge->{target_node_id};
         my $stored_source_name    = $stored_edge->{source_name};
@@ -134,14 +138,17 @@ sub load_file {
         my $source         = $source_node->get_output($stored_source_name);
         my $target         = $target_node->get_input($stored_target_name);
 
-        # N.B. : add_edge method is abstract, should be defined in child classes
+        # N.B. : 
+        # add_edge method is abstract, should be defined in child classes.
         $self->add_edge(
             source => $source,
             target => $target
         );
     }
+    #--------------------------------------------------------------------------
 
-    # Create comments
+    # Create comments.
+    #--------------------------------------------------------------------------
     for my $stored_comment_id ( keys %{$stored_comments} ) {
 
         my $stored_comment = $stored_comments->{$stored_comment_id};
@@ -158,6 +165,7 @@ sub load_file {
             content  => $content,
         );
     }
+    #--------------------------------------------------------------------------
 }
 
 # return \%content
@@ -169,7 +177,8 @@ sub save_file {
     my $edges    = {};
     my $nodes    = {};
 
-    # Get info about nodes
+    # Get info about nodes.
+    #-------------------------------------------------------------------------
     while ( my ( $gui_node_id, $gui_node ) = each %{ $self->get('nodes') } ) {
         my $center_y = $gui_node->get_center_y;
         my $center_x = $gui_node->get_center_x;
@@ -185,8 +194,10 @@ sub save_file {
             type   => $type,
         };
     }
+    #-------------------------------------------------------------------------
 
-    # Get info about edges
+    # Get info about edges.
+    #-------------------------------------------------------------------------
     while ( my ( $edge_id, $edge ) = each %{ $self->get('edges') } ) {
         my $source_name    = $edge->get_source->get_name;
         my $source_node_id = $edge->get_source_node->id;
@@ -200,8 +211,10 @@ sub save_file {
             target_node_id => $target_node_id,
         };
     }
+    #-------------------------------------------------------------------------
 
-    # Get info about comments
+    # Get info about comments.
+    #-------------------------------------------------------------------------
     while ( my ( $comment_id, $comment ) = each %{ $self->get('comments') } ) {
         my $center_y = $comment->get_center_y;
         my $center_x = $comment->get_center_x;
@@ -213,6 +226,7 @@ sub save_file {
             content  => $content,
         };
     }
+    #-------------------------------------------------------------------------
 
     return $file->set_content(
         {
@@ -220,7 +234,7 @@ sub save_file {
             edges    => $edges,
             nodes    => $nodes,
         }
-    );
+    )
 }
 
 sub set_file {
@@ -230,22 +244,42 @@ sub set_file {
     $self->set( file => $file );
 }
 
-1;
+1
 __END__
 
 =head1 NAME
 
 PNI::GUI::Scenario - is a scenario abstract view
 
+=head1 SYNOPSIS
+
+    use PNI;
+    use PNI::File;
+    use PNI::GUI::Scenario;
+
+    my $file = PNI::File->new;
+    my $scenario = PNI::root->add_scenario;
+
+    my $gui_scenario = PNI::GUI::Scenario->new(
+        file => $file,
+        scenario => $scenario,
+    );
+
 =head1 ATTRIBUTES
+
+=head2 C<comments>
+
+=head2 C<edges>
 
 =head2 C<file>
 
-    my $file = $scenario->get_file;
+    my $file = $gui_scenario->get_file;
 
     my $new_file = PNI::File->new;
-    $scenario->set_file( $new_file );
-    $scenario->save_file;
+    $gui_scenario->set_file( $new_file );
+    $gui_scenario->save_file;
+
+=head2 C<nodes>
 
 =head1 METHODS
 
@@ -258,6 +292,8 @@ PNI::GUI::Scenario - is a scenario abstract view
 =head2 C<add_scenario>
 
 =head2 C<clear_all>
+
+    my $previous_content = $scenario->clear_all;
 
 =head2 C<del_edge>
 

@@ -5,14 +5,13 @@ use PNI::Error;
 
 my $next_id;
 
-# the %attr hash holds all attributes of every PNI::Item
+# The %attr hash holds all attributes of every PNI::Item.
 my %attr;
 
-# return $self
 sub new {
     my $class   = shift;
     my $item_id = ++$next_id;
-    return bless \$item_id, $class;
+    return bless \$item_id, $class
 }
 
 # return 1
@@ -31,7 +30,7 @@ sub add {
 
     $attr{$id}{$attribute_name} = $attribute_value;
 
-    return 1;
+    return 1
 }
 
 # return 1
@@ -44,7 +43,7 @@ sub cleanup {
         undef $attribute_value;
     }
 
-    return 1;
+    return 1
 }
 
 # return 1
@@ -56,7 +55,7 @@ sub del {
     my $attribute_value = delete $attr{$id}{$attribute_name};
     undef $attribute_value;
 
-    return 1;
+    return 1
 }
 
 # return $attribute_value
@@ -65,11 +64,11 @@ sub get {
     my $attribute_name = shift
       or return PNI::Error::missing_required_argument;
 
-    # check if attribute exists
+    # Check if attribute exists.
     $self->has($attribute_name)
       or return PNI::Error::attribute_does_not_exists;
 
-    return $attr{ $self->id }{$attribute_name};
+    return $attr{ $self->id }{$attribute_name}
 }
 
 # return 1 or 0
@@ -78,14 +77,11 @@ sub has {
     my $attribute_name = shift
       or return PNI::Error::missing_required_argument;
 
-    return exists $attr{$id}{$attribute_name} || 0;
+    return exists $attr{$id}{$attribute_name} || 0
 }
 
 # return $id
-sub id {
-    my $self = shift;
-    return ${$self};
-}
+sub id { my $self = shift; return ${$self} }
 
 # TODO every package should define an $attribute hash_ref
 # so this init sub could be called after constructor by default
@@ -93,7 +89,7 @@ sub id {
 # also need an $init_args
 # so nodes could just have a "our $attributes" or "our $inputs" "our $outputs"
 # do this before 1.0 !!!!!!
-sub init { return PNI::Error::unimplemented_abstract_method; }
+sub init { PNI::Error::unimplemented_abstract_method }
 
 # return 1
 sub set {
@@ -101,40 +97,65 @@ sub set {
     my $attribute_name = shift
       or return PNI::Error::missing_required_argument;
 
-    # check if attribute exists
+    # Check if attribute exists.
     $self->has($attribute_name)
       or return PNI::Error::attribute_does_not_exists;
 
-    # attribute value can be undef
+    # Attribute value can be undef.
     my $attribute_value = shift;
 
     $attr{ $self->id }{$attribute_name} = $attribute_value;
 
-    return 1;
+    return 1
 }
 
-# return $type
-sub type { return ref shift; }
+sub type { ref shift }
 
 sub DESTROY {
 
-    # garbage all item attributes
+    # Garbage all item attributes.
     shift->cleanup;
 }
 
-1;
+1
 __END__
 
 =head1 NAME
 
-PNI::Item - is the base class
+PNI::Item - is a base class
 
 =head1 SYNOPSIS
 
-    package PNI::Point;
-
+    package PNI::Point_2d;
+    use parent 'PNI::Item';
     use strict;
-    use base 'PNI::Item';
+
+    sub new {
+        my $self = shift->SUPER::new;
+
+        $self->add('name');
+
+        $self->add( y => 0 );
+        $self->add( x => 0 );
+
+        return $self;
+    }
+    
+    package PNI::Point_3d;
+    use parent 'PNI::Point_3d';
+    use strict;
+
+    sub new {
+        my $self = shift->SUPER::new;
+
+        $self->add( z => 0 );
+
+        return $self;
+    }
+
+    package main;
+
+    my $point = PNI::Point_3d->new;
 
 =head1 DESCRIPTION
 
@@ -142,7 +163,7 @@ This is an inside out object, to provide encapsulation for PNI classes.
 
 Every object has an id, for instance, the reference to the object itself is a blessed id.
 
-Objects can be (un)decorated adding/removing attributes at runtime.
+Objects can be [un]decorated adding/removing attributes at runtime.
 
 Every attribute value is a scalar or a reference.
 
@@ -163,6 +184,11 @@ Every attribute value is a scalar or a reference.
 
 =head2 C<has>
 
+    $self->has('x');   # returns 1
+    $self->has('car'); # returns 0
+
+Checks if exists attribute_name.
+
 =head2 C<id>
 
     my $id = $self->id;
@@ -175,6 +201,9 @@ Every attribute value is a scalar or a reference.
 
 =head2 C<type>
 
-    my $type = $self->type; # the package name
+    my $type = $self->type;
+
+Returns the package name.
 
 =cut
+

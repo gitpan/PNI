@@ -6,17 +6,13 @@ use PNI::Error;
 use PNI::Node;
 
 sub new {
-    my $self = shift->SUPER::new(@_)
-      or return PNI::Error::unable_to_create_item;
-    my $arg = {@_};
+    my $self = shift->SUPER::new;
 
     $self->add( edges => {} );
-
     $self->add( nodes => {} );
-
     $self->add( scenarios => {} );
 
-    return $self;
+    return $self
 }
 
 # return $edge : PNI::Edge
@@ -25,7 +21,7 @@ sub add_edge {
     my $edge = PNI::Edge->new(@_)
       or return PNI::Error::unable_to_create_item;
 
-    return $self->get('edges')->{ $edge->id } = $edge;
+    return $self->get('edges')->{ $edge->id } = $edge
 }
 
 # return $node : PNI::Node
@@ -39,7 +35,7 @@ sub add_node {
     if ( not defined $type ) {
         my $node = PNI::Node->new;
 
-        return $self->get('nodes')->{ $node->id } = $node;
+        return $self->get('nodes')->{ $node->id } = $node
     }
 
     my $node_class = "PNI::Node::$type";
@@ -61,7 +57,7 @@ sub add_node {
         $node->get_input($slot_name)->set_data($slot_data);
     }
 
-    return $self->get('nodes')->{ $node->id } = $node;
+    return $self->get('nodes')->{ $node->id } = $node
 }
 
 # return $scenario : PNI::Scenario
@@ -70,7 +66,7 @@ sub add_scenario {
     my $scenario = PNI::Scenario->new(@_)
       or return PNI::Error::unable_to_create_item;
 
-    return $self->get('scenarios')->{ $scenario->id } = $scenario;
+    return $self->get('scenarios')->{ $scenario->id } = $scenario
 }
 
 sub del_edge {
@@ -99,10 +95,10 @@ sub del_scenario {
 
     # Clean up all items contained in the scenario
 
-    # Deleting a node deletes also the edges connected to it 
+    # Deleting a node deletes also the edges connected to it.
     $scenario->del_node($_) for $scenario->get_nodes;
 
-    # Deleting a scenario deletes also the nodes contained in it
+    # Deleting a scenario deletes also the nodes contained in it.
     $scenario->del_scenario($_) for $scenario->get_scenarios;
 
     delete $self->get('scenarios')->{ $scenario->id };
@@ -119,12 +115,12 @@ sub get_scenarios { values %{ shift->get('scenarios') } }
 
 sub task {
 
-    # Here we go, this is one of the most important PNI subs
+    # Here we go, this is one of the most important PNI subs.
     my $self = shift;
 
     my %has_run_task_of;
 
-    RUN_TASKS:
+  RUN_TASKS:
 
     for my $node ( $self->get_nodes ) {
 
@@ -137,22 +133,22 @@ sub task {
         # so their task will run before their children
         for my $parent_node ( $node->parents ) {
 
-            # Wait until all parent nodes run
+            # Wait until all parent nodes run.
             next RUN_TASKS if not exists $has_run_task_of{$parent_node};
         }
 
-            # Retrieve slot data coming from input edges
-            $_->task for ( $node->get_input_edges );
+        # Retrieve slot data coming from input edges
+        $_->task for ( $node->get_input_edges );
 
-            # Ok, now it's time to run node task
-            eval { $node->task } or do {
+        # Ok, now it's time to run node task
+        eval { $node->task } or do {
 
-                # If node task fails raise error (without return)
-                PNI::Error::unable_to_run_task;
-            };
+            # If node task fails raise error (without return)
+            PNI::Error::unable_to_run_task;
+        };
 
-            # Remember that node has run its task
-            $has_run_task_of{$node} = 1;
+        # Remember that node has run its task
+        $has_run_task_of{$node} = 1;
     }
 
     # Check if all tasks run
@@ -162,21 +158,46 @@ sub task {
 
     # At this point all tasks are run so reset all slots "changed" flag.
     for my $node ( $self->get_nodes ) {
-        $_->set( changed => 0 ) for ( $node->get_inputs, $node->get_outputs )
+        $_->set( changed => 0 ) for ( $node->get_inputs, $node->get_outputs );
     }
 
     # Finally, run all sub scenarios tasks.
     $_->task for ( $self->get_scenarios );
 
-    return 1;
+    return 1
 }
 
-1;
+1
 __END__
 
 =head1 NAME
 
 PNI::Scenario - is a set of nodes connected by edges
+
+=head1 SYNOPSIS
+
+    use PNI;
+
+    my $scenario = PNI::root->add_scenario;
+
+    my $sub_sccenario = $scenario->add_scenario;
+
+
+    # You can call the constructor to get a scenario ...
+
+    use PNI::Scenario;
+    $standalone_scenario = PNI::Scenario->new;
+
+    # ... but it will not belong to PNI hierarchy tree,
+    # so its task method will not be called.
+
+=head1 ATTRIBUTES
+
+=head2 C<edges>
+
+=head2 C<nodes>
+
+=head2 C<scenarios>
 
 =head1 METHODS
 
@@ -184,7 +205,7 @@ PNI::Scenario - is a set of nodes connected by edges
 
 =head2 C<add_node>
 
-    # suppose 'Foo::Bar' is a valid PNI node type,
+    # Suppose 'Foo::Bar' is a valid PNI node type,
     # create a new PNI::Node::Foo::Bar
     my $node_foo_bar = $scenario->add_node( type => 'Foo::Bar' );
 
@@ -208,6 +229,8 @@ An additional inputs arg, if provided, is used to set node inputs data before
 running the first node task.
 
 =head2 C<add_scenario>
+
+    my $sub_scenario = $scenario->add_scenario;
 
 =head2 C<del_edge>
 

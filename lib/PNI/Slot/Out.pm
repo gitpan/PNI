@@ -10,7 +10,7 @@ sub new {
 
     $self->add( edges => {} );
 
-    return $self;
+    return $self
 }
 
 sub add_edge {
@@ -37,8 +37,7 @@ sub del_edge {
 # return @edges : PNI::Edge
 sub get_edges { values %{ shift->get('edges') }; }
 
-# return 0 or 1
-sub is_connected { shift->get_edges ? 1 : 0; }
+sub is_connected { shift->get_edges ? 1 : 0 }
 
 # return $edge : PNI::Edge
 sub join_to {
@@ -48,10 +47,10 @@ sub join_to {
     my $input_slot = shift
       or return PNI::Error::missing_required_argument;
 
-    return PNI::Edge->new( source => $self, target => $input_slot );
+    return PNI::Edge->new( source => $self, target => $input_slot )
 }
 
-1;
+1
 __END__
 
 =head1 NAME

@@ -3,7 +3,7 @@ use Test::More;
 use PNI::Node;
 use PNI::Error;
 
-# create an empty node and decorate it
+# Create an empty node and decorate it.
 my $node1 = PNI::Node->new;
 isa_ok $node1, 'PNI::Node';
 
@@ -15,6 +15,10 @@ isa_ok $node1->get_input('in'), 'PNI::Slot::In';
 ok $node1->add_output('out'),     'add_output';
 isa_ok $node1->get_output('out'), 'PNI::Slot::Out';
 
+is $node1->has_no_input_slot_changed,  1;
+ok $node1->some_input_slot_is_changed;
+is $node1->has_no_input_slot_changed, 0;
+
 my $data = 'foo';
 ok $node1->get_input('in')->set_data($data), 'set_data';
 is $node1->get_input('in')->get_data, $data, 'get_data';
@@ -24,8 +28,7 @@ isa_ok $node1->get_input('one'), 'PNI::Slot::In';
 is $node1->get_input('one')->get_data, 1, 'get_data';
 ok $node1->get_input('one')->set_data(1), 'set_data';
 
-# passing wrong parameters
-
+# Passing wrong parameters:
 # tell PNI::Error to be silent for next tests ...
 PNI::Error::verbose_off;
 
@@ -38,10 +41,10 @@ isnt $node1->add_output('out'), 1, 'add two outputs with the same name';
 isnt $node1->get_input,  1, 'get_input without arg';
 isnt $node1->get_output, 1, 'get_output without arg';
 
-# ... end of silence
+# ... end of silence.
 PNI::Error::verbose_on;
 
-# checking ordered slots
+# Checking ordered slots.
 my $node2        = PNI::Node->new;
 my @input_names  = qw(a b c);
 my @output_names = qw(d e f g);

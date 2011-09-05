@@ -8,6 +8,8 @@ my $slot = PNI::Slot->new( node => PNI::node, name => 'slot_test' );
 isa_ok $slot, 'PNI::Slot';
 
 is $slot->is_changed, 0;
+$slot->set_data(1);
+is $slot->is_changed, 1;
 $slot->set_data;
 is $slot->is_changed, 1;
 

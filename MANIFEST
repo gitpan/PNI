@@ -12,6 +12,7 @@ lib/PNI/GUI/Scenario.pm
 lib/PNI/GUI/Slot.pm
 lib/PNI/Item.pm
 lib/PNI/Node.pm
+lib/PNI/Node/PNI/Root.pm
 lib/PNI/Scenario.pm
 lib/PNI/Slot.pm
 lib/PNI/Slot/In.pm
@@ -30,6 +31,7 @@ t/_gui-node.t
 t/_gui-scenario.t
 t/_gui-slot.t
 t/_item.t
+t/_node-pni-root.t
 t/_node.t
 t/_pni.t
 t/_scenario.t

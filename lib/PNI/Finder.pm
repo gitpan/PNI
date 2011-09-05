@@ -1,29 +1,64 @@
 package PNI::Finder;
 use strict;
-use Module::Pluggable search_path => 'PNI::Node', require => 1, inner => 0;
+use File::Basename;
+use File::Find;
+use Module::Pluggable
+  search_path => 'PNI::Node',
+  require     => 1,
+  inner       => 0;
 
-# this class is a singleton
+# This class is a singleton.
 my $self;
+
+my $PNI_dir = File::Basename::dirname(__FILE__);
 
 # return $self : PNI::Finder
 sub instance {
+
     if ( not defined $self ) {
-        # it was 
+
+        #-------------------------------------------------------
+        # It was
+        #
         # $self = bless \__PACKAGE__, __PACKAGE__;
-        # but it is not supported by perl 5.8, see bug id=69733
+        #
+        # but it is not supported by perl 5.8, see
+        # https://rt.cpan.org/Public/Bug/Display.html?id=69733
+        #-------------------------------------------------------
+
         $self = bless \my $singleton, __PACKAGE__;
     }
+
     return $self;
 }
 
-# return @nodes: PNI::Node
+# return @nodes : PNI::Node
 sub nodes {
     my @nodes = grep { $_->isa('PNI::Node') } shift->plugins;
+
     s/^PNI::Node::// foreach (@nodes);
+
     return @nodes;
 }
 
-1;
+sub files {
+    my @pni_files;
+
+    find(
+        {
+            wanted => sub {
+                return unless /\.pni$/;
+                push @pni_files, $File::Find::name;
+            },
+            no_chdir => 1,
+        },
+        $PNI_dir
+    );
+
+    return @pni_files;
+}
+
+1
 __END__
 
 =head1 NAME

@@ -2,7 +2,7 @@ package PNI;
 
 use strict;
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 use Exporter 'import';
 use PNI::Edge;
@@ -16,7 +16,7 @@ use Time::HiRes;
 our @EXPORT_OK = qw( edge node task );
 our %EXPORT_TAGS = ( '-D' => \@EXPORT_OK );
 
-# The node finder.
+# The PNI finder.
 my $find = PNI::Finder->instance;
 
 # The root scenario.
@@ -35,8 +35,11 @@ sub edge {
     return $root->add_edge(
         source => $source_output,
         target => $target_input
-    );
+    )
 }
+
+# return @pni_files : PNI::File
+sub files { $find->files }
 
 sub loop {
     while (1) {
@@ -59,7 +62,7 @@ sub root { $root }
 
 sub task { $root->task }
 
-1;
+1
 __END__
 
 =head1 NAME
@@ -89,7 +92,7 @@ To install PNI module plus a basic set of PNI nodes, do:
 
 =head1 DESCRIPTION
 
-Hi! I'm an italian mathematician. 
+Hi all! I'm an italian mathematician. 
 I really like Perl philosophy as Larry jokes a lot even if 
 he is one of the masters of hacking.
 
@@ -129,6 +132,12 @@ Blah blah blah. ( this was the h2xs command :-)
                'source_output_name' => 'target_input_name';
 
 Connects an output of a node to an input of another node.
+
+=head2 C<files>
+
+    my @pni_files = PNI::files;
+
+Returns a list of all .pni files in PNI.pm install dir and subdirs.
 
 =head2 C<node>
 
@@ -178,6 +187,8 @@ L<PNI::Core>
 
 L<PNI::GUI::Tk>
 
+L<PNI blog|http://perl-node-interface.blogspot.com>
+
 =head1 AUTHOR
 
 G. Casati , E<lt>fibo@cpan.orgE<gt>
@@ -187,7 +198,7 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 Copyright (C) 2009-2011, Gianluca Casati
 
 This program is free software, you can redistribute it and/or modify it
-under the same terms of the Artistic License version 2.0 .
+under the same terms of the Artistic License version 2.0.
 
 =cut
 

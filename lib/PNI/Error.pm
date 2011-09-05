@@ -4,10 +4,6 @@ use Carp;
 
 my $verbose = 1;
 
-sub verbose_off { return not $verbose = 0; }
-
-sub verbose_on { return $verbose = 1; }
-
 my $say = sub {
     if ($verbose) {
         my $message = shift;
@@ -17,55 +13,59 @@ my $say = sub {
 
 sub attribute_does_not_exists {
     $say->('attribute does not exists');
-    return;
+    return
 }
 
 sub generic {
     $say->('generic');
-    return;
+    return
 }
 
 sub invalid_argument_type {
     $say->('invalid argument type');
-    return;
+    return
 }
 
 sub missing_required_argument {
     $say->('missing required argument');
-    return;
+    return
 }
 
 sub overridden_attribute_name {
     $say->('overridden attribute name');
-    return;
+    return
 }
 
 sub unable_to_create_item {
     $say->('unable to create item');
-    return;
+    return
 }
 
 sub unable_to_init_node {
     $say->('unable to init node');
-    return;
+    return
 }
 
 sub unable_to_load_node {
     $say->('unable to load node');
-    return;
+    return
 }
 
 sub unable_to_run_task {
     $say->('unable to run task');
-    return;
+    return
 }
 
 sub unimplemented_abstract_method {
     $say->('unimplemented abstract method');
-    return;
+    return
 }
 
-1;
+sub verbose_off { return not $verbose = 0 }
+
+sub verbose_on { return $verbose = 1 }
+
+1
 __END__
 
 =head1 NAME

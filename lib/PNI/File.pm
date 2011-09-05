@@ -33,7 +33,7 @@ sub new {
         $self->set_content($empty_content);
     }
 
-    return $self;
+    return $self
 }
 
 # return \%content
@@ -50,7 +50,7 @@ sub get_content {
     $content = decode_json($text);
     close $fh;
 
-    return $content;
+    return $content
 }
 
 # return $path
@@ -71,10 +71,10 @@ sub set_content {
 
     close $fh;
 
-    return $content;
+    return $content
 }
 
-1;
+1
 __END__
 
 =head1 NAME
@@ -82,6 +82,8 @@ __END__
 PNI::File - stores a scenario in a .pni file
 
 =head1 SYNOPSIS
+
+    use PNI::File;
 
     my $file = PNI::File->new( path => '/path/to/my/file.pni' );
 

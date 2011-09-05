@@ -7,5 +7,7 @@ my $find2 = PNI::Finder->instance;
 
 is $find , $find2, 'PNI::Finder is a singleton';
 
-done_testing;
+print for $find->files;
+
+done_testing
 __END__

@@ -30,7 +30,7 @@ sub new {
         $target->set_data( $source->get_data );
     }
 
-    return $self;
+    return $self
 }
 
 # return $source : PNI::Slot::Out
@@ -51,10 +51,10 @@ sub task {
     # This is Edge's task: pass data from target to source.
     $target->set_data( $source->get_data );
 
-    return 1;
+    return 1
 }
 
-1;
+1
 __END__
 
 =head1 NAME

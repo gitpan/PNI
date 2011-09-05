@@ -1,6 +1,6 @@
 package PNI::GUI::Slot;
+use parent 'PNI::Item';
 use strict;
-use base 'PNI::Item';
 use PNI::Error;
 
 sub new {
@@ -24,7 +24,7 @@ sub new {
       or return PNI::Error::missing_required_argument;
     $self->add( slot => $slot );
 
-    return $self;
+    return $self
 }
 
 sub get_center_y { shift->get('center_y') }
@@ -53,7 +53,7 @@ sub set_center_x {
     $self->set( center_x => $center_x );
 }
 
-1;
+1
 __END__
 
 =head1 NAME

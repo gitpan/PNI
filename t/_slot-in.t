@@ -12,6 +12,10 @@ isa_ok $slot, 'PNI::Slot::In';
 # at creation, slot should not be connected
 is $slot->is_connected, 0;
 
+my $data = 'foo';
+ok $slot->set_data( $data );
+is $slot->get_data,$data;
+
 # create a fake edge for tests
 my $edge = PNI::Edge->new(
     source => $node->add_output('out'),

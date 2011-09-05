@@ -11,16 +11,18 @@ sub new {
 
     $self->add('edge');
 
-    return $self;
+    return $self
 }
 
 sub add_edge {
     my $self = shift;
     my $edge = shift
       or return PNI::Error::missing_required_argument;
+
     $edge->isa('PNI::Edge')
       or return PNI::Error::invalid_argument_type;
-    return $self->set( edge => $edge );
+
+    return $self->set( edge => $edge )
 }
 
 sub del_edge { shift->set( edge => undef ) }
@@ -28,21 +30,27 @@ sub del_edge { shift->set( edge => undef ) }
 # return $edge : PNI::Edge
 sub get_edge { shift->get('edge') }
 
-# return 0 or 1
 sub is_connected { defined( shift->get_edge ) ? 1 : 0 }
 
 # return $edge : PNI::Edge
 sub join_to {
     my $self = shift;
 
-    # output_slot is required
     my $output_slot = shift
       or return PNI::Error::missing_required_argument;
 
-    return PNI::Edge->new( source => $output_slot, target => $self );
+    return PNI::Edge->new( source => $output_slot, target => $self )
 }
 
-1;
+sub set_data {
+    my $self = shift;
+
+    $self->SUPER::set_data(@_);
+
+    $self->get_node->some_input_slot_is_changed if $self->is_changed;
+}
+
+1
 __END__
 
 =head1 NAME
@@ -64,6 +72,8 @@ PNI::Slot::In - input slot
 =head2 C<join_to>
 
     my $new_edge = $in->join_to( $out );
+
+=head2 C<set_data>
 
 =cut
 

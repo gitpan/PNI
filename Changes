@@ -1,5 +1,12 @@
 Revision history for Perl Node Interface.
 
+0.19  2011-09-xx
+    - PNI::Node::some_input_slot_is_changed 
+    - PNI::Node::has_no_input_slot_changed
+    - PNI::Slot::In::set_data
+    - PNI::Node::PNI::Root
+    - some code cleaning
+
 0.18  2011-08-23
     - PNI::GUI::Comment
     - can remove stuff with del_node, del_scenario, del_edge
