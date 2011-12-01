@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               PNI
-version:            0.19
+version:            0.20
 abstract:           Perl Node Interface
 author:
     - G. Casati <fibo@cpan.org>
@@ -15,9 +15,10 @@ requires:
     Exporter:           0
     File::Find:         0
     File::Spec:         0
-    File::Temp:         0.22
-    JSON:               2.51
+    File::Temp:         0
+    JSON:               0
     Module::Pluggable:  0
+    Mojolicious:        0
     Scalar::Util:       0
     Test::More:         0
     Time::HiRes:        0
@@ -25,7 +26,7 @@ no_index:
     directory:
         - t
         - inc
-generated_by:       ExtUtils::MakeMaker version 6.56
+generated_by:       ExtUtils::MakeMaker version 6.55_02
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
     version:  1.4
