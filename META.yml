@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               PNI
-version:            0.20
+version:            0.20.1
 abstract:           Perl Node Interface
 author:
     - G. Casati <fibo@cpan.org>
