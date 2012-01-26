@@ -6,13 +6,14 @@ use PNI::Out;
 use PNI::Rectangle;
 use PNI::Set;
 
-has _on   => ( default => sub { 1 } );
+has _on => ( default => sub { 1 } );
 
-has box   => ( default => sub { PNI::Rectangle->new } );
-has ins   => ( default => sub { PNI::Set->new } );
-has label => ( default => sub { '' } );
-has outs  => ( default => sub { PNI::Set->new } );
-has type  => ( default => sub { __PACKAGE__ } );
+has box    => ( default => sub { PNI::Rectangle->new } );
+has father => ( default => sub { 0 } );
+has ins    => ( default => sub { PNI::Set->new } );
+has label  => ( default => sub { '' } );
+has outs   => ( default => sub { PNI::Set->new } );
+has type   => ( default => sub { __PACKAGE__ } );
 
 sub get_ins_edges {
     grep { defined } map { $_->edge } shift->ins->list;
@@ -105,9 +106,17 @@ PNI::Node - is a basic unit of code
 
 =head2 box
 
+=head2 father
+
+    $node->father;
+    
+Returns C<father> scenario.
+
 =head2 ins
 
 =head2 outs
+
+=head2 type
 
 =head1 METHODS
 
@@ -117,24 +126,23 @@ PNI::Node - is a basic unit of code
 
 =head2 in
 
-Creates an input by the given name if such input does not exists.
-
     $node->in('input_name');
-    
-Returns a L<PNI::In> object.
 
+Creates an input by the given name if such input does not exists.
+    
     my $in = $node->in('input_name');
 
-Default input name is 'in', so you are really lazy you can do
+Returns a L<PNI::In> object.
 
     $node->in->data(1);
-
     say $node->in->data;
 
-If you pass number x as input_name, it will be replaced by C<inx>.
+Default input name is 'in', so you can be lazy.
 
     $node->in(1);
     $node->in('in1'); # idem
+
+If you pass digit C<x> as input_name, it will be replaced by C<inx>.
 
 =head2 is_on
 
@@ -186,8 +194,6 @@ Returns the list of nodes which outputs are connected to the node inputs.
 =head2 task
 
 =head2 translate
-
-=head2 type
 
 =cut
 

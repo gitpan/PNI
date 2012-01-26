@@ -3,7 +3,7 @@ package PNI;
 use strict;
 use warnings;
 
-our $VERSION = '0.22.0';
+our $VERSION = '0.23';
 
 use Exporter 'import';
 use PNI::Edge;
@@ -65,14 +65,8 @@ PNI - Perl Node Interface
 
 =head1 ATTENTION
 
-This module was created to be used internally by a GUI, anyway you are free to
-use the scripting api if it does make sense.
-
-=head1 INSTALLATION
-
-To install PNI module plus a basic set of PNI nodes, do:
-    
-    cpan PNI::Core
+The Perl Node Interface was created to be used via browser,
+anyway you are free to use the scripting api if it does make sense.
 
 =head1 SYNOPSIS
 
@@ -166,11 +160,9 @@ This method delegates to the root scenario task method.
 
 =head1 SEE ALSO
 
-L<PNI::Core>
-
-L<PNI::GUI>
-
 L<PNI blog|http://perl-node-interface.blogspot.com>
+
+L<PNI repository|http://github.com/fibo/pni-pm>
 
 =head1 AUTHOR
 
@@ -178,7 +170,7 @@ G. Casati , E<lt>fibo@cpan.orgE<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2009-2011, Gianluca Casati
+Copyright (C) 2009-2012, Gianluca Casati
 
 This program is free software, you can redistribute it and/or modify it
 under the same terms of the Artistic License version 2.0.

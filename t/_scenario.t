@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use PNI::Scenario;
-use Test::More tests => 30;
+use Test::More tests => 31;
 
 my $scenario = PNI::Scenario->new;
 isa_ok $scenario, 'PNI::Scenario';
@@ -20,6 +20,9 @@ my $node1 = $scen->add_node;
 isa_ok $node1, 'PNI::Node', 'add_node';
 my $node2 = $scen->add_node;
 is $scen->nodes->list, 2, 'nodes list';
+
+# Check father.
+is $node1->father, $scen, 'father';
 
 # Connect nodes with an edge.
 my $source1 = $node1->out;
@@ -48,11 +51,6 @@ $scen->add_edge( source => $source2, target => $target2 );
 $scen->del_node($node2);
 is $scen->nodes->list, 2, 'del_node';
 is $scen->edges->list, 0, 'del_node cleans edges';
-
-# TODO
-# my $content = {roba presa da un .pni file}
-# $scen->add_scenario($content);
-# per ora faccio solo
 
 # Create another edge, then delete it.
 my $edge2 = $scen->add_edge( source => $source1, target => $target2 );
@@ -112,7 +110,7 @@ is $scen->edges->list,         0, 'del_scenario cleans edges';
 is $scen->nodes->list,         0, 'del_scenario cleans nodes';
 is $scen->scenarios->list,     0, 'del_scenario cleans scenarios';
 
-# A node which sub task returns undef
+# A node which sub task returns undef.
 my $error = $scen->add_node('Error');
 ok $error->is_on, 'error node is on by default';
 $scen->task;
