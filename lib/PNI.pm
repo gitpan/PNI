@@ -3,7 +3,7 @@ package PNI;
 use strict;
 use warnings;
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 use Exporter 'import';
 use PNI::Edge;
@@ -70,13 +70,9 @@ anyway you are free to use the scripting api if it does make sense.
 
 =head1 SYNOPSIS
 
-    use PNI ':-D'; # imports node, edge and task
+    $ pni daemon
 
-    my $node = node 'Perlfunc::Print';
-    $node->in('list')->data('Hello World !');
-    $node->in('do_print')->data(1);
-
-    task; # prints Hello World !
+Then point your browser to http://localhost:3000 and use the gui.
 
 =head1 DESCRIPTION
 
