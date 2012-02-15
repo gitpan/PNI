@@ -7,7 +7,7 @@ use warnings;
 # considering version x.yy stable, a new release will be versioned
 # as x.yy_zz so it will not be listed by CPAN.pm as the last.
 # After test results will be ok, it can be officially released x.(yy+1) version.
-our $VERSION = '0.26';
+our $VERSION = '0.26_01';
 $VERSION = eval $VERSION;
 
 use Exporter 'import';
@@ -91,7 +91,7 @@ Think about genetic researchers, for example. They need to focus on protein chai
 
 They want things working and they need Perl ... but if you say Strawberry they think about yogurt, not about Windows.
 
-There are a lot of node programming languages (VVVV, Puredata, Max/Msp) but normally they target artists and interaction designers. I saw a lot of vjs and musicians do really complex programs with those software, and they never wrote a line of code.
+There are a lot of node programming languages (L<VVVV|http://vvvv.org/>, L<Puredata|http://puredata.info/>, L<Max/Msp|http://cycling74.com/>) but normally they target artists and interaction designers. I saw a lot of vjs and musicians do really complex programs with those software, and they never wrote a line of code.
 
 This is my effort to provide a node interface that brings Perl power to people who don't know the Perl language.
 
