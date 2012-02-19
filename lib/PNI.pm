@@ -7,7 +7,7 @@ use warnings;
 # considering version x.yy stable, a new release will be versioned
 # as x.yy_zz so it will not be listed by CPAN.pm as the last.
 # After test results will be ok, it can be officially released x.(yy+1) version.
-our $VERSION = '0.26_01';
+our $VERSION = '0.26_02';
 $VERSION = eval $VERSION;
 
 use Exporter 'import';
@@ -164,6 +164,8 @@ This method delegates to the root scenario task method.
 L<PNI blog|http://perl-node-interface.blogspot.com>
 
 L<PNI repository|http://github.com/fibo/pni-pm>
+
+L<PNI Class Diagram|http://goo.gl/MQ89f>
 
 =head1 AUTHOR
 
