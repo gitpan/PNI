@@ -35,7 +35,7 @@
             "Carp" : 0,
             "Exporter" : 0,
             "File::Find" : 0,
-            "File::Spec" : 0,
+            "File::Spec::Functions" : 0,
             "File::Temp" : 0,
             "JSON::PP" : 0,
             "Module::Pluggable" : 0,
@@ -46,6 +46,6 @@
          }
       }
    },
-   "release_status" : "stable",
-   "version" : "0.27"
+   "release_status" : "testing",
+   "version" : "0.27_01"
 }

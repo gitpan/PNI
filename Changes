@@ -1,5 +1,11 @@
 Revision history for Perl Node Interface.
 
+0.27  2012-02-28
+    - removed view stuff from model
+    - PNI::Comment now it's a node
+    - updated deprecated paths method in PNI::GUI
+    - avoid PAUSE indexing for nodes and Mo
+
 0.26  2012-01-31
     - small bug fixes
     - removed tests from _finder.t, since they can fail if there are
